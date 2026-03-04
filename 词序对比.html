@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>汉越语序结构对比专项测试卷</title>
+<title>Đề Thi / 测试卷</title>
 <style>
   * {
     box-sizing: border-box;
@@ -13,12 +13,28 @@
     margin: 0;
     padding: 0;
     width: 100%;
-    overflow-x: hidden;
+    scroll-behavior: smooth;
   }
   body {
     background: #f4f6f8;
     padding: 10px;
+    padding-top: 60px;
   }
+
+  .fixed-timer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #2d3748;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 9999;
+  }
+
   .container {
     width: 100%;
     max-width: 800px;
@@ -63,14 +79,23 @@
     font-size: 20px;
     font-weight: bold;
     color: #2c3e50;
-    margin-bottom: 6px;
+    margin-bottom: 10px;
+  }
+  .score-info {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: #e53935;
+    margin: 10px 0;
+    display: none;
   }
   .student-info {
     text-align: center;
     font-size: 14px;
     color: #34495e;
-    margin-bottom: 20px;
+    margin: 5px 0 20px;
     line-height: 1.5;
+    display: none;
   }
   .question {
     margin: 12px 0;
@@ -95,6 +120,7 @@
     border-radius: 6px;
     font-size: 13px;
     display: none;
+    line-height: 1.5;
   }
   .btn-box {
     text-align: center;
@@ -111,11 +137,6 @@
     width: 80%;
     max-width: 300px;
   }
-  .score-box {
-    font-weight: bold;
-    color: #e53935;
-  }
-
   .q-correct {
     border-left-color: #00b42a !important;
     background: #f0fff4 !important;
@@ -128,182 +149,134 @@
 </head>
 <body>
 
+<div class="fixed-timer" id="fixedTimer"></div>
+
 <div class="container">
   <div class="login-box" id="loginBox">
-    <h2>汉越语序结构对比专项测试卷</h2>
-    <input type="text" id="studentName" placeholder="请输入你的姓名" />
+    <h2 id="titleLogin">汉越语序结构对比测试卷</h2>
+    <input type="text" id="studentName" placeholder="请输入姓名">
     <br>
-    <button onclick="startExam()">进入考试</button>
+    <button onclick="startExam()" id="btnStart">进入考试</button>
   </div>
 
   <div class="paper" id="paper">
-    <div class="paper-title">汉越语序结构对比专项测试卷</div>
+    <div class="paper-title" id="titlePaper">汉越语序结构对比测试卷</div>
+    <div class="score-info" id="scoreInfo"></div>
     <div class="student-info" id="studentInfo"></div>
 
     <form id="quizForm">
+      <div class="question" id="q1">
+        <div class="q-text">1. 汉语：红色的书 → 越语？</div>
+        <div class="option"><label><input type="radio" name="q1" value="A"> A. sách đỏ</label></div>
+        <div class="option"><label><input type="radio" name="q1" value="B"> B. đỏ sách</label></div>
+        <div class="answer-analysis" id="an1">
+          正确答案：A<br>
+          解析：汉语：中心词+修饰词；越南语：修饰词+中心词<br>
+          Đáp án đúng: A<br>
+          Giải thích: Tiếng Trung: Danh từ + Tính từ; Tiếng Việt: Tính từ + Danh từ
+        </div>
+      </div>
 
-<!-- 1 -->
-<div class="question" id="q1">
-  <div class="q-text">1. 汉语：红色的书 → 越语正确结构是？</div>
-  <div class="option"><label><input type="radio" name="q1" value="A"> A. sách đỏ</label></div>
-  <div class="option"><label><input type="radio" name="q1" value="B"> B. đỏ sách</label></div>
-  <div class="answer-analysis" id="an1">正确答案：A<br>解析：汉语中心词+修饰词，越语修饰词+中心词。</div>
-</div>
+      <div class="question" id="q2">
+        <div class="q-text">2. 汉语：新的房子 → 越语？</div>
+        <div class="option"><label><input type="radio" name="q2" value="A"> A. nhà mới</label></div>
+        <div class="option"><label><input type="radio" name="q2" value="B"> B. mới nhà</label></div>
+        <div class="answer-analysis" id="an2">
+          正确答案：A<br>
+          解析：越南语语序：名词 + 形容词<br>
+          Đáp án đúng: A<br>
+          Giải thích: Cấu trúc tiếng Việt: Danh từ + Tính từ
+        </div>
+      </div>
 
-<!-- 2 -->
-<div class="question" id="q2">
-  <div class="q-text">2. 汉语：新的房子 → 越语？</div>
-  <div class="option"><label><input type="radio" name="q2" value="A"> A. nhà mới</label></div>
-  <div class="option"><label><input type="radio" name="q2" value="B"> B. mới nhà</label></div>
-  <div class="answer-analysis" id="an2">正确答案：A<br>解析：越语：名词在前，形容词在后。</div>
-</div>
+      <div class="question" id="q3">
+        <div class="q-text">3. 汉语：漂亮的女孩 → 越语？</div>
+        <div class="option"><label><input type="radio" name="q3" value="A"> A. cô gái đẹp</label></div>
+        <div class="option"><label><input type="radio" name="q3" value="B"> B. đẹp cô gái</label></div>
+        <div class="answer-analysis" id="an3">
+          正确答案：A<br>
+          解析：越语：cô gái (女孩) + đẹp (漂亮)<br>
+          Đáp án đúng: A<br>
+          Giải thích: cô gái + đẹp
+        </div>
+      </div>
 
-<!-- 3 -->
-<div class="question" id="q3">
-  <div class="q-text">3. 汉语：漂亮的女孩 → 越语？</div>
-  <div class="option"><label><input type="radio" name="q3" value="A"> A. cô gái đẹp</label></div>
-  <div class="option"><label><input type="radio" name="q3" value="B"> B. đẹp cô gái</label></div>
-  <div class="answer-analysis" id="an3">正确答案：A<br>解析：越语：cô gái（女孩）+ đẹp（漂亮）。</div>
-</div>
+      <div class="question" id="q4">
+        <div class="q-text">4. 越语：bánh ngọt → 汉语？</div>
+        <div class="option"><label><input type="radio" name="q4" value="A"> A. 甜的蛋糕</label></div>
+        <div class="option"><label><input type="radio" name="q4" value="B"> B. 蛋糕甜</label></div>
+        <div class="answer-analysis" id="an4">
+          正确答案：A<br>
+          解析：越语修饰词在前，汉语倒回：修饰词+中心词<br>
+          Đáp án đúng: A<br>
+          Giải thích: Tính từ đứng trước ở Việt, đảo lại cho Trung
+        </div>
+      </div>
 
-<!-- 4 -->
-<div class="question" id="q4">
-  <div class="q-text">4. 越语：bánh ngọt → 汉语正确结构？</div>
-  <div class="option"><label><input type="radio" name="q4" value="A"> A. 甜的蛋糕</label></div>
-  <div class="option"><label><input type="radio" name="q4" value="B"> B. 蛋糕甜</label></div>
-  <div class="answer-analysis" id="an4">正确答案：A<br>解析：越语修饰词在前，汉语要倒回修饰词+中心词。</div>
-</div>
+      <div class="question" id="q5">
+        <div class="q-text">5. 越语：nước lạnh → 汉语？</div>
+        <div class="option"><label><input type="radio" name="q5" value="A"> A. 冷的水</label></div>
+        <div class="option"><label><input type="radio" name="q5" value="B"> B. 水冷</label></div>
+        <div class="answer-analysis" id="an5">
+          正确答案：A<br>
+          解析：nước lạnh → 冷的水<br>
+          Đáp án đúng: A<br>
+          Giải thích: nước lạnh = nước lạnh
+        </div>
+      </div>
 
-<!-- 5 -->
-<div class="question" id="q5">
-  <div class="q-text">5. 越语：nước lạnh → 汉语？</div>
-  <div class="option"><label><input type="radio" name="q5" value="A"> A. 冷的水</label></div>
-  <div class="option"><label><input type="radio" name="q5" value="B"> B. 水冷</label></div>
-  <div class="answer-analysis" id="an5">正确答案：A<br>解析：越语lạnh（冷）+ nước（水）→ 冷的水。</div>
-</div>
+      <div class="question" id="q6">
+        <div class="q-text">6. 汉语：大的城市 → 越语？</div>
+        <div class="option"><label><input type="radio" name="q6" value="A"> A. thành phố lớn</label></div>
+        <div class="option"><label><input type="radio" name="q6" value="B"> B. lớn thành phố</label></div>
+        <div class="answer-analysis" id="an6">
+          正确答案：A<br>
+          Đáp án đúng: A
+        </div>
+      </div>
 
-<!-- 6 -->
-<div class="question" id="q6">
-  <div class="q-text">6. 汉语：大的城市 → 越语？</div>
-  <div class="option"><label><input type="radio" name="q6" value="A"> A. thành phố lớn</label></div>
-  <div class="option"><label><input type="radio" name="q6" value="B"> B. lớn thành phố</label></div>
-  <div class="answer-analysis" id="an6">正确答案：A</div>
-</div>
+      <div class="question" id="q7">
+        <div class="q-text">7. 汉语：小的狗 → 越语？</div>
+        <div class="option"><label><input type="radio" name="q7" value="A"> A. chó nhỏ</label></div>
+        <div class="option"><label><input type="radio" name="q7" value="B"> B. nhỏ chó</label></div>
+        <div class="answer-analysis" id="an7">
+          正确答案：A<br>
+          Đáp án đúng: A
+        </div>
+      </div>
 
-<!-- 7 -->
-<div class="question" id="q7">
-  <div class="q-text">7. 汉语：小的狗 → 越语？</div>
-  <div class="option"><label><input type="radio" name="q7" value="A"> A. chó nhỏ</label></div>
-  <div class="option"><label><input type="radio" name="q7" value="B"> B. nhỏ chó</label></div>
-  <div class="answer-analysis" id="an7">正确答案：A</div>
-</div>
+      <div class="question" id="q8">
+        <div class="q-text">8. 汉语：干净的房间 → 越语？</div>
+        <div class="option"><label><input type="radio" name="q8" value="A"> A. phòng sạch</label></div>
+        <div class="option"><label><input type="radio" name="q8" value="B"> B. sạch phòng</label></div>
+        <div class="answer-analysis" id="an8">
+          正确答案：A<br>
+          Đáp án đúng: A
+        </div>
+      </div>
 
-<!-- 8 -->
-<div class="question" id="q8">
-  <div class="q-text">8. 汉语：干净的房间 → 越语？</div>
-  <div class="option"><label><input type="radio" name="q8" value="A"> A. phòng sạch</label></div>
-  <div class="option"><label><input type="radio" name="q8" value="B"> B. sạch phòng</label></div>
-  <div class="answer-analysis" id="an8">正确答案：A</div>
-</div>
+      <div class="question" id="q9">
+        <div class="q-text">9. 越语：áo dài → 汉语？</div>
+        <div class="option"><label><input type="radio" name="q9" value="A"> A. 长衣服</label></div>
+        <div class="option"><label><input type="radio" name="q9" value="B"> B. 衣服长</label></div>
+        <div class="answer-analysis" id="an9">
+          正确答案：A<br>
+          Đáp án đúng: A
+        </div>
+      </div>
 
-<!-- 9 -->
-<div class="question" id="q9">
-  <div class="q-text">9. 汉语：快乐的孩子 → 越语？</div>
-  <div class="option"><label><input type="radio" name="q9" value="A"> A. trẻ em vui vẻ</label></div>
-  <div class="option"><label><input type="radio" name="q9" value="B"> B. vui vẻ trẻ em</label></div>
-  <div class="answer-analysis" id="an9">正确答案：A</div>
-</div>
-
-<!-- 10 -->
-<div class="question" id="q10">
-  <div class="q-text">10. 汉语：温暖的天气 → 越语？</div>
-  <div class="option"><label><input type="radio" name="q10" value="A"> A. thời tiết ấm áp</label></div>
-  <div class="option"><label><input type="radio" name="q10" value="B"> B. ấm áp thời tiết</label></div>
-  <div class="answer-analysis" id="an10">正确答案：A</div>
-</div>
-
-<!-- 11 -->
-<div class="question" id="q11">
-  <div class="q-text">11. 越语：áo dài → 汉语？</div>
-  <div class="option"><label><input type="radio" name="q11" value="A"> A. 长的衣服</label></div>
-  <div class="option"><label><input type="radio" name="q11" value="B"> B. 衣服长</label></div>
-  <div class="answer-analysis" id="an11">正确答案：A</div>
-</div>
-
-<!-- 12 -->
-<div class="question" id="q12">
-  <div class="q-text">12. 越语：xe đạp → 汉语？</div>
-  <div class="option"><label><input type="radio" name="q12" value="A"> A. 自行车</label></div>
-  <div class="option"><label><input type="radio" name="q12" value="B"> B. 车自行</label></div>
-  <div class="answer-analysis" id="an12">正确答案：A</div>
-</div>
-
-<!-- 13 -->
-<div class="question" id="q13">
-  <div class="q-text">13. 越语：quần short → 汉语？</div>
-  <div class="option"><label><input type="radio" name="q13" value="A"> A. 短裤子</label></div>
-  <div class="option"><label><input type="radio" name="q13" value="B"> B. 裤子短</label></div>
-  <div class="answer-analysis" id="an13">正确答案：A</div>
-</div>
-
-<!-- 14 -->
-<div class="question" id="q14">
-  <div class="q-text">14. 汉语：蓝色的天空 → 越语？</div>
-  <div class="option"><label><input type="radio" name="q14" value="A"> A. trời xanh</label></div>
-  <div class="option"><label><input type="radio" name="q14" value="B"> B. xanh trời</label></div>
-  <div class="answer-analysis" id="an14">正确答案：A</div>
-</div>
-
-<!-- 15 -->
-<div class="question" id="q15">
-  <div class="q-text">15. 汉语：黑色的笔 → 越语？</div>
-  <div class="option"><label><input type="radio" name="q15" value="A"> A. bút đen</label></div>
-  <div class="option"><label><input type="radio" name="q15" value="B"> B. đen bút</label></div>
-  <div class="answer-analysis" id="an15">正确答案：A</div>
-</div>
-
-<!-- 16 -->
-<div class="question" id="q16">
-  <div class="q-text">16. 汉语：年轻的老师 → 越语？</div>
-  <div class="option"><label><input type="radio" name="q16" value="A"> A. giáo viên trẻ</label></div>
-  <div class="option"><label><input type="radio" name="q16" value="B"> B. trẻ giáo viên</label></div>
-  <div class="answer-analysis" id="an16">正确答案：A</div>
-</div>
-
-<!-- 17 -->
-<div class="question" id="q17">
-  <div class="q-text">17. 汉语：古老的街道 → 越语？</div>
-  <div class="option"><label><input type="radio" name="q17" value="A"> A. phố cũ</label></div>
-  <div class="option"><label><input type="radio" name="q17" value="B"> B. cũ phố</label></div>
-  <div class="answer-analysis" id="an17">正确答案：A</div>
-</div>
-
-<!-- 18 -->
-<div class="question" id="q18">
-  <div class="q-text">18. 越语：cây xanh → 汉语？</div>
-  <div class="option"><label><input type="radio" name="q18" value="A"> A. 绿色的树</label></div>
-  <div class="option"><label><input type="radio" name="q18" value="B"> B. 树绿色</label></div>
-  <div class="answer-analysis" id="an18">正确答案：A</div>
-</div>
-
-<!-- 19 -->
-<div class="question" id="q19">
-  <div class="q-text">19. 越语：sách cũ → 汉语？</div>
-  <div class="option"><label><input type="radio" name="q19" value="A"> A. 旧的书</label></div>
-  <div class="option"><label><input type="radio" name="q19" value="B"> B. 书旧</label></div>
-  <div class="answer-analysis" id="an19">正确答案：A</div>
-</div>
-
-<!-- 20 -->
-<div class="question" id="q20">
-  <div class="q-text">20. 越语：người tốt → 汉语？</div>
-  <div class="option"><label><input type="radio" name="q20" value="A"> A. 好人</label></div>
-  <div class="option"><label><input type="radio" name="q20" value="B"> B. 人好</label></div>
-  <div class="answer-analysis" id="an20">正确答案：A</div>
-</div>
+      <div class="question" id="q10">
+        <div class="q-text">10. 越语：người tốt → 汉语？</div>
+        <div class="option"><label><input type="radio" name="q10" value="A"> A. 好人</label></div>
+        <div class="option"><label><input type="radio" name="q10" value="B"> B. 人好</label></div>
+        <div class="answer-analysis" id="an10">
+          正确答案：A<br>
+          Đáp án đúng: A
+        </div>
+      </div>
 
       <div class="btn-box">
-        <button type="button" class="submit-btn" onclick="submitExam()">提交答案</button>
+        <button type="button" class="submit-btn" onclick="submitExam()" id="btnSubmit">提交答案</button>
       </div>
     </form>
   </div>
@@ -311,100 +284,139 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-let startTime;
-const total = 20;
-const answers = {
-  q1:"A",q2:"A",q3:"A",q4:"A",q5:"A",
-  q6:"A",q7:"A",q8:"A",q9:"A",q10:"A",
-  q11:"A",q12:"A",q13:"A",q14:"A",q15:"A",
-  q16:"A",q17:"A",q18:"A",q19:"A",q20:"A"
+const sysLang = navigator.language || navigator.userLanguage;
+const isVi = sysLang.toLowerCase().includes('vi');
+
+const i18n = {
+  title: isVi ? 'Đề Thi Cấu Trúc Câu Trung-Việt' : '汉越语序结构对比测试卷',
+  placeholderName: isVi ? 'Nhập tên của bạn' : '请输入姓名',
+  btnStart: isVi ? 'Vào Thi' : '进入考试',
+  btnSubmit: isVi ? 'Nộp Bài' : '提交答案',
+  alertEmptyName: isVi ? 'Vui lòng nhập tên!' : '请输入姓名！',
+
+  alertUnfinished: (nums) => isVi
+    ? `Chưa làm câu ${nums.join(', ')}! Vui lòng hoàn thành!`
+    : `第 ${nums.join('、')} 题未完成，请完成后提交！`,
+
+  confirmAllDone: isVi
+    ? 'Bạn đã làm hết câu hỏi!\n\n👉 Hủy: Quay lại kiểm tra\n👉 OK: Xác nhận nộp bài'
+    : '你已完成所有题目！\n\n👉 取消：返回检查题目\n👉 确定：确认提交答案',
+
+  success: isVi ? 'Nộp bài thành công!' : '提交成功！',
+  timerStudent: isVi ? 'Thí sinh：' : '考生：',
+  min: isVi ? ' phút ' : '分',
+  sec: isVi ? ' giây' : '秒',
+  nameLabel: isVi ? 'Tên: ' : '姓名: ',
+  timeLabel: isVi ? 'Thời gian: ' : '用时: ',
+  finishTime: isVi ? 'Hoàn thành: ' : '完成时间: '
 };
 
+document.getElementById('titleLogin').innerText = i18n.title;
+document.getElementById('titlePaper').innerText = i18n.title;
+document.getElementById('studentName').placeholder = i18n.placeholderName;
+document.getElementById('btnStart').innerText = i18n.btnStart;
+document.getElementById('btnSubmit').innerText = i18n.btnSubmit;
+
+let startTime;
+let timerInterval;
+let studentName = '';
+const total = 10;
+const ans = { q1:"A",q2:"A",q3:"A",q4:"A",q5:"A",q6:"A",q7:"A",q8:"A",q9:"A",q10:"A" };
+
 function startExam() {
-  const name = document.getElementById('studentName').value.trim();
-  if (!name) {
-    alert('请输入姓名！');
+  studentName = document.getElementById('studentName').value.trim();
+  if (!studentName) {
+    alert(i18n.alertEmptyName);
     return;
   }
   document.getElementById('loginBox').style.display = 'none';
   document.getElementById('paper').style.display = 'block';
-  document.getElementById('studentInfo').innerHTML = `学生：${name}`;
   startTime = new Date();
+  startTimer();
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    const d = Math.floor((new Date() - startTime) / 1000);
+    const m = Math.floor(d / 60);
+    const s = d % 60;
+    document.getElementById('fixedTimer').innerText =
+      i18n.timerStudent + studentName + ' | ' + m + i18n.min + s + i18n.sec;
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}
+
+function scrollToQuestion(qnum) {
+  const el = document.getElementById('q'+qnum);
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 async function submitExam() {
   const form = new FormData(quizForm);
-  let unanswered = [];
-
-  for (let i = 1; i <= total; i++) {
-    const val = form.get('q' + i);
-    if (!val) unanswered.push(i);
+  let empty = [];
+  for (let i=1; i<=total; i++) {
+    if (!form.get('q'+i)) empty.push(i);
   }
 
-  if (unanswered.length > 0) {
-    alert('第 ' + unanswered.join('、') + ' 题未完成，请全部作答后提交！');
+  if (empty.length > 0) {
+    alert(i18n.alertUnfinished(empty));
+    scrollToQuestion(empty[0]);
     return;
   }
 
-  const confirmSubmit = confirm(
-    '你已完成所有题目，请检查答案！\n\n' +
-    '确定：提交试卷并导出长图\n' +
-    '取消：返回试卷继续检查'
-  );
+  if (!confirm(i18n.confirmAllDone)) return;
 
-  if (!confirmSubmit) return;
-
+  stopTimer();
   let correct = 0;
-  for (let i = 1; i <= total; i++) {
-    const qName = 'q' + i;
-    const userAns = form.get(qName);
-    const rightAns = answers[qName];
-    const qBox = document.getElementById(qName);
-    const anBox = document.getElementById('an' + i);
-
-    anBox.style.display = 'block';
-    if (userAns === rightAns) {
+  for (let i=1; i<=total; i++) {
+    const u = form.get('q'+i);
+    if (u === ans['q'+i]) {
       correct++;
-      qBox.classList.add('q-correct');
+      document.getElementById('q'+i).classList.add('q-correct');
     } else {
-      qBox.classList.add('q-wrong');
+      document.getElementById('q'+i).classList.add('q-wrong');
     }
+    document.getElementById('an'+i).style.display = 'block';
   }
 
-  const endTime = new Date();
-  const useSec = Math.round((endTime - startTime) / 1000);
-  const score = correct * 5;
-  const finishTime = endTime.toLocaleString();
-  const name = document.getElementById('studentName').value.trim();
+  const score = correct * 10;
+  const d = Math.floor((new Date() - startTime) / 1000);
+  const useMin = Math.floor(d / 60);
+  const useSec = d % 60;
+  const timeStr = useMin + i18n.min + useSec + i18n.sec;
+  const finishStr = new Date().toLocaleString();
 
-  document.getElementById('studentInfo').innerHTML =
-    `学生：${name}　<span class="score-box">分数：${score}分　用时：${useSec}秒　完成时间：${finishTime}</span>`;
+  let scoreText = isVi
+    ? `${score} điểm（${correct}/${total}）`
+    : `${score}分（${correct}/${total}）`;
+
+  let infoText = i18n.nameLabel + studentName + ' | ' +
+                i18n.timeLabel + timeStr + ' | ' +
+                i18n.finishTime + finishStr;
+
+  document.getElementById('scoreInfo').innerText = scoreText;
+  document.getElementById('scoreInfo').style.display = 'block';
+  document.getElementById('studentInfo').innerText = infoText;
+  document.getElementById('studentInfo').style.display = 'block';
 
   await new Promise(r => setTimeout(r, 500));
-  await exportFullImageMobileSafe();
-  alert("提交成功！试卷长图已导出");
+  await exportImg();
+  alert(i18n.success);
 }
 
-async function exportFullImageMobileSafe() {
-  const paper = document.getElementById('paper');
-  const name = document.getElementById('studentName').value.trim();
-  const title = '汉越语序结构对比专项测试卷';
+async function exportImg() {
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+  const dateStr = `${month}月${day}日`;
 
-  const canvas = await html2canvas(paper, {
-    scale: 2,
-    useCORS: true,
-    logging: false,
-    allowTaint: true,
-    scrollX: 0,
-    scrollY: 0,
-    windowWidth: document.documentElement.scrollWidth,
-    windowHeight: document.documentElement.scrollHeight,
-    foreignObjectRendering: false
-  });
-
+  const c = await html2canvas(document.getElementById('paper'), { scale:2 });
   const a = document.createElement('a');
-  a.download = `${name} - ${title}.jpg`;
-  a.href = canvas.toDataURL('image/jpeg', 0.92);
+  a.download = `${studentName}_${dateStr}_${i18n.title}.jpg`;
+  a.href = c.toDataURL('image/jpeg');
   a.click();
 }
 </script>
