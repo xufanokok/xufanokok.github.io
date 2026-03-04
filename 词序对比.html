@@ -2,23 +2,29 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>汉越语序结构对比专项测试卷</title>
 <style>
   * {
     box-sizing: border-box;
     font-family: "Microsoft YaHei", sans-serif;
   }
-  body {
+  html, body {
     margin: 0;
-    padding: 20px;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+  }
+  body {
     background: #f4f6f8;
+    padding: 10px;
   }
   .container {
+    width: 100%;
     max-width: 800px;
     margin: 0 auto;
     background: #fff;
-    padding: 30px;
+    padding: 20px 15px;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   }
@@ -27,12 +33,14 @@
     padding: 40px 20px;
   }
   .login-box h2 {
+    font-size: 20px;
     margin-bottom: 20px;
     color: #2c3e50;
   }
   .login-box input {
     padding: 10px 12px;
-    width: 260px;
+    width: 240px;
+    max-width: 90%;
     font-size: 16px;
     margin-bottom: 20px;
     border: 1px solid #ddd;
@@ -52,44 +60,45 @@
   }
   .paper-title {
     text-align: center;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
     color: #2c3e50;
     margin-bottom: 6px;
   }
   .student-info {
     text-align: center;
-    font-size: 16px;
+    font-size: 14px;
     color: #34495e;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+    line-height: 1.5;
   }
   .question {
-    margin: 20px 0;
-    padding: 16px;
+    margin: 12px 0;
+    padding: 12px;
     border-left: 4px solid #2d8cf0;
     background: #f8fafc;
     border-radius: 6px;
   }
   .q-text {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 500;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
   .option {
-    margin: 8px 0;
-    font-size: 15px;
+    margin: 6px 0;
+    font-size: 14px;
   }
   .answer-analysis {
-    margin-top: 12px;
-    padding: 10px 12px;
+    margin-top: 10px;
+    padding: 8px 10px;
     background: #e8f5e9;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 13px;
     display: none;
   }
   .btn-box {
     text-align: center;
-    margin: 30px 0;
+    margin: 20px 0;
   }
   .submit-btn {
     padding: 12px 28px;
@@ -99,10 +108,21 @@
     border-radius: 6px;
     font-size: 16px;
     cursor: pointer;
+    width: 80%;
+    max-width: 300px;
   }
   .score-box {
     font-weight: bold;
     color: #e53935;
+  }
+
+  .q-correct {
+    border-left-color: #00b42a !important;
+    background: #f0fff4 !important;
+  }
+  .q-wrong {
+    border-left-color: #f53f3f !important;
+    background: #fff0f0 !important;
   }
 </style>
 </head>
@@ -177,15 +197,13 @@
       </div>
 
       <div class="btn-box">
-        <button type="button" class="submit-btn" onclick="submitExam()">提交答案并导出完整试卷</button>
+        <button type="button" class="submit-btn" onclick="submitExam()">提交答案</button>
       </div>
     </form>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.js"></script>
-
 <script>
 let startTime;
 const total = 5;
@@ -206,11 +224,9 @@ function startExam() {
 async function submitExam() {
   const form = new FormData(quizForm);
   let unanswered = [];
-  let correct = 0;
 
   for (let i = 1; i <= total; i++) {
-    const name = 'q' + i;
-    const val = form.get(name);
+    const val = form.get('q' + i);
     if (!val) unanswered.push(i);
   }
 
@@ -219,11 +235,29 @@ async function submitExam() {
     return;
   }
 
+  const confirmSubmit = confirm(
+    '你已完成所有题目，请检查答案！\n\n' +
+    '确定：提交试卷并导出长图\n' +
+    '取消：返回试卷继续检查'
+  );
+
+  if (!confirmSubmit) return;
+
+  let correct = 0;
   for (let i = 1; i <= total; i++) {
-    const name = 'q' + i;
-    const val = form.get(name);
-    if (answers[name] === val) correct++;
-    document.getElementById('an' + i).style.display = 'block';
+    const qName = 'q' + i;
+    const userAns = form.get(qName);
+    const rightAns = answers[qName];
+    const qBox = document.getElementById(qName);
+    const anBox = document.getElementById('an' + i);
+
+    anBox.style.display = 'block';
+    if (userAns === rightAns) {
+      correct++;
+      qBox.classList.add('q-correct');
+    } else {
+      qBox.classList.add('q-wrong');
+    }
   }
 
   const endTime = new Date();
@@ -235,67 +269,34 @@ async function submitExam() {
   document.getElementById('studentInfo').innerHTML =
     `学生：${name}　<span class="score-box">分数：${score}分　用时：${useSec}秒　完成时间：${finishTime}</span>`;
 
-  await new Promise(r => setTimeout(r, 300));
-  
-  // 先导出长图（一定能完整截取）
-  await exportFullImage();
-  // 再导出完整PDF
-  await exportFullPDF();
-
-  alert("提交成功！已导出：完整长图 + 完整PDF");
+  await new Promise(r => setTimeout(r, 500));
+  await exportFullImageMobileSafe();
+  alert("提交成功！试卷长图已导出");
 }
 
-// ====================== 导出完整长图（全页，无截断）======================
-async function exportFullImage() {
+// 手机安全版 完整长图导出（电脑/手机都完整）
+async function exportFullImageMobileSafe() {
   const paper = document.getElementById('paper');
   const name = document.getElementById('studentName').value.trim();
   const title = '汉越语序结构对比专项测试卷';
 
+  // 关键修复：手机浏览器不截断
   const canvas = await html2canvas(paper, {
     scale: 2,
     useCORS: true,
     logging: false,
     allowTaint: true,
-    width: paper.scrollWidth,
-    height: paper.scrollHeight,
     scrollX: 0,
     scrollY: 0,
-    windowWidth: paper.scrollWidth,
-    windowHeight: paper.scrollHeight
+    windowWidth: document.documentElement.scrollWidth,
+    windowHeight: document.documentElement.scrollHeight,
+    foreignObjectRendering: false
   });
 
   const a = document.createElement('a');
   a.download = `${name} - ${title}.jpg`;
-  a.href = canvas.toDataURL('image/jpeg', 0.95);
+  a.href = canvas.toDataURL('image/jpeg', 0.92);
   a.click();
-}
-
-// ====================== 导出完整PDF（全页，无截断）======================
-async function exportFullPDF() {
-  const { jsPDF } = window.jspdf;
-  const paper = document.getElementById('paper');
-  const name = document.getElementById('studentName').value.trim();
-  const title = '汉越语序结构对比专项测试卷';
-
-  const canvas = await html2canvas(paper, {
-    scale: 2,
-    useCORS: true,
-    logging: false,
-    allowTaint: true,
-    width: paper.scrollWidth,
-    height: paper.scrollHeight,
-    scrollX: 0,
-    scrollY: 0,
-    windowWidth: paper.scrollWidth,
-    windowHeight: paper.scrollHeight
-  });
-
-  const imgWidth = 210;
-  const imgHeight = canvas.height * imgWidth / canvas.width;
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  
-  pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, imgWidth, imgHeight);
-  pdf.save(`${name} - ${title}.pdf`);
 }
 </script>
 </body>
