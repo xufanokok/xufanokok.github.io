@@ -1,33 +1,301 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>练习2：数字表达</title>
-  <style>
-    body { padding: 20px; font-family: 微软雅黑; max-width: 500px; margin: 0 auto; }
-    button { padding: 10px 20px; background: #0088ff; color: white; border: none; border-radius: 8px; margin-top: 20px; }
-    #result { display: none; margin-top: 20px; padding: 10px; background: #f0f8ff; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>汉越语序结构对比专项测试卷</title>
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: "Microsoft YaHei", sans-serif;
+  }
+  body {
+    margin: 0;
+    padding: 20px;
+    background: #f4f6f8;
+  }
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  .login-box {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .login-box h2 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+  }
+  .login-box input {
+    padding: 10px 12px;
+    width: 260px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+  }
+  .login-box button {
+    padding: 10px 24px;
+    background: #2d8cf0;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  .paper {
+    display: none;
+  }
+  .paper-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 6px;
+  }
+  .student-info {
+    text-align: center;
+    font-size: 16px;
+    color: #34495e;
+    margin-bottom: 30px;
+  }
+  .question {
+    margin: 20px 0;
+    padding: 16px;
+    border-left: 4px solid #2d8cf0;
+    background: #f8fafc;
+    border-radius: 6px;
+  }
+  .q-text {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .option {
+    margin: 8px 0;
+    font-size: 15px;
+  }
+  .answer-analysis {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: #e8f5e9;
+    border-radius: 6px;
+    font-size: 14px;
+    display: none;
+  }
+  .btn-box {
+    text-align: center;
+    margin: 30px 0;
+  }
+  .submit-btn {
+    padding: 12px 28px;
+    background: #2d8cf0;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .score-box {
+    font-weight: bold;
+    color: #e53935;
+  }
+
+  /* 正确 */
+  .q-correct {
+    border-left-color: #00b42a !important;
+    background: #f0fff4 !important;
+  }
+  /* 错误 */
+  .q-wrong {
+    border-left-color: #f53f3f !important;
+    background: #fff0f0 !important;
+  }
+</style>
 </head>
 <body>
-  <h1>练习2：数字表达</h1>
-  <p>1. “15”越南语正确表达？</p>
-  <input type="radio" name="q1" value="10"> A. mười lăm<br>
-  <input type="radio" name="q1" value="0"> B. lăm mười<br>
-  <button onclick="showResult()">提交答案</button>
-  <div id="result">
-    <p>得分：<span id="score">0</span>/10</p>
-    <p>解析：正确答案A，越南语数字15是mười lăm</p>
-    <a href="index.html">← 返回导航页</a>
+
+<div class="container">
+  <div class="login-box" id="loginBox">
+    <h2>汉越语序结构对比专项测试卷</h2>
+    <input type="text" id="studentName" placeholder="请输入你的姓名" />
+    <br>
+    <button onclick="startExam()">进入考试</button>
   </div>
 
-  <script>
-    function showResult() {
-      let ans = document.querySelector('input[name="q1"]:checked')?.value || 0;
-      document.getElementById('score').innerText = ans;
-      document.getElementById('result').style.display = 'block';
+  <div class="paper" id="paper">
+    <div class="paper-title">汉越语序结构对比专项测试卷</div>
+    <div class="student-info" id="studentInfo"></div>
+
+    <form id="quizForm">
+      <!-- 1 -->
+      <div class="question" id="q1">
+        <div class="q-text">1. 汉语：红色的书 → 越语正确结构是？</div>
+        <div class="option"><label><input type="radio" name="q1" value="A"> A. sách đỏ</label></div>
+        <div class="option"><label><input type="radio" name="q1" value="B"> B. đỏ sách</label></div>
+        <div class="answer-analysis" id="an1">
+          正确答案：A<br>
+          解析：汉语是【中心词+修饰词】，越南语是【修饰词+中心词】。书（sách）是中心词，红色（đỏ）是修饰词，越语为 sách đỏ。
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="question" id="q2">
+        <div class="q-text">2. 汉语：新的房子 → 越语正确结构是？</div>
+        <div class="option"><label><input type="radio" name="q2" value="A"> A. nhà mới</label></div>
+        <div class="option"><label><input type="radio" name="q2" value="B"> B. mới nhà</label></div>
+        <div class="answer-analysis" id="an2">
+          正确答案：A<br>
+          解析：房子（nhà）中心词，新（mới）修饰词，越语语序：nhà mới。
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="question" id="q3">
+        <div class="q-text">3. 汉语：漂亮的女孩 → 越语正确结构是？</div>
+        <div class="option"><label><input type="radio" name="q3" value="A"> A. cô gái đẹp</label></div>
+        <div class="option"><label><input type="radio" name="q3" value="B"> B. đẹp cô gái</label></div>
+        <div class="answer-analysis" id="an3">
+          正确答案：A<br>
+          解析：女孩（cô gái）中心词，漂亮（đẹp）修饰词，越语为 cô gái đẹp。
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="question" id="q4">
+        <div class="q-text">4. 越语：bánh ngọt → 汉语正确结构是？</div>
+        <div class="option"><label><input type="radio" name="q4" value="A"> A. 甜的蛋糕</label></div>
+        <div class="option"><label><input type="radio" name="q4" value="B"> B. 蛋糕甜</label></div>
+        <div class="answer-analysis" id="an4">
+          正确答案：A<br>
+          解析：越语 ngọt（甜）+ bánh（蛋糕），汉语要倒回：修饰词+中心词 → 甜的蛋糕。
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="question" id="q5">
+        <div class="q-text">5. 越语：nước lạnh → 汉语正确结构是？</div>
+        <div class="option"><label><input type="radio" name="q5" value="A"> A. 冷的水</label></div>
+        <div class="option"><label><input type="radio" name="q5" value="B"> B. 水冷</label></div>
+        <div class="answer-analysis" id="an5">
+          正确答案：A<br>
+          解析：越语 lạnh（冷）+ nước（水），汉语语序：冷的水。
+        </div>
+      </div>
+
+      <div class="btn-box">
+        <button type="button" class="submit-btn" onclick="submitExam()">提交答案</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+let startTime;
+const total = 5;
+const answers = { q1:"A", q2:"A", q3:"A", q4:"A", q5:"A" };
+
+function startExam() {
+  const name = document.getElementById('studentName').value.trim();
+  if (!name) {
+    alert('请输入姓名！');
+    return;
+  }
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('paper').style.display = 'block';
+  document.getElementById('studentInfo').innerHTML = `学生：${name}`;
+  startTime = new Date();
+}
+
+// 提交主逻辑
+async function submitExam() {
+  const form = new FormData(quizForm);
+  let unanswered = [];
+
+  // 1. 检查未完成题目
+  for (let i = 1; i <= total; i++) {
+    const val = form.get('q' + i);
+    if (!val) unanswered.push(i);
+  }
+
+  if (unanswered.length > 0) {
+    alert('第 ' + unanswered.join('、') + ' 题未完成，请全部作答后提交！');
+    return;
+  }
+
+  // 2. 弹出确认框：检查 / 确认提交
+  const confirmSubmit = confirm(
+    '你已完成所有题目，请检查答案！\n\n' +
+    '确定：提交试卷并导出长图\n' +
+    '取消：返回试卷继续检查'
+  );
+
+  if (!confirmSubmit) return;
+
+  // 3. 确认提交 → 批改、显示对错
+  let correct = 0;
+  for (let i = 1; i <= total; i++) {
+    const qName = 'q' + i;
+    const userAns = form.get(qName);
+    const rightAns = answers[qName];
+    const qBox = document.getElementById(qName);
+    const anBox = document.getElementById('an' + i);
+
+    anBox.style.display = 'block';
+    if (userAns === rightAns) {
+      correct++;
+      qBox.classList.add('q-correct');
+    } else {
+      qBox.classList.add('q-wrong');
     }
-  </script>
+  }
+
+  // 显示成绩
+  const endTime = new Date();
+  const useSec = Math.round((endTime - startTime) / 1000);
+  const score = correct * 20;
+  const finishTime = endTime.toLocaleString();
+  const name = document.getElementById('studentName').value.trim();
+
+  document.getElementById('studentInfo').innerHTML =
+    `学生：${name}　<span class="score-box">分数：${score}分　用时：${useSec}秒　完成时间：${finishTime}</span>`;
+
+  // 4. 导出长图
+  await new Promise(r => setTimeout(r, 300));
+  await exportFullImage();
+  alert("提交成功！完整试卷长图已导出");
+}
+
+// 导出完整长图
+async function exportFullImage() {
+  const paper = document.getElementById('paper');
+  const name = document.getElementById('studentName').value.trim();
+  const title = '汉越语序结构对比专项测试卷';
+
+  const canvas = await html2canvas(paper, {
+    scale: 2,
+    useCORS: true,
+    logging: false,
+    allowTaint: true,
+    width: paper.scrollWidth,
+    height: paper.scrollHeight,
+    scrollX: 0,
+    scrollY: 0,
+    windowWidth: paper.scrollWidth,
+    windowHeight: paper.scrollHeight
+  });
+
+  const a = document.createElement('a');
+  a.download = `${name} - ${title}.jpg`;
+  a.href = canvas.toDataURL('image/jpeg', 0.95);
+  a.click();
+}
+</script>
 </body>
 </html>
