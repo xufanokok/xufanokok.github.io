@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>练习1：词序对比</title>
+  <style>
+    body { padding: 20px; font-family: 微软雅黑; max-width: 500px; margin: 0 auto; }
+    button { padding: 10px 20px; background: #0088ff; color: white; border: none; border-radius: 8px; margin-top: 20px; }
+    #result { display: none; margin-top: 20px; padding: 10px; background: #f0f8ff; }
+  </style>
+</head>
+<body>
+  <h1>练习1：词序对比</h1>
+  <p>1. “红色的书”越南语正确语序？</p>
+  <input type="radio" name="q1" value="10"> A. sách màu đỏ<br>
+  <input type="radio" name="q1" value="0"> B. màu đỏ sách<br>
+  <button onclick="showResult()">提交答案</button>
+  <div id="result">
+    <p>得分：<span id="score">0</span>/10</p>
+    <p>解析：正确答案A，越南语形容词放名词后</p>
+    <a href="index.html">← 返回导航页</a>
+  </div>
+
+  <script>
+    function showResult() {
+      let ans = document.querySelector('input[name="q1"]:checked')?.value || 0;
+      document.getElementById('score').innerText = ans;
+      document.getElementById('result').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
