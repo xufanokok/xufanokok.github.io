@@ -16,14 +16,16 @@
 
   html, body {
     width: 100%;
-    min-height: 300vh;
+    min-height: 100vh; /* 修复：原300vh导致多余空白，改为100vh适配实际内容高度 */
     background: #f5f5f7;
     color: #1d1d1f;
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
     padding-top: 0;
+    overflow-x: hidden; /* 修复：防止横向滚动溢出 */
   }
 
+  /* ========== 分区名称：顶部导航栏 分区起始 ========== */
   /* 顶部导航栏 - 苹果风格优化 + 强化缩放效果 */
   .header {
     position: fixed;
@@ -121,8 +123,10 @@
     transform: translateY(0);
     box-shadow: 0 1px 3px rgba(0, 113, 227, 0.15);
   }
+  /* ========== 分区名称：顶部导航栏 分区结束 ========== */
 
-  /* 主视觉区 - 关键修改：增加头像上方空间 */
+  /* ========== 分区名称：主视觉区（Hero） 分区起始 ========== */
+  /* 主视觉区 - 关键修改：增加头像上方空间 + 修复布局间距 */
   .hero-section {
     padding: 60px 20px 80px; /* 顶部内边距从20px改为60px，给头像上方留更多空间 */
     text-align: center;
@@ -166,7 +170,9 @@
     max-width: 700px;
     margin: 0 auto;
   }
+  /* ========== 分区名称：主视觉区（Hero） 分区结束 ========== */
 
+  /* ========== 分区名称：内容链接测试区 分区起始 ========== */
   .link-test-section {
     max-width: 1200px;
     margin: 0 auto 80px;
@@ -180,6 +186,7 @@
     visibility: hidden;
   }
 
+  /* ========== 分区名称：学习方法区 分区起始 ========== */
   .test-area {
     width: 100%;
     min-height: 600px;
@@ -237,7 +244,9 @@
     max-width: 900px;
     margin: 0 auto;
   }
+  /* ========== 分区名称：学习方法区 分区结束 ========== */
 
+  /* ========== 分区名称：下载区 分区起始 ========== */
   .download-content {
     display: flex;
     flex-direction: column;
@@ -298,7 +307,9 @@
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(52, 199, 89, 0.2);
   }
+  /* ========== 分区名称：下载区 分区结束 ========== */
 
+  /* 空区域占位 - 辅助滚动测试 */
   .test-empty-area {
     width: 100%;
     height: 1500px;
@@ -306,7 +317,9 @@
     margin: 40px 0;
     border-radius: 32px;
   }
+  /* ========== 分区名称：内容链接测试区 分区结束 ========== */
 
+  /* ========== 分区名称：响应式适配 分区起始 ========== */
   /* 响应式适配 - 同步调整移动端头像上方空间 */
   @media (max-width: 768px) {
     .header {
@@ -403,9 +416,11 @@
       border-radius: 16px;
     }
   }
+  /* ========== 分区名称：响应式适配 分区结束 ========== */
 </style>
 </head>
 <body>
+  <!-- ========== 分区名称：顶部导航栏 DOM 分区起始 ========== -->
   <div class="header" id="floatingHeader">
     <div class="header-logo">Lớp học trực tuyến HSK</div>
     <div class="nav-buttons">
@@ -414,7 +429,9 @@
       <a href="#download-area" class="nav-btn download-btn">Tải tài liệu học tập miễn phí</a>
     </div>
   </div>
+  <!-- ========== 分区名称：顶部导航栏 DOM 分区结束 ========== -->
 
+  <!-- ========== 分区名称：主视觉区 DOM 分区起始 ========== -->
   <div class="hero-section">
     <!-- 
       【图片存放路径备注】
@@ -428,8 +445,11 @@
     <h1 class="hero-title">Hứa Phàm<br>Giáo viên dạy HSK trực tuyến</h1>
     <p class="hero-subtitle">Chuyên dạy HSK 1-1 một trực tuyến, từ chối tiếng Trung câm, làm cho tiếng Trung trở thành công cụ giao tiếp của bạn</p>
   </div>
+  <!-- ========== 分区名称：主视觉区 DOM 分区结束 ========== -->
 
+  <!-- ========== 分区名称：内容链接测试区 DOM 分区起始 ========== -->
   <div class="link-test-section">
+    <!-- ========== 分区名称：学习方法区 DOM 分区起始 ========== -->
     <div id="learn-area" class="anchor-target"></div>
     <div class="test-area">
       <h2 class="test-area-title">Cách học tiếng Trung hiệu quả: Từ chối tư duy dịch thuật</h2>
@@ -481,8 +501,10 @@ có thể giao tiếp thoải mái trong cuộc sống, học tập, công việ
 thực sự đạt được: nghe hiểu, nói ra, dùng đúng, trở thành người học tiếng Trung biết dùng, chứ không chỉ biết làm bài thi.
       </div>
     </div>
+    <!-- ========== 分区名称：学习方法区 DOM 分区结束 ========== -->
 
-<!-- 联系方式区域 - 二维码强制同行 + 信息区加宽+极致紧凑 -->
+    <!-- ========== 分区名称：联系方式区 DOM 分区起始 ========== -->
+  <!-- 联系方式区域 - 二维码强制同行 + 信息区加宽+极致紧凑 -->
 <div id="contact-area" class="anchor-target"></div>
 <div class="test-area">
   <!-- 标题保持与主页匹配的风格 -->
@@ -656,70 +678,55 @@ thực sự đạt được: nghe hiểu, nói ra, dùng đúng, trở thành ng
     }
   </style>
 </div>
-<!-- 此行为区域结束位置 -->
+    <!-- ========== 分区名称：联系方式区 DOM 分区结束 ========== -->
 
+    <!-- ========== 分区名称：下载区 DOM 分区起始 ========== -->
     <div id="download-area" class="anchor-target"></div>
     <div class="test-area download-area">
       <h2 class="test-area-title">Tải tài liệu học tập miễn phí</h2>
-      <div class="test-area-content download-content">
+      <div class="download-content">
+        <!-- 下载项1 -->
         <div class="download-item">
           <div class="download-icon">📖</div>
           <div class="download-info">
-            <h3>Bảng từ vựng cốt lõi HSK cấp 1-6</h3>
-            <p>Được sắp xếp theo chủ đề, kèm theo phiên âm, thanh điệu, câu ví dụ, phù hợp để học thuộc nhớ</p>
+            <h3>Tài liệu HSK 1-6 (PDF)</h3>
+            <p>Bộ tài liệu đầy đủ ngữ pháp, từ vựng, đề thi minh họa cho từng cấp HSK</p>
           </div>
           <a href="#" class="download-btn-link">Tải ngay</a>
         </div>
-        <div class="download-item">
-          <div class="download-icon">📝</div>
-          <div class="download-info">
-            <h3>Đề thi thử HSK (phiên bản 2024)</h3>
-            <p>Bao gồm toàn bộ dạng bài nghe hiểu, đọc hiểu, viết, kèm giải thích đáp án chi tiết</p>
-          </div>
-          <a href="#" class="download-btn-link">Tải ngay</a>
-        </div>
+        <!-- 下载项2 -->
         <div class="download-item">
           <div class="download-icon">🎧</div>
           <div class="download-info">
-            <h3>900 câu nói giao tiếp hàng ngày</h3>
-            <p>Đóng bao gồm các tình huống cuộc sống, học tập, đi lại, kèm tệp âm thanh</p>
+            <h3>Audio nghe hiểu HSK (MP3)</h3>
+            <p>File âm thanh nghe hiểu theo từng cấp, giúp luyện nghe và phát âm chuẩn</p>
           </div>
           <a href="#" class="download-btn-link">Tải ngay</a>
         </div>
+        <!-- 下载项3 -->
         <div class="download-item">
-          <div class="download-icon">📊</div>
+          <div class="download-icon">📝</div>
           <div class="download-info">
-            <h3>Lịch trình tiến độ học HSK</h3>
-            <p>Quy hoạch nội dung học theo tuần, giúp ôn thi hệ thống, nâng cao hiệu quả</p>
+            <h3>Bài tập luyện viết HSK</h3>
+            <p>Bộ bài tập viết theo chủ đề thực tế, phù hợp cho người học giao tiếp</p>
           </div>
           <a href="#" class="download-btn-link">Tải ngay</a>
         </div>
       </div>
     </div>
+    <!-- ========== 分区名称：下载区 DOM 分区结束 ========== -->
   </div>
+  <!-- ========== 分区名称：内容链接测试区 DOM 分区结束 ========== -->
 
-  <div class="test-empty-area"></div>
-
+  <!-- 导航栏收缩效果脚本 -->
   <script>
-    // 头像加载失败兜底处理（保留，防止图片加载失败）
-    const avatar = document.querySelector('.hero-avatar');
-    avatar.onerror = function() {
-      this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" fill="#86868b"><circle cx="70" cy="70" r="68" stroke="#eee" stroke-width="2"/><path d="M70 40c-17 0-30 13-30 30s13 30 30 30 30-13 30-30-13-30-30-30zm0 45c-8 0-15-7-15-15s7-15 15-15 15 7 15 15-7 15-15 15zm0-55c-9 0-16 7-16 16s7 16 16 16 16-7 16-16-7-16-16-16z"/></svg>';
-    };
-
-    const header = document.getElementById('floatingHeader');
-    let lastScrollTop = 0;
-
     window.addEventListener('scroll', function() {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-      if (scrollTop > lastScrollTop && scrollTop > 50) {
+      const header = document.getElementById('floatingHeader');
+      if (window.scrollY > 50) {
         header.classList.add('shrink');
       } else {
         header.classList.remove('shrink');
       }
-
-      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
     });
   </script>
 </body>
