@@ -363,25 +363,20 @@ body {
 .menu-area {
   display: none;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   z-index: 1001;
-  cursor: pointer;
+  cursor: pointer; /* 整个menu区域可点击 */
+}
 
-  padding: 10px 16px;
-  border-radius: 999px;
-
+/* 同步呼吸动画 */
+.menu-hint, .menu-toggle {
   animation: pulseHint 1.8s infinite;
-  transition: 0.25s ease;
 }
 
-.menu-area:hover {
-  background: rgba(0,0,0,0.05);
-}
 .menu-hint {
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  color: var(--text-dark);
+  font-size: 12px;
+  color: var(--text-gray);
+  /* 动画移到公共样式，实现同步 */
 }
 
 @keyframes pulseHint {
@@ -391,13 +386,22 @@ body {
 }
 
 .menu-toggle {
-  font-size: 30px;
-  line-height: 1;
+  font-size: 26px;
+  cursor: pointer;
   transition: 0.3s ease;
+  /* 动画移到公共样式，实现同步 */
 }
-  
+
 .menu-toggle.active {
   transform: rotate(90deg);
+  /* 激活时暂停动画 */
+  animation: none;
+}
+
+/* 激活时menu文字也暂停动画 */
+.menu-hint.active {
+  animation: none;
+  opacity: 1;
 }
 
 /* 遮罩层 */
@@ -462,10 +466,10 @@ body.menu-open {
 <div class="header" id="floatingHeader">
   <div class="header-logo">Lớp học trực tuyến HSK</div>
 
-<div class="menu-area" id="menuArea">
-  <div class="menu-hint">MENU</div>
-  <div class="menu-toggle">☰</div>
-</div>
+  <div class="menu-area" id="menuArea">
+    <div class="menu-hint" id="menuHint">Menu</div>
+    <div class="menu-toggle" id="menuToggle">☰</div>
+  </div>
 
   <div class="nav-overlay" id="navOverlay"></div>
 
@@ -586,12 +590,34 @@ window.addEventListener('scroll', () => {
     window.requestAnimationFrame(() => {
       const header = document.getElementById('floatingHeader');
       header.classList.toggle('shrink', window.scrollY > 50);
-      if (navMenu.classList.contains('active')) {
-  closeMenu();
-}
       ticking = false;
     });
     ticking = true;
+  }
+
+  // 滑动时渐进收起菜单
+  const navMenu = document.getElementById('navMenu');
+  const toggle = document.getElementById('menuToggle');
+  const menuHint = document.getElementById('menuHint');
+  const navOverlay = document.getElementById('navOverlay');
+  
+  if (navMenu.classList.contains('active')) {
+    // 获取滚动距离，计算透明度和位移
+    const scrollTop = window.scrollY;
+    const maxScroll = 100; // 滚动100px后完全收起
+    const progress = Math.min(scrollTop / maxScroll, 1);
+    
+    // 渐进修改样式
+    navMenu.style.opacity = 1 - progress;
+    navMenu.style.transform = `translateY(${-20 * progress}px)`;
+    
+    // 滚动超过阈值后完全关闭
+    if (progress >= 1) {
+      closeMenu();
+      // 恢复样式
+      navMenu.style.opacity = '';
+      navMenu.style.transform = '';
+    }
   }
 });
 
@@ -599,7 +625,10 @@ function toggleAudio() {
   document.getElementById('audioDesc').style.display = 'none';
   document.getElementById('audioSub').style.display = 'block';
 }
-  const toggle = document.getElementById('menuArea');
+
+const toggle = document.getElementById('menuToggle');
+const menuArea = document.getElementById('menuArea');
+const menuHint = document.getElementById('menuHint');
 const navMenu = document.getElementById('navMenu');
 const navOverlay = document.getElementById('navOverlay');
 const navLinks = document.querySelectorAll('#navMenu a');
@@ -607,30 +636,52 @@ const navLinks = document.querySelectorAll('#navMenu a');
 function closeMenu() {
   navMenu.classList.remove('active');
   toggle.classList.remove('active');
+  menuHint.classList.remove('active');
   navOverlay.classList.remove('active');
   document.body.classList.remove('menu-open');
 }
 
-toggle.addEventListener('click', () => {
-  navMenu.classList.toggle('active');
-  toggle.classList.toggle('active');
-  navOverlay.classList.toggle('active');
-  document.body.classList.toggle('menu-open');
+// 点击整个menu区域（包括文字和三杠）触发菜单
+menuArea.addEventListener('click', (e) => {
+  // 阻止事件冒泡，避免立即关闭
+  e.stopPropagation();
+  
+  const isActive = navMenu.classList.contains('active');
+  
+  if (isActive) {
+    closeMenu();
+  } else {
+    navMenu.classList.add('active');
+    toggle.classList.add('active');
+    menuHint.classList.add('active');
+    navOverlay.classList.add('active');
+    document.body.classList.add('menu-open');
+  }
 });
 
+// 点击遮罩层关闭
 navOverlay.addEventListener('click', closeMenu);
 
+// 点击导航链接关闭
 navLinks.forEach(link => {
   link.addEventListener('click', closeMenu);
 });
 
-  document.addEventListener('click', (e) => {
-  const header = document.getElementById('floatingHeader');
-  if (!header.contains(e.target)) {
+// 点击页面其他区域关闭菜单
+document.addEventListener('click', (e) => {
+  const isClickInsideMenu = menuArea.contains(e.target);
+  const isClickInsideNav = navMenu.contains(e.target);
+  
+  if (!isClickInsideMenu && !isClickInsideNav && navMenu.classList.contains('active')) {
     closeMenu();
   }
 });
-  
+
+// 阻止导航菜单内点击事件冒泡
+navMenu.addEventListener('click', (e) => {
+  e.stopPropagation();
+});
+
 </script>
 
 </body>
