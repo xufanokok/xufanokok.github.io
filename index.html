@@ -487,117 +487,123 @@ thực sự đạt được: nghe hiểu, nói ra, dùng đúng, trở thành ng
 <div class="test-area">
   <!-- 标题保持与主页匹配的风格 -->
   <h2 class="test-area-title" style="
-    font-size: 28px;
-    color: #1d1d1f;
-    text-align: center;
-    margin: 40px 0 20px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    font-size: 28px !important;
+    color: #1d1d1f !important;
+    text-align: center !important;
+    margin: 40px 0 20px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    padding: 0 !important;
   ">Cách liên hệ với tôi</h2>
   
   <div class="test-area-content" style="
-    max-width: 900px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 0 20px 40px;
+    max-width: 900px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+    padding: 0 20px 40px !important;
   ">
     <!-- 第一部分：二维码区（强制同行，所有屏幕不换行） -->
     <div style="
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      width: 100%;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 20px !important;
+      width: 100% !important;
       flex-wrap: nowrap !important; /* 强制所有屏幕不换行 */
-      overflow-x: auto; /* 超小屏允许横向滚动，保证同行 */
-      padding: 10px 0;
+      overflow-x: auto !important; /* 超小屏允许横向滚动，保证同行 */
+      padding: 10px 0 !important;
+      margin: 0 !important;
     ">
       <!-- Zalo 二维码卡片（统一尺寸） -->
       <div style="
-        background: #f0f8fb;
-        padding: 15px;
-        border-radius: 16px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-        flex: 0 0 170px; /* 固定宽度，禁止收缩 */
+        background: #f0f8fb !important;
+        padding: 15px !important;
+        border-radius: 16px !important;
+        text-align: center !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+        transition: all 0.3s ease !important;
+        flex: 0 0 170px !important; /* 固定宽度，禁止收缩 */
+        margin: 0 !important;
       " onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
-        <h3 style="color: #0071e3; font-size: 20px; margin-bottom: 8px; font-weight: 600;">Zalo</h3>
+        <h3 style="color: #0071e3 !important; font-size: 20px !important; margin: 0 0 8px 0 !important; font-weight: 600 !important; padding: 0 !important;">Zalo</h3>
         <img src="https://xufanhsk.github.io/Pic/zalo.JPG" 
              alt="QR code Zalo" 
              style="
-               width: 140px;
-               height: 140px;
-               border-radius: 8px;
-               margin: 0 auto;
-               border: 1px solid #eee;
-               object-fit: contain;
-               background: #fff;
+               width: 140px !important;
+               height: 140px !important;
+               border-radius: 8px !important;
+               margin: 0 auto !important;
+               border: 1px solid #eee !important;
+               object-fit: contain !important;
+               background: #fff !important;
+               display: block !important; /* 消除图片下方默认空白 */
              ">
       </div>
 
       <!-- WeChat 二维码卡片（与Zalo同尺寸） -->
       <div style="
-        background: #fef7fb;
-        padding: 15px;
-        border-radius: 16px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-        flex: 0 0 170px; /* 固定宽度，禁止收缩 */
+        background: #fef7fb !important;
+        padding: 15px !important;
+        border-radius: 16px !important;
+        text-align: center !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+        transition: all 0.3s ease !important;
+        flex: 0 0 170px !important; /* 固定宽度，禁止收缩 */
+        margin: 0 !important;
       " onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
-        <h3 style="color: #34c759; font-size: 20px; margin-bottom: 8px; font-weight: 600;">WeChat</h3>
+        <h3 style="color: #34c759 !important; font-size: 20px !important; margin: 0 0 8px 0 !important; font-weight: 600 !important; padding: 0 !important;">WeChat</h3>
         <img src="https://xufanhsk.github.io/Pic/wechat.JPG" 
              alt="QR code WeChat" 
              style="
-               width: 140px;
-               height: 140px;
-               border-radius: 8px;
-               margin: 0 auto;
-               border: 1px solid #eee;
-               object-fit: contain;
-               background: #fff;
+               width: 140px !important;
+               height: 140px !important;
+               border-radius: 8px !important;
+               margin: 0 auto !important;
+               border: 1px solid #eee !important;
+               object-fit: contain !important;
+               background: #fff !important;
+               display: block !important; /* 消除图片下方默认空白 */
              ">
       </div>
     </div>
 
     <!-- 第二部分：信息区（加宽背景 + 行距极致压缩） -->
     <div style="
-      background: #f5f5f7;
-      padding: 8px 15px; /* 极致内边距 */
-      border-radius: 16px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      display: flex;
-      flex-direction: column;
-      gap: 2px; /* 上下间距压缩到最小 */
-      align-items: center;
-      text-align: center;
-      width: 100%; /* 背景宽度100%拉满 */
-      max-width: none; /* 取消最大宽度限制 */
-      margin: 0 auto;
+      background: #f5f5f7 !important;
+      padding: 8px 15px !important; /* 极致内边距 */
+      border-radius: 16px !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 2px !important; /* 上下间距压缩到最小 */
+      align-items: center !important;
+      text-align: center !important;
+      width: 100% !important; /* 背景宽度100%拉满 */
+      max-width: none !important; /* 取消最大宽度限制 */
+      margin: 0 auto !important;
     ">
       <!-- Facebook 信息 -->
-      <div style="width: 100%;">
-        <h3 style="color: #1d1d1f; font-size: 15px; margin: 0 0 1px 0; font-weight: 600;">Facebook</h3>
+      <div style="width: 100% !important; margin: 0 !important;">
+        <h3 style="color: #1d1d1f !important; font-size: 15px !important; margin: 0 0 1px 0 !important; font-weight: 600 !important; padding: 0 !important;">Facebook</h3>
         <a href="https://www.facebook.com/share/1HkARNg9Ug/?mibextid=wwXIfr" 
            target="_blank" 
-           style="font-size: 12px; color: #1877f2; text-decoration: none; font-weight: 500; line-height: 1.0;">
+           style="font-size: 12px !important; color: #1877f2 !important; text-decoration: none !important; font-weight: 500 !important; line-height: 1.0 !important; display: block !important; margin: 0 !important;">
           Truy cập trang FB
         </a>
       </div>
       <!-- Email 信息 -->
-      <div style="width: 100%;">
-        <h3 style="color: #1d1d1f; font-size: 15px; margin: 0 0 1px 0; font-weight: 600;">Email</h3>
-        <p style="font-size: 12px; color: #0071e3; font-weight: 500; line-height: 1.0; margin: 0;">
+      <div style="width: 100% !important; margin: 0 !important;">
+        <h3 style="color: #1d1d1f !important; font-size: 15px !important; margin: 0 0 1px 0 !important; font-weight: 600 !important; padding: 0 !important;">Email</h3>
+        <p style="font-size: 12px !important; color: #0071e3 !important; font-weight: 500 !important; line-height: 1.0 !important; margin: 0 !important; padding: 0 !important;">
           xufanokok@gmail.com
         </p>
       </div>
       <!-- SĐT 信息（越南号码单独换行） -->
-      <div style="width: 100%;">
-        <h3 style="color: #1d1d1f; font-size: 15px; margin: 0 0 1px 0; font-weight: 600;">SĐT</h3>
-        <p style="font-size: 11px; color: #1d1d1f; line-height: 1.0; margin: 0;">
+      <div style="width: 100% !important; margin: 0 !important;">
+        <h3 style="color: #1d1d1f !important; font-size: 15px !important; margin: 0 0 1px 0 !important; font-weight: 600 !important; padding: 0 !important;">SĐT</h3>
+        <p style="font-size: 11px !important; color: #1d1d1f !important; line-height: 1.0 !important; margin: 0 !important; padding: 0 !important;">
           🇨🇳 +86 13377970080 (Thêm Zalo/WeChat)<br>
           🇻🇳 +84 357 7693703 (Chỉ nhận tin/gọi)
         </p>
@@ -605,8 +611,18 @@ thực sự đạt được: nghe hiểu, nói ra, dùng đúng, trở thành ng
     </div>
   </div>
 
-  <!-- 移动端适配（仅调整尺寸，二维码仍同行） -->
+  <!-- 全局样式重置（彻底解决 GitHub 空白问题） -->
   <style>
+    /* 强制重置所有 test-area 内元素的默认 margin/padding */
+    .test-area * {
+      margin: 0 !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+    }
+    /* 强制重置行高，消除空白 */
+    .test-area p, .test-area a, .test-area h3 {
+      line-height: 1.0 !important;
+    }
     /* 所有屏幕二维码强制同行，仅调整尺寸 */
     @media (max-width: 767px) {
       .test-area-title {
