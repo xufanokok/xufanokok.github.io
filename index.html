@@ -697,8 +697,7 @@ body {
   opacity: 0.5;
 }
 
-.floating-avatar.show:hover,
-.floating-avatar.show:active {
+.floating-avatar.show:hover {
   opacity: 1;
 }
 
@@ -976,6 +975,16 @@ window.addEventListener("scroll",()=>{
 });
 
 floatingAvatar.addEventListener("click",()=>{
+  // 点击时将不透明度设置为1
+  floatingAvatar.style.opacity = '1';
+  
+  // 1.5秒后恢复为0.5
+  setTimeout(() => {
+    if (floatingAvatar.classList.contains('show')) {
+      floatingAvatar.style.opacity = '0.5';
+    }
+  }, 1500);
+  
   if (isContactSection) {
     // 如果在联系方式区，回到页面顶端
     window.scrollTo({
