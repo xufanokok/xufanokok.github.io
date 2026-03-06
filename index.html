@@ -16,7 +16,7 @@
   --space-sm: 8px;
   --space-md: 16px;
   --space-lg: 32px;
-  --space-xl: 100px;
+  --space-xl: 60px; /* 减小超大间距，修复区域间隔过大问题 */
 
   --radius-lg: 24px;
   --radius-md: 16px;
@@ -112,15 +112,15 @@ body {
 
 .hero-section {
   width: 100%;
-  padding-top: 150px;
-  padding-bottom: 120px;
+  padding-top: 120px; /* 减小顶部内边距 */
+  padding-bottom: 80px; /* 减小底部内边距 */
   background: linear-gradient(180deg, #f5f5f7 0%, #ffffff 100%);
 }
 
 .hero-card {
   background: #ffffff;
   border-radius: var(--radius-lg);
-  padding: 80px 60px;
+  padding: 60px 40px; /* 减小内边距 */
   text-align: center;
   box-shadow: 0 20px 40px rgba(0,0,0,0.06);
   transition: 0.4s ease;
@@ -136,6 +136,33 @@ body {
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: var(--space-lg);
+  /* 头像呼吸+旋转动画 */
+  animation: avatarBreath 4s ease-in-out infinite;
+  /* 增加头像阴影，增强立体感 */
+  box-shadow: 0 0 20px rgba(0,113,227,0.2);
+  transition: all 0.5s ease;
+}
+
+/* 头像悬停增强效果 */
+.hero-avatar:hover {
+  transform: scale(1.05) rotate(5deg);
+  box-shadow: 0 0 30px rgba(0,113,227,0.4);
+}
+
+/* 头像呼吸动画 */
+@keyframes avatarBreath {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(0,113,227,0.2);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 0 30px rgba(0,113,227,0.3);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(0,113,227,0.2);
+  }
 }
 
 .hero-title {
@@ -159,7 +186,7 @@ body {
 
 .section {
   width: 100%;
-  padding: var(--space-xl) 0;
+  padding: var(--space-xl) 0; /* 使用减小后的space-xl */
 }
 
 .section:nth-child(even) {
@@ -173,7 +200,7 @@ body {
 .section-card {
   background: #ffffff;
   border-radius: var(--radius-lg);
-  padding: 70px 50px;
+  padding: 50px 30px; /* 减小内边距 */
   box-shadow: 0 12px 30px rgba(0,0,0,0.05);
 }
 
@@ -243,17 +270,19 @@ body {
 .contact-qr-row {
   display: flex;
   justify-content: center;
-  gap: var(--space-lg);
+  gap: var(--space-md); /* 减小二维码间距 */
 }
 
 .contact-card {
   flex: 1;
   max-width: 240px;
-  padding: 30px 20px;
+  padding: 20px 15px; /* 减小内边距 */
   background: #f5f5f7;
   border-radius: var(--radius-md);
   text-align: center;
   transition: 0.3s ease;
+  /* 关键：添加overflow隐藏，防止二维码穿出 */
+  overflow: hidden;
 }
 
 .contact-card:hover {
@@ -261,9 +290,13 @@ body {
 }
 
 .contact-card img {
-  width: clamp(110px, 18vw, 160px);
+  /* 修复极小屏幕二维码缩放问题 */
+  width: 100%;
+  max-width: 160px;
   height: auto;
   margin-top: 15px;
+  /* 确保二维码自适应容器 */
+  object-fit: contain;
 }
 
 .contact-info-box {
@@ -274,6 +307,24 @@ body {
   line-height: 1.8;
 }
 
+/* 优化极小屏幕适配（小于480px） */
+@media (max-width: 480px) {
+  .contact-qr-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .contact-card {
+    max-width: 90%;
+    padding: 15px 10px;
+  }
+  
+  .contact-card img {
+    max-width: 120px;
+  }
+}
+
 @media (max-width: 768px) {
   .contact-qr-row {
     flex-direction: row;
@@ -282,7 +333,7 @@ body {
 
   .contact-card {
     max-width: 45%;
-    padding: 20px 10px;
+    padding: 15px 10px; /* 减小内边距 */
   }
 }
 
@@ -301,7 +352,7 @@ body {
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  padding: 30px;
+  padding: 20px 15px; /* 减小内边距 */
   border-radius: var(--radius-md);
   background: #ffffff;
   box-shadow: 0 8px 20px rgba(0,0,0,0.04);
@@ -328,105 +379,10 @@ body {
 
 .menu-toggle {
   display: none;
-  font-size: 26px;
   cursor: pointer;
 }
 
 @media (max-width: 768px) {
-
-  .nav-buttons {
-    position: absolute;
-    top: 72px;
-    right: 0;
-    width: 100%;
-    background: #ffffff;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 0;
-    gap: 20px;
-    display: none;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-  }
-
-  .nav-buttons.active {
-    display: flex;
-  }
-
-  .menu-toggle {
-    display: block;
-  }
-}
-
-/* ========== 分区名称：移动端导航适配 结束 ========== */
-  /* ========== 分区名称：终极移动端导航系统 起始 ========== */
-
-.menu-area {
-  display: none;
-  align-items: center;
-  gap: 8px;
-  z-index: 1001;
-  cursor: pointer; /* 整个menu区域可点击 */
-}
-
-/* 同步呼吸动画 */
-.menu-hint, .menu-toggle {
-  animation: pulseHint 1.8s infinite;
-}
-
-.menu-hint {
-  font-size: 12px;
-  color: var(--text-gray);
-  /* 动画移到公共样式，实现同步 */
-}
-
-@keyframes pulseHint {
-  0% { opacity: 0.4; transform: translateY(0); }
-  50% { opacity: 1; transform: translateY(-2px); }
-  100% { opacity: 0.4; transform: translateY(0); }
-}
-
-.menu-toggle {
-  font-size: 26px;
-  cursor: pointer;
-  transition: 0.3s ease;
-  /* 动画移到公共样式，实现同步 */
-}
-
-.menu-toggle.active {
-  transform: rotate(90deg);
-  /* 激活时暂停动画 */
-  animation: none;
-}
-
-/* 激活时menu文字也暂停动画 */
-.menu-hint.active {
-  animation: none;
-  opacity: 1;
-}
-
-/* 遮罩层 */
-.nav-overlay {
-  display: none;
-}
-
-@media (max-width: 768px) {
-
-  .menu-area {
-    display: flex;
-  }
-
-  .nav-overlay.active {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.25);
-    backdrop-filter: blur(4px);
-    z-index: 998;
-  }
-
   .nav-buttons {
     position: fixed;
     top: 72px;
@@ -438,12 +394,12 @@ body {
     align-items: center;
     padding: 40px 0;
     gap: 28px;
-
     transform: translateY(-20px);
     opacity: 0;
     pointer-events: none;
-    transition: all 0.35s ease;
+    transition: all 0.35s ease-in-out;
     z-index: 999;
+    overflow: visible;
   }
 
   .nav-buttons.active {
@@ -451,13 +407,142 @@ body {
     opacity: 1;
     pointer-events: auto;
   }
+
+  .menu-toggle {
+    display: block;
+  }
 }
 
-body.menu-open {
-  overflow: hidden;
+/* ========== 分区名称：移动端导航适配 结束 ========== */
+
+/* ========== 分区名称：终极移动端导航系统 起始 ========== */
+
+.menu-area {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+/* Menu文字 */
+.menu-hint {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  /* 文字同步呼吸效果 */
+  animation: textBreath 4s ease-in-out infinite;
+}
+
+/* 三杠按钮 */
+.menu-toggle {
+  font-size: 32px;
+  line-height: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  transition: transform 0.35s ease;
+  /* 三杠呼吸灯动画 */
+  animation: menuBreath 2s ease-in-out infinite;
+}
+
+/* 三杠呼吸灯动画 */
+@keyframes menuBreath {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+    text-shadow: 0 0 5px rgba(0,113,227,0.1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+    text-shadow: 0 0 10px rgba(0,113,227,0.3);
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+    text-shadow: 0 0 5px rgba(0,113,227,0.1);
+  }
+}
+
+/* 文字呼吸动画 */
+@keyframes textBreath {
+  0% {
+    opacity: 0.8;
+    color: #1d1d1f;
+  }
+  50% {
+    opacity: 1;
+    color: #0071e3;
+  }
+  100% {
+    opacity: 0.8;
+    color: #1d1d1f;
+  }
+}
+
+/* 打开菜单旋转 */
+.menu-toggle.active {
+  transform: rotate(90deg);
+  /* 旋转时暂停呼吸动画，避免冲突 */
+  animation-play-state: paused;
+}
+
+/* ===== 每5秒高亮一次 ===== */
+
+.menu-area::after {
+  content: "";
+  position: absolute;
+  inset: -6px -10px;
+  border-radius: 12px;
+  pointer-events: none;
+  animation: menuGlow 5s infinite;
+}
+
+@keyframes menuGlow {
+  0% { opacity:0; }
+  6% {
+    opacity:1;
+    box-shadow:0 0 0 2px rgba(0,113,227,0.25),
+               0 0 12px rgba(0,113,227,0.35);
+  }
+  12% { opacity:0; }
+  100% { opacity:0; }
+}
+
+/* 手机端显示 */
+@media (max-width:768px) {
+  .menu-area {
+    display:flex;
+    position:relative;
+  }
 }
 
 /* ========== 分区名称：终极移动端导航系统 结束 ========== */
+
+/* 遮罩层样式 */
+.nav-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .nav-overlay.active {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+    pointer-events: auto;
+  }
+}
 </style>
 </head>
 
@@ -467,7 +552,7 @@ body.menu-open {
   <div class="header-logo">Lớp học trực tuyến HSK</div>
 
   <div class="menu-area" id="menuArea">
-    <div class="menu-hint" id="menuHint">Menu</div>
+    <div class="menu-hint">Menu</div>
     <div class="menu-toggle" id="menuToggle">☰</div>
   </div>
 
@@ -521,23 +606,18 @@ body.menu-open {
 <div id="contact" class="section">
   <div class="container">
     <div class="section-card">
-
       <h2 class="section-title">Cách liên hệ với tôi</h2>
-
       <div class="contact-wrapper">
-
         <div class="contact-qr-row">
           <div class="contact-card">
             <h3>Zalo</h3>
-            <img src="https://xufanhsk.github.io/Pic/zalo.JPG">
+            <img src="https://xufanhsk.github.io/Pic/zalo.JPG" alt="Zalo QR Code">
           </div>
-
           <div class="contact-card">
             <h3>WeChat</h3>
-            <img src="https://xufanhsk.github.io/Pic/wechat.JPG">
+            <img src="https://xufanhsk.github.io/Pic/wechat.JPG" alt="WeChat QR Code">
           </div>
         </div>
-
         <div class="contact-info-box">
           <div>Facebook: 
             <a href="https://www.facebook.com/share/1HkARNg9Ug/?mibextid=wwXIfr" target="_blank">
@@ -550,9 +630,7 @@ body.menu-open {
             🇻🇳 +84 357 7693703
           </div>
         </div>
-
       </div>
-
     </div>
   </div>
 </div>
@@ -561,24 +639,20 @@ body.menu-open {
   <div class="container">
     <div class="section-card">
       <h2 class="section-title">Tải tài liệu học tập miễn phí</h2>
-
       <div class="download-list">
         <div class="download-item">
           📖 Tài liệu HSK 1–6
           <a href="#" class="download-btn">Tải</a>
         </div>
-
         <div class="download-item">
           🎧 Audio nghe hiểu
           <a href="#" class="download-btn">Tải</a>
         </div>
-
         <div class="download-item">
           📝 Bài tập luyện viết
           <a href="#" class="download-btn">Tải</a>
         </div>
       </div>
-
     </div>
   </div>
 </div>
@@ -595,26 +669,20 @@ window.addEventListener('scroll', () => {
     ticking = true;
   }
 
-  // 滑动时渐进收起菜单
   const navMenu = document.getElementById('navMenu');
   const toggle = document.getElementById('menuToggle');
-  const menuHint = document.getElementById('menuHint');
   const navOverlay = document.getElementById('navOverlay');
   
   if (navMenu.classList.contains('active')) {
-    // 获取滚动距离，计算透明度和位移
-    const scrollTop = window.scrollY;
-    const maxScroll = 100; // 滚动100px后完全收起
-    const progress = Math.min(scrollTop / maxScroll, 1);
+    const scrollY = window.scrollY;
+    const opacity = Math.max(0, 1 - scrollY / 100);
+    const scale = Math.max(0.8, 1 - scrollY / 200);
     
-    // 渐进修改样式
-    navMenu.style.opacity = 1 - progress;
-    navMenu.style.transform = `translateY(${-20 * progress}px)`;
+    navMenu.style.opacity = opacity;
+    navMenu.style.transform = `translateY(0) scale(${scale})`;
     
-    // 滚动超过阈值后完全关闭
-    if (progress >= 1) {
+    if (scrollY > 100) {
       closeMenu();
-      // 恢复样式
       navMenu.style.opacity = '';
       navMenu.style.transform = '';
     }
@@ -628,22 +696,27 @@ function toggleAudio() {
 
 const toggle = document.getElementById('menuToggle');
 const menuArea = document.getElementById('menuArea');
-const menuHint = document.getElementById('menuHint');
 const navMenu = document.getElementById('navMenu');
 const navOverlay = document.getElementById('navOverlay');
 const navLinks = document.querySelectorAll('#navMenu a');
 
+// 增强关闭菜单函数，确保动画同步完成
 function closeMenu() {
   navMenu.classList.remove('active');
   toggle.classList.remove('active');
-  menuHint.classList.remove('active');
   navOverlay.classList.remove('active');
   document.body.classList.remove('menu-open');
+  
+  setTimeout(() => {
+    navMenu.style.opacity = '';
+    navMenu.style.transform = '';
+    // 恢复呼吸动画
+    toggle.style.animationPlayState = 'running';
+  }, 350);
 }
 
-// 点击整个menu区域（包括文字和三杠）触发菜单
-menuArea.addEventListener('click', (e) => {
-  // 阻止事件冒泡，避免立即关闭
+// 统一菜单切换，确保状态同步
+function toggleMenu(e) {
   e.stopPropagation();
   
   const isActive = navMenu.classList.contains('active');
@@ -653,16 +726,23 @@ menuArea.addEventListener('click', (e) => {
   } else {
     navMenu.classList.add('active');
     toggle.classList.add('active');
-    menuHint.classList.add('active');
     navOverlay.classList.add('active');
     document.body.classList.add('menu-open');
+    navMenu.style.opacity = '';
+    navMenu.style.transform = '';
+    // 暂停呼吸动画
+    toggle.style.animationPlayState = 'paused';
   }
-});
+}
 
-// 点击遮罩层关闭
+// 绑定点击事件
+toggle.addEventListener('click', toggleMenu);
+menuArea.addEventListener('click', toggleMenu);
+
+// 遮罩层点击关闭菜单
 navOverlay.addEventListener('click', closeMenu);
 
-// 点击导航链接关闭
+// 菜单链接点击关闭菜单
 navLinks.forEach(link => {
   link.addEventListener('click', closeMenu);
 });
@@ -671,13 +751,14 @@ navLinks.forEach(link => {
 document.addEventListener('click', (e) => {
   const isClickInsideMenu = menuArea.contains(e.target);
   const isClickInsideNav = navMenu.contains(e.target);
+  const isClickOnOverlay = navOverlay.contains(e.target);
   
-  if (!isClickInsideMenu && !isClickInsideNav && navMenu.classList.contains('active')) {
+  if (!isClickInsideMenu && !isClickInsideNav && !isClickOnOverlay && navMenu.classList.contains('active')) {
     closeMenu();
   }
 });
 
-// 阻止导航菜单内点击事件冒泡
+// 防止菜单内点击触发页面点击事件
 navMenu.addEventListener('click', (e) => {
   e.stopPropagation();
 });
