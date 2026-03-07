@@ -447,35 +447,86 @@ body {
 }
 /* ========== 分区名称：联系方式区 优化结束 ========== */
 
-/* ========== 分区名称：下载区 分区起始 ========== */
-.download-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
+/* ========== 分区名称：下载区（升级版） 分区起始 ========== */
+
+.download-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:24px;
+  margin-top:20px;
 }
-.download-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding: 20px 15px;
-  border-radius: var(--radius-md);
-  background: #ffffff;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
-  transition: 0.3s ease;
+
+.download-card{
+  background:#ffffff;
+  border-radius:18px;
+  padding:26px 22px;
+  text-align:center;
+
+  box-shadow:0 12px 30px rgba(0,0,0,0.06);
+
+  transition:all .35s ease;
+
+  display:flex;
+  flex-direction:column;
+  gap:12px;
 }
-.download-item:hover {
-  transform: translateY(-6px);
+
+.download-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 40px rgba(0,0,0,0.12);
 }
-.download-btn {
-  margin-left: auto;
-  padding: 10px 20px;
-  border-radius: 999px;
-  background: var(--success);
-  color: white;
-  text-decoration: none;
-  font-size: 14px;
+
+.download-icon{
+  font-size:38px;
 }
-/* ========== 分区名称：下载区 分区结束 ========== */
+
+.download-title{
+  font-size:18px;
+  font-weight:600;
+}
+
+.download-desc{
+  font-size:14px;
+  color:var(--text-gray);
+  line-height:1.6;
+}
+
+.download-btn{
+  margin-top:10px;
+
+  padding:10px 22px;
+
+  border-radius:999px;
+
+  background:var(--primary);
+  color:white;
+
+  text-decoration:none;
+
+  font-size:14px;
+  font-weight:600;
+
+  transition:all .3s ease;
+
+  box-shadow:0 4px 14px rgba(0,113,227,.25);
+}
+
+.download-btn:hover{
+  transform:scale(1.05);
+  box-shadow:0 8px 22px rgba(0,113,227,.4);
+}
+
+/* 移动端 */
+
+@media(max-width:768px){
+
+  .download-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+/* ========== 分区名称：下载区（升级版） 分区结束 ========== */
 
 /* ========== 分区名称：移动端导航适配 起始 ========== */
 .menu-toggle {
@@ -759,6 +810,112 @@ body {
     gripBreath 3s ease-in-out infinite,
     cliffShake .6s ease-in-out;
 }
+.zalo-float{
+  position:fixed;
+  right:26px;
+  bottom:146px;
+
+  width:60px;
+  height:60px;
+
+  background:rgba(0,104,255,0.6);
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  text-decoration:none;
+
+  box-shadow:0 10px 25px rgba(0,0,0,.18);
+
+  transition:all .25s ease;
+
+  z-index:9999;
+}
+
+/* hover */
+
+.zalo-float:hover{
+  background:#0068ff;
+  transform:translateY(-4px) scale(1.05);
+  box-shadow:0 18px 40px rgba(0,0,0,.25);
+}
+
+/* 呼吸光圈 */
+
+.zalo-float::after{
+  content:"";
+  position:absolute;
+
+  width:100%;
+  height:100%;
+
+  border-radius:50%;
+
+  border:3px solid rgba(0,104,255,.35);
+
+  animation:zaloPulse 2s infinite;
+
+  pointer-events:none;
+}
+
+@keyframes zaloPulse{
+
+  0%{
+    transform:scale(1);
+    opacity:.6;
+  }
+
+  70%{
+    transform:scale(1.6);
+    opacity:0;
+  }
+
+  100%{
+    opacity:0;
+  }
+
+}
+
+/* 在线红点 */
+
+.zalo-online{
+  position:absolute;
+
+  top:6px;
+  right:6px;
+
+  width:12px;
+  height:12px;
+
+  background:#00c853;
+
+  border-radius:50%;
+
+  border:2px solid white;
+
+  box-shadow:0 0 6px rgba(0,200,83,.8);
+
+  animation:onlineBlink 1.8s infinite;
+}
+
+@keyframes onlineBlink{
+
+  0%{
+    transform:scale(1);
+  }
+
+  50%{
+    transform:scale(1.2);
+  }
+
+  100%{
+    transform:scale(1);
+  }
+
+}
 </style>
 </head>
 <body>
@@ -865,11 +1022,71 @@ body {
 <div id="download" class="section">
   <div class="container">
     <div class="section-card">
-      <h2 class="section-title">Tải tài liệu học tập miễn phí</h2>
-      <div class="download-list">
-        <div class="download-item">📖 Tài liệu HSK 1–6 <a href="other/zlzy.html" class="download-btn">Tải</a></div>
-        <div class="download-item">🎧 Audio nghe hiểu <a href="other/zlzy.html" class="download-btn">Tải</a></div>
-        <div class="download-item">📝 Bài tập luyện viết <a href="other/zlzy.html" class="download-btn">Tải</a></div>
+      <h2 class="section-title">Tài liệu học tiếng Trung miễn phí</h2>
+      <div class="download-grid">
+
+        <div class="download-card">
+
+          <div class="download-icon">📘</div>
+
+          <div class="download-title">
+            Tài liệu HSK 1–6
+          </div>
+
+          <div class="download-desc">
+            Tổng hợp giáo trình HSK từ cấp 1 đến cấp 6,
+            phù hợp cho người mới bắt đầu và luyện thi.
+          </div>
+
+          <a href="https://xufanhsk.github.io/other/zlzy.html"
+            class="download-btn">
+            Tải xuống
+          </a>
+
+        </div>
+
+
+        <div class="download-card">
+
+          <div class="download-icon">🎧</div>
+
+          <div class="download-title">
+            Audio nghe hiểu
+          </div>
+
+          <div class="download-desc">
+            File nghe giúp luyện khả năng nghe tiếng Trung
+            theo phương pháp phản xạ tự nhiên.
+          </div>
+
+          <a href="https://xufanhsk.github.io/other/zlzy.html"
+            class="download-btn">
+            Tải xuống
+          </a>
+
+        </div>
+
+
+        <div class="download-card">
+
+          <div class="download-icon">✍️</div>
+
+          <div class="download-title">
+            Bài tập luyện viết
+          </div>
+
+          <div class="download-desc">
+            Bài tập luyện viết chữ Hán giúp ghi nhớ từ vựng
+            và cấu trúc câu nhanh hơn.
+          </div>
+
+          <a href="https://xufanhsk.github.io/other/zlzy.html"
+            class="download-btn">
+            Tải xuống
+          </a>
+
+        </div>
+
       </div>
     </div>
   </div>
@@ -1042,5 +1259,9 @@ contactBtn.addEventListener('click', (e) => {
 
 
 </script>
+<a class="zalo-float" href="zalo://conversation?phone=8613377970080" onclick="setTimeout(function(){ window.location='https://zalo.me/8613377970080'; },600);" aria-label="Chat Zalo">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" width="28">
+  <span class="zalo-online"></span>
+</a>
 </body>
 </html>
