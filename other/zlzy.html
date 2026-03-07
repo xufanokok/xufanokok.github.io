@@ -482,6 +482,232 @@ body {
   }
 }
 /* ========== 分区名称：移动端导航适配 结束 ========== */
+/* Zalo 悬浮按钮 */
+.zalo-float{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  width:56px;
+  height:56px;
+  background:#0068ff;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 10px 24px rgba(0,0,0,.18);
+  cursor:pointer;
+  text-decoration:none;
+  transition:all .25s ease;
+  z-index:999;
+  animation:zaloFadeIn .6s ease .8s both;
+}
+
+/* hover浮起 */
+.zalo-float:hover{
+  transform:translateY(-4px);
+  box-shadow:0 16px 32px rgba(0,0,0,.25);
+}
+
+/* 呼吸光圈 */
+.zalo-float::after{
+  content:"";
+  position:absolute;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  background:#0068ff;
+  opacity:.35;
+  animation:zaloPulse 2.2s infinite;
+}
+
+@keyframes zaloPulse{
+  0%{
+    transform:scale(1);
+    opacity:.35;
+  }
+  70%{
+    transform:scale(1.6);
+    opacity:0;
+  }
+  100%{
+    opacity:0;
+  }
+}
+
+/* tooltip */
+.zalo-tooltip{
+  position:absolute;
+  right:70px;
+  background:white;
+  padding:8px 12px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:500;
+  white-space:nowrap;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
+  opacity:0;
+  transform:translateX(10px);
+  transition:all .25s ease;
+}
+
+/* hover显示 */
+.zalo-float:hover .zalo-tooltip{
+  opacity:1;
+  transform:translateX(0);
+}
+
+@keyframes zaloFadeIn{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+.zalo-float{
+  position:fixed;
+  right:26px;
+  bottom:146px;
+
+  width:60px;
+  height:60px;
+
+  background:rgba(0,104,255,0.6);
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  text-decoration:none;
+
+  box-shadow:0 10px 25px rgba(0,0,0,.18);
+
+  transition:all .25s ease;
+
+  z-index:9999;
+}
+
+/* hover */
+
+.zalo-float:hover{
+  background:#0068ff;
+  transform:translateY(-4px) scale(1.05);
+  box-shadow:0 18px 40px rgba(0,0,0,.25);
+}
+
+/* 呼吸光圈 */
+
+.zalo-float::after{
+  content:"";
+  position:absolute;
+
+  width:100%;
+  height:100%;
+
+  border-radius:50%;
+
+  border:3px solid rgba(0,104,255,.35);
+
+  animation:zaloPulse 2s infinite;
+
+  pointer-events:none;
+}
+
+@keyframes zaloPulse{
+
+  0%{
+    transform:scale(1);
+    opacity:.6;
+  }
+
+  70%{
+    transform:scale(1.6);
+    opacity:0;
+  }
+
+  100%{
+    opacity:0;
+  }
+
+}
+
+/* 在线红点 */
+
+.zalo-online{
+  position:absolute;
+
+  top:6px;
+  right:6px;
+
+  width:12px;
+  height:12px;
+
+  background:#00c853;
+
+  border-radius:50%;
+
+  border:2px solid white;
+
+  box-shadow:0 0 6px rgba(0,200,83,.8);
+
+  animation:onlineBlink 1.8s infinite;
+}
+
+@keyframes onlineBlink{
+
+  0%{
+    transform:scale(1);
+  }
+
+  50%{
+    transform:scale(1.2);
+  }
+
+  100%{
+    transform:scale(1);
+  }
+
+}
+
+.hero-btn {
+  display: inline-block;
+  padding: 14px 32px;
+  background: var(--primary);
+  color: white;
+  text-decoration: none;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+  animation: buttonGlow 2s ease-in-out infinite;
+}
+
+.hero-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 24px rgba(0, 113, 227, 0.6);
+  opacity: 0.9;
+  animation: none;
+}
+
+@keyframes buttonGlow {
+  0% {
+    box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 8px 24px rgba(0, 113, 227, 0.6);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+    transform: scale(1);
+  }
+}
 </style>
 </head>
 <body>
@@ -500,15 +726,15 @@ body {
     <div class="section-card">
       <h2 class="section-title">Giáo Trình HSK</h2>
       <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 30px;">
-        <a href="#download-list" class="download-btn">我不想看废话😛跳转到下载列表</a>
-        <a href="#" class="download-btn">听听老师说什么</a>
-        <div style="width: 100%; max-width: 600px; height: 40px; border: 1px solid #ddd; border-radius: 8px; margin-top: 10px; display: flex; align-items: center; padding: 0 15px; background: #f5f5f7;">
-          <!-- 字幕框 -->
-        </div>
+        <a href="#" class="hero-btn">听听老师说什么</a>
       </div>
       <div class="section-content">
         <!-- 在这里添加页面内容 -->
         <p>Là một người Trung Quốc và cũng là một giáo viên dạy tiếng Trung, tôi rất vui khi thấy ngày càng nhiều người yêu thích văn hóa Trung Quốc. Tôi cũng rất sẵn lòng chia sẻ ngôn ngữ và văn hóa Trung Quốc với mọi người.</p>
+        <div style="display: flex; justify-content: center; margin-top: 15px;">
+          <a href="#download-list" class="hero-btn">Lười đọc quá 😛 Tới danh sách tải</a>
+        </div>
+
         <p>Tại đây, tôi đã chuẩn bị một số tài liệu học tiếng Trung miễn phí dành cho những bạn yêu thích tiếng Trung nhưng vì nhiều lý do hiện tại chỉ có thể tự học. Những tài liệu này bao gồm: giáo trình HSK Standard Course, sách bài tập, vở luyện viết chữ Hán, đề thi thử HSK và file âm thanh đi kèm.</p>
         <p>Bạn chỉ cần tìm đúng liên kết và nhấp vào là có thể tải xuống miễn phí và bắt đầu học ngay.</p>
         <p>Nếu trong quá trình tự học bạn gặp khó khăn, hoặc muốn thử luyện nói tiếng Trung với người Trung Quốc, bạn cũng có thể liên hệ với tôi. Hãy nhấp vào avatar nổi trên trang hoặc liên hệ với tôi qua Zalo.</p>
@@ -758,5 +984,9 @@ if (jumpBtn) {
 const mobileHomeBtn = document.getElementById('mobileHomeBtn');
 mobileHomeBtn.addEventListener('click', handleHomeClick);
 </script>
+<a class="zalo-float" href="zalo://conversation?phone=8613377970080" onclick="setTimeout(function(){ window.location='https://zalo.me/8613377970080'; },600);" aria-label="Chat Zalo">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" width="28">
+  <span class="zalo-online"></span>
+</a>
 </body>
 </html>
