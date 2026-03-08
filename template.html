@@ -346,9 +346,8 @@ body {
   width:58px;
   height:58px;
   border-radius:50%;
-  object-fit:cover;
   transform:translateX(-50%) translateY(0) scale(1);
-  opacity:1;
+  opacity:0;
   z-index:998;
   cursor:pointer;
   transition:
@@ -356,9 +355,46 @@ body {
     opacity .35s;
   box-shadow: 0 14px 30px rgba(0,0,0,0.28);
   filter:drop-shadow(0 10px 10px rgba(0,0,0,.25));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
+
+.floating-avatar.show {
+  opacity: 0.5;
+}
+
+.floating-avatar.show:hover {
+  opacity: 1;
+}
+
+.floating-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}
+
+.floating-avatar-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--primary);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
 .floating-avatar.show{
-  opacity:1;
   transform: translateX(-50%) translateY(0) scale(1);
   animation: floatGlow 3s ease-in-out infinite, gripBreath 3s ease-in-out infinite;
 }
@@ -430,6 +466,196 @@ body {
   }
 }
 /* ========== 分区名称：移动端导航适配 结束 ========== */
+/* Zalo 悬浮按钮 */
+.zalo-float{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  width:56px;
+  height:56px;
+  background:#0068ff;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 10px 24px rgba(0,0,0,.18);
+  cursor:pointer;
+  text-decoration:none;
+  transition:all .25s ease;
+  z-index:999;
+  animation:zaloFadeIn .6s ease .8s both;
+}
+
+/* hover浮起 */
+.zalo-float:hover{
+  transform:translateY(-4px);
+  box-shadow:0 16px 32px rgba(0,0,0,.25);
+}
+
+/* 呼吸光圈 */
+.zalo-float::after{
+  content:"";
+  position:absolute;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  background:#0068ff;
+  opacity:.35;
+  animation:zaloPulse 2.2s infinite;
+}
+
+@keyframes zaloPulse{
+  0%{
+    transform:scale(1);
+    opacity:.35;
+  }
+  70%{
+    transform:scale(1.6);
+    opacity:0;
+  }
+  100%{
+    opacity:0;
+  }
+}
+
+/* tooltip */
+.zalo-tooltip{
+  position:absolute;
+  right:70px;
+  background:white;
+  padding:8px 12px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:500;
+  white-space:nowrap;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
+  opacity:0;
+  transform:translateX(10px);
+  transition:all .25s ease;
+}
+
+/* hover显示 */
+.zalo-float:hover .zalo-tooltip{
+  opacity:1;
+  transform:translateX(0);
+}
+
+@keyframes zaloFadeIn{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+.zalo-float{
+  position:fixed;
+  right:26px;
+  bottom:146px;
+
+  width:60px;
+  height:60px;
+
+  background:rgba(0,104,255,0.6);
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  text-decoration:none;
+
+  box-shadow:0 10px 25px rgba(0,0,0,.18);
+
+  transition:all .25s ease;
+
+  z-index:9999;
+}
+
+/* hover */
+
+.zalo-float:hover{
+  background:#0068ff;
+  transform:translateY(-4px) scale(1.05);
+  box-shadow:0 18px 40px rgba(0,0,0,.25);
+}
+
+/* 呼吸光圈 */
+
+.zalo-float::after{
+  content:"";
+  position:absolute;
+
+  width:100%;
+  height:100%;
+
+  border-radius:50%;
+
+  border:3px solid rgba(0,104,255,.35);
+
+  animation:zaloPulse 2s infinite;
+
+  pointer-events:none;
+}
+
+@keyframes zaloPulse{
+
+  0%{
+    transform:scale(1);
+    opacity:.6;
+  }
+
+  70%{
+    transform:scale(1.6);
+    opacity:0;
+  }
+
+  100%{
+    opacity:0;
+  }
+
+}
+
+/* 在线红点 */
+
+.zalo-online{
+  position:absolute;
+
+  top:6px;
+  right:6px;
+
+  width:12px;
+  height:12px;
+
+  background:#00c853;
+
+  border-radius:50%;
+
+  border:2px solid white;
+
+  box-shadow:0 0 6px rgba(0,200,83,.8);
+
+  animation:onlineBlink 1.8s infinite;
+}
+
+@keyframes onlineBlink{
+
+  0%{
+    transform:scale(1);
+  }
+
+  50%{
+    transform:scale(1.2);
+  }
+
+  100%{
+    transform:scale(1);
+  }
+
+}
 </style>
 </head>
 <body>
@@ -482,11 +708,14 @@ body {
   </div>
 </div>
 
-<img id="floatingAvatar" class="floating-avatar"
-src="https://raw.githubusercontent.com/xufanhsk/xufanhsk.github.io/main/Pic/avatar.JPG">
+<div id="floatingAvatar" class="floating-avatar">
+  <img src="https://raw.githubusercontent.com/xufanhsk/xufanhsk.github.io/main/Pic/avatar.JPG" class="floating-avatar-img">
+  <div class="floating-avatar-top">Top</div>
+</div>
 
 <script>
 let ticking = false;
+let isContactSection = false;
 window.addEventListener('scroll', () => {
   if (!ticking) {
     window.requestAnimationFrame(() => {
@@ -502,17 +731,37 @@ window.addEventListener('scroll', () => {
     ticking = true;
   }
 
+  // 检测是否滚动到了联系方式区
+  const contactSection = document.getElementById('contact');
+  const rect = contactSection.getBoundingClientRect();
+  const isInView = rect.top <= window.innerHeight && rect.bottom >= 0;
+  
+  const avatarImg = floatingAvatar.querySelector('.floating-avatar-img');
+  const topBtn = floatingAvatar.querySelector('.floating-avatar-top');
+  
+  if (isInView) {
+    isContactSection = true;
+    // 显示Top按钮，隐藏头像
+    avatarImg.style.opacity = '0';
+    topBtn.style.opacity = '1';
+  } else {
+    isContactSection = false;
+    // 显示头像，隐藏Top按钮
+    avatarImg.style.opacity = '1';
+    topBtn.style.opacity = '0';
+  }
+
   const navMenu = document.getElementById('navMenu');
   const toggle = document.getElementById('menuToggle');
   const navOverlay = document.getElementById('navOverlay');
 
-  if (navMenu.classList.contains('active')) {
+  if (navMenu && navMenu.classList.contains('active')) {
     const scrollY = window.scrollY;
     const opacity = Math.max(0, 1 - scrollY / 100);
     const scale = Math.max(0.8, 1 - scrollY / 200);
     navMenu.style.opacity = opacity;
     navMenu.style.transform = `translateY(0) scale(${scale})`;
-    if (scrollY > 100) {
+    if (scrollY > 100 && typeof closeMenu === 'function') {
       closeMenu();
       navMenu.style.opacity = '';
       navMenu.style.transform = '';
@@ -554,9 +803,28 @@ window.addEventListener("scroll",()=>{
 });
 
 floatingAvatar.addEventListener("click",()=>{
-  document.getElementById("contact").scrollIntoView({
-    behavior:"smooth"
-  });
+  // 点击时将不透明度设置为1
+  floatingAvatar.style.opacity = '1';
+  
+  // 1.5秒后恢复为0.5
+  setTimeout(() => {
+    if (floatingAvatar.classList.contains('show')) {
+      floatingAvatar.style.opacity = '0.5';
+    }
+  }, 1500);
+  
+  if (isContactSection) {
+    // 如果在联系方式区，回到页面顶端
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  } else {
+    // 否则跳转到联系方式区
+    document.getElementById("contact").scrollIntoView({
+      behavior:"smooth"
+    });
+  }
   
   // 跳转后调整头像位置
   setTimeout(() => {
@@ -596,5 +864,9 @@ function handleHomeClick(e) {
 const mobileHomeBtn = document.getElementById('mobileHomeBtn');
 mobileHomeBtn.addEventListener('click', handleHomeClick);
 </script>
+<a class="zalo-float" href="zalo://conversation?phone=8613377970080" onclick="setTimeout(function(){ window.location='https://zalo.me/8613377970080'; },600);" aria-label="Chat Zalo">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" width="28">
+  <span class="zalo-online"></span>
+</a>
 </body>
 </html>
