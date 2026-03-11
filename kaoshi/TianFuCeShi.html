@@ -1,951 +1,1879 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test your Chinese learning talent | 测试你学习汉语的天赋</title>
-<style>
-/* ========== 分区名称：全局设计系统 分区起始 ========== */
-:root {
-  --container-width: 980px;
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 32px;
-  --space-xl: 60px;
-  --radius-lg: 24px;
-  --radius-md: 16px;
-  --text-dark: #1d1d1f;
-  --text-gray: #6e6e73;
-  --bg-light: #f5f5f7;
-  --primary: #0071e3;
-  --success: #34c759;
-}
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-               "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-body {
-  background: var(--bg-light);
-  color: var(--text-dark);
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-}
-.container {
-  max-width: var(--container-width);
-  margin: 0 auto;
-  padding: 0 20px;
-}
-/* ========== 分区名称：全局设计系统 分区结束 ========== */
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>90% người làm bài test này không ngờ kết quả của mình</title>
+    <style>
+        /* 全局变量和重置 */
+        :root {
+            --primary-color: #4a7cff;
+            --primary-light: #7fe0ff;
+            --primary-dark: #3a68e0;
+            --accent-color: #ff8a4a;
+            --accent-dark: #e07a3f;
+            --background-start: #6b8cff;
+            --background-end: #7fe0ff;
+            --card-bg: #ffffff;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --option-bg: #f2f5ff;
+            --option-hover: #dfe6ff;
+            --border-radius: 18px;
+            --shadow: 0 15px 40px rgba(0,0,0,0.2);
+            --transition: all 0.3s ease;
+            
+            /* 额外变量 */
+            --container-width: 980px;
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 32px;
+            --space-xl: 60px;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --bg-light: #f5f5f7;
+            --primary: #0071e3;
+            --success: #34c759;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--background-start), var(--background-end));
+            min-height: 100vh;
+            padding: 20px;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 92%;
+            max-width: 520px;
+            margin: 100px auto 0;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+        }
+        
+        /* ========== 顶部导航栏 ========== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 72px;
+            background: rgba(245,245,247,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 0 32px;
+            z-index: 999;
+            transition: 0.3s ease;
+        }
 
-/* ========== 分区名称：顶部导航栏 分区起始 ========== */
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 72px;
-  background: rgba(245,245,247,0.85);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 0 32px;
-  z-index: 999;
-  transition: 0.3s ease;
-}
+        .mobile-home-btn {
+            display: none;
+        }
 
-.mobile-home-btn {
-  display: none;
-}
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+            flex-wrap: wrap;
+        }
 
-.header-content {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex: 1;
-  flex-wrap: wrap;
-}
+        @media (min-width: 769px) {
+            .header-content {
+                justify-content: flex-start;
+            }
+        }
 
-@media (min-width: 769px) {
-  .header-content {
-    justify-content: flex-start;
-  }
-}
+        .header-logo {
+            flex-shrink: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
 
-.header-logo {
-  flex-shrink: 0;
-  font-size: 20px;
-  font-weight: 600;
-}
+        .home-btn, .menu-area {
+            flex-shrink: 1;
+            flex-grow: 0;
+            min-width: 80px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.35s ease, font-size 0.3s ease;
+            animation: menuBreath 2s ease-in-out infinite;
+            padding: 0 12px;
+            border-radius: 12px;
+            background: rgba(0, 113, 227, 0.1);
+            border: 1px solid rgba(0, 113, 227, 0.2);
+            text-decoration: none;
+        }
 
-.home-btn, .menu-area {
-  flex-shrink: 1;
-  flex-grow: 0;
-  min-width: 80px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--primary);
-  line-height: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: transform 0.35s ease, font-size 0.3s ease;
-  animation: menuBreath 2s ease-in-out infinite;
-  padding: 0 12px;
-  border-radius: 12px;
-  background: rgba(0, 113, 227, 0.1);
-  border: 1px solid rgba(0, 113, 227, 0.2);
-  text-decoration: none;
-}
+        @media (max-width: 1024px) {
+            .header-logo {
+                font-size: 18px;
+            }
+            .home-btn, .menu-area {
+                font-size: 13px;
+                padding: 0 10px;
+            }
+        }
 
-@media (max-width: 1024px) {
-  .header-logo {
-    font-size: 18px;
-  }
-  .home-btn, .menu-area {
-    font-size: 13px;
-    padding: 0 10px;
-  }
-}
+        @media (max-width: 900px) {
+            .header-logo {
+                font-size: 16px;
+            }
+            .home-btn, .menu-area {
+                font-size: 12px;
+                padding: 0 8px;
+            }
+        }
 
-@media (max-width: 900px) {
-  .header-logo {
-    font-size: 16px;
-  }
-  .home-btn, .menu-area {
-    font-size: 12px;
-    padding: 0 8px;
-  }
-}
+        .mobile-home-btn {
+            display: none;
+            flex-shrink: 0;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.35s ease;
+            animation: menuBreath 2s ease-in-out infinite;
+            padding: 0 12px;
+            border-radius: 12px;
+            background: rgba(0, 113, 227, 0.1);
+            border: 1px solid rgba(0, 113, 227, 0.2);
+            text-decoration: none;
+        }
 
-.mobile-home-btn {
-  display: none;
-  flex-shrink: 0;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--primary);
-  line-height: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: transform 0.35s ease;
-  animation: menuBreath 2s ease-in-out infinite;
-  padding: 0 12px;
-  border-radius: 12px;
-  background: rgba(0, 113, 227, 0.1);
-  border: 1px solid rgba(0, 113, 227, 0.2);
-  text-decoration: none;
-}
+        .home-btn:hover, .mobile-home-btn:hover, .contact-btn:hover {
+            transform: scale(1.05);
+            background: rgba(0, 113, 227, 0.15);
+            box-shadow: 0 0 12px rgba(0, 113, 227, 0.3);
+        }
 
-.home-btn:hover, .mobile-home-btn:hover, .menu-area:hover {
-  transform: scale(1.05);
-  background: rgba(0, 113, 227, 0.15);
-  box-shadow: 0 0 12px rgba(0, 113, 227, 0.3);
-}
+        .mobile-home-btn {
+            display: flex;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            padding: 0 8px;
+            height: 28px;
+            line-height: 28px;
+        }
 
-.mobile-home-btn {
-  display: none;
-}
+        .header-content {
+            flex: 1;
+            justify-content: center;
+        }
 
-.menu-area {
-  margin-left: auto;
-}
+        .header.shrink {
+            height: 50px;
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        .header-logo {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .nav-btn {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 999px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .nav-btn.download {
+            background: var(--success);
+        }
+        .nav-btn:hover {
+            opacity: 0.85;
+        }
 
-.menu-hint {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+        .contact-btn {
+            display: flex;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            padding: 0 8px;
+            height: 28px;
+            line-height: 28px;
+            margin-left: auto;
+            transition: transform 0.35s ease;
+            animation: menuBreath 2s ease-in-out infinite;
+            border-radius: 12px;
+            background: rgba(0, 113, 227, 0.1);
+            border: 1px solid rgba(0, 113, 227, 0.2);
+            text-decoration: none;
+        }
 
-.menu-toggle {
-  font-size: 16px;
-  line-height: 1;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 16px;
-  height: 16px;
-}
+        /* 导航被抓弹性动画 */
+        .header.grabbed{
+            animation:navElastic .45s ease;
+        }
+        @keyframes navElastic{
+            0%{ transform:translateY(-6px) }
+            50%{ transform:translateY(3px) }
+            100%{ transform:translateY(0) }
+        }
+        
+        /* ========== 联系方式区 ========== */
+        .contact-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+        .contact-qr-row {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-md);
+        }
+        .contact-card {
+            flex: 1;
+            max-width: 240px;
+            padding: 20px 15px;
+            background: #f5f5f7;
+            border-radius: var(--radius-md);
+            text-align: center;
+            transition: 0.3s ease;
+            overflow: hidden;
+        }
+        .contact-card:hover {
+            transform: translateY(-6px);
+        }
+        .contact-card img {
+            width: 100%;
+            max-width: 160px;
+            height: auto;
+            margin-top: 15px;
+            object-fit: contain;
+        }
+        .contact-info-box {
+            background: #f5f5f7;
+            padding: 24px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            line-height: 1.8;
+        }
+        @media (max-width: 480px) {
+            .contact-qr-row {
+                flex-direction: column;
+                align-items: center;
+                gap: 16px;
+            }
+            .contact-card {
+                max-width: 90%;
+                padding: 15px 10px;
+            }
+            .contact-card img {
+                max-width: 120px;
+            }
+        }
+        @media (max-width: 768px) {
+            .contact-qr-row {
+                flex-direction: row;
+                gap: 16px;
+            }
+            .contact-card {
+                max-width: 45%;
+                padding: 15px 10px;
+            }
+        }
+        
+        /* ========== 响应式导航 ========== */
+        @media (max-width:480px) {
+            .header {
+                padding: 0 16px;
+            }
+            .header-logo {
+                font-size: 14px;
+            }
+            .mobile-home-btn, .contact-btn {
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--primary);
+                padding: 0 6px;
+                height: 24px;
+                line-height: 24px;
+                gap: 4px;
+            }
+        }
+        
+        /* ========== 浮动头像 ========== */
+        .floating-avatar{
+            position:fixed;
+            top:50px;
+            left:50%;
+            width:58px;
+            height:58px;
+            border-radius:50%;
+            transform:translateX(-50%) translateY(0) scale(1);
+            opacity:0;
+            z-index:998;
+            cursor:pointer;
+            transition:
+                transform .45s cubic-bezier(.22,1.4,.36,1),
+                opacity .35s;
+            box-shadow: 0 14px 30px rgba(0,0,0,0.28);
+            filter:drop-shadow(0 10px 10px rgba(0,0,0,.25));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
 
-.header.shrink {
-  height: 50px;
-  background: rgba(255,255,255,0.95);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-}
-.header-logo {
-  font-size: 20px;
-  font-weight: 600;
-}
-.nav-buttons {
-  display: flex;
-  gap: 16px;
-}
-.nav-btn {
-  padding: 10px 20px;
-  background: var(--primary);
-  color: white;
-  text-decoration: none;
-  border-radius: 999px;
-  font-size: 14px;
-  transition: 0.3s;
-}
-.nav-btn.download {
-  background: var(--success);
-}
-.nav-btn:hover {
-  opacity: 0.85;
-}
+        .floating-avatar.show {
+            opacity: 0.5;
+        }
 
-/* 导航被抓弹性动画 */
-.header.grabbed{
-  animation:navElastic .45s ease;
-}
-@keyframes navElastic{
-  0%{ transform:translateY(-6px) }
-  50%{ transform:translateY(3px) }
-  100%{ transform:translateY(0) }
-}
-/* ========== 分区名称：顶部导航栏 分区结束 ========== */
+        .floating-avatar.show:hover {
+            opacity: 1;
+        }
 
-/* ========== 分区名称：主视觉区（Hero） 分区起始 ========== */
-.hero-section {
-  width: 100%;
-  padding-top: 120px;
-  padding-bottom: 80px;
-  background: linear-gradient(180deg, #f5f5f7 0%, #ffffff 100%);
-}
-.hero-card {
-  background: #ffffff;
-  border-radius: var(--radius-lg);
-  padding: 60px 40px;
-  text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-  transition: 0.4s ease;
-}
-.hero-card:hover {
-  transform: translateY(-6px);
-}
+        .floating-avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+        }
 
-.hero-title {
-  font-size: 42px;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-.hero-subtitle {
-  font-size: 20px;
-  color: var(--text-gray);
-  max-width: 720px;
-  margin: 0 auto;
-  line-height: 1.6;
-  margin-bottom: 32px;
-}
+        .floating-avatar-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
-.hero-btn {
-  display: inline-block;
-  padding: 14px 32px;
-  background: var(--primary);
-  color: white;
-  text-decoration: none;
-  border-radius: 999px;
-  font-size: 16px;
-  font-weight: 600;
-  transition: 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
-  animation: buttonGlow 2s ease-in-out infinite;
-}
+        .floating-avatar.show{
+            transform: translateX(-50%) translateY(0) scale(1);
+            animation: floatGlow 3s ease-in-out infinite, gripBreath 3s ease-in-out infinite;
+        }
+        @keyframes floatGlow {
+            0% {
+                box-shadow: 0 0 20px rgba(0,113,227,0.3), 0 14px 30px rgba(0,0,0,0.28);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(0,113,227,0.55), 0 14px 30px rgba(0,0,0,0.28);
+            }
+            100% {
+                box-shadow: 0 0 20px rgba(0,113,227,0.3), 0 14px 30px rgba(0,0,0,0.28);
+            }
+        }
+        @keyframes gripBreath{
+            0%{ transform:translateX(-50%) translateY(0) scale(1) }
+            50%{ transform:translateX(-50%) translateY(2px) scale(1.03) }
+            100%{ transform:translateX(-50%) translateY(0) scale(1) }
+        }
+        @keyframes cliffShake{
+            0%{ transform:translateX(-50%) rotate(0deg) }
+            20%{ transform:translateX(-50%) rotate(-2deg) }
+            40%{ transform:translateX(-50%) rotate(2deg) }
+            60%{ transform:translateX(-50%) rotate(-1deg) }
+            80%{ transform:translateX(-50%) rotate(1deg) }
+            100%{ transform:translateX(-50%) rotate(0deg) }
+        }
+        .floating-avatar.tired{
+            animation:
+                floatGlow 3s ease-in-out infinite,
+                gripBreath 3s ease-in-out infinite,
+                cliffShake .6s ease-in-out;
+        }
 
-.hero-btn:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 24px rgba(0, 113, 227, 0.6);
-  opacity: 0.9;
-  animation: none;
-}
+        /* ========== 移动端导航适配 ========== */
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .mobile-home-btn {
+                display: block;
+            }
+            .nav-buttons {
+                position: fixed;
+                top: 72px;
+                right: 0;
+                width: 100%;
+                background: rgba(255,255,255,0.85);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                align-items: center;
+                padding: 40px 0;
+                gap: 28px;
+                transform: translateY(-20px);
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.35s ease-in-out;
+                z-index: 999;
+                overflow: visible;
+            }
+            .nav-buttons.active {
+                transform: translateY(0);
+                opacity: 1;
+                pointer-events: auto;
+            }
+            .menu-toggle {
+                display: block;
+            }
+        }
+        
+        /* ========== Zalo 悬浮按钮 ========== */
+        .zalo-float{
+            position:fixed;
+            right:26px;
+            bottom:146px;
+            width:60px;
+            height:60px;
+            background:rgba(0,104,255,0.6);
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            text-decoration:none;
+            box-shadow:0 10px 25px rgba(0,0,0,.18);
+            transition:all .25s ease;
+            z-index:9999;
+        }
 
-@keyframes buttonGlow {
-  0% {
-    box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
-    transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 8px 24px rgba(0, 113, 227, 0.6);
-    transform: scale(1.05);
-  }
-  100% {
-    box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
-    transform: scale(1);
-  }
-}
-/* ========== 分区名称：主视觉区（Hero） 分区结束 ========== */
+        /* hover */
+        .zalo-float:hover{
+            background:#0068ff;
+            transform:translateY(-4px) scale(1.05);
+            box-shadow:0 18px 40px rgba(0,0,0,.25);
+        }
 
-/* ========== 分区名称：通用内容区 分区起始 ========== */
-.section {
-  width: 100%;
-  padding: var(--space-xl) 0;
-}
-.section:nth-child(even) {
-  background: #f5f5f7;
-}
-.section:nth-child(odd) {
-  background: #ffffff;
-}
-.section-card {
-  background: #ffffff;
-  border-radius: var(--radius-lg);
-  padding: 50px 30px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.05);
-}
-.section-title {
-  font-size: 32px;
-  font-weight: 600;
-  text-align: center;
-  margin-bottom: var(--space-lg);
-}
-.section-content {
-  font-size: 18px;
-  line-height: 1.9;
-  color: var(--text-gray);
-  white-space: pre-line;
-}
-/* ========== 分区名称：通用内容区 分区结束 ========== */
+        /* 呼吸光圈 */
+        .zalo-float::after{
+            content:"";
+            position:absolute;
+            width:100%;
+            height:100%;
+            border-radius:50%;
+            border:3px solid rgba(0,104,255,.35);
+            animation:zaloPulse 2s infinite;
+            pointer-events:none;
+        }
 
-/* ========== 分区名称：天赋测试区 分区起始 ========== */
-.test-section {
-  width: 100%;
-  padding: var(--space-xl) 0;
-  background: #ffffff;
-}
-.test-card {
-  background: #ffffff;
-  border-radius: var(--radius-lg);
-  padding: 50px 30px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.05);
-}
-.test-title {
-  font-size: 32px;
-  font-weight: 600;
-  text-align: center;
-  margin-bottom: var(--space-lg);
-}
-.test-content {
-  font-size: 18px;
-  line-height: 1.9;
-  color: var(--text-gray);
-  white-space: pre-line;
-  margin-bottom: var(--space-lg);
-}
-.test-form {
-  max-width: 800px;
-  margin: 0 auto;
-}
-.test-question {
-  margin-bottom: var(--space-lg);
-  padding: var(--space-md);
-  background: #f5f5f7;
-  border-radius: var(--radius-md);
-}
-.question-text {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: var(--space-md);
-}
-.option-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-.option-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm);
-  background: #ffffff;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-.option-item:hover {
-  background: #e3f2fd;
-}
-.option-item input[type="radio"] {
-  width: 18px;
-  height: 18px;
-}
-.option-item label {
-  cursor: pointer;
-  flex: 1;
-}
-.submit-btn {
-  display: block;
-  width: 200px;
-  margin: 0 auto;
-  padding: 14px 32px;
-  background: var(--primary);
-  color: white;
-  text-decoration: none;
-  border: none;
-  border-radius: 999px;
-  font-size: 16px;
-  font-weight: 600;
-  transition: 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
-  cursor: pointer;
-  animation: buttonGlow 2s ease-in-out infinite;
-}
-.submit-btn:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 24px rgba(0, 113, 227, 0.6);
-  opacity: 0.9;
-  animation: none;
-}
-/* ========== 分区名称：天赋测试区 分区结束 ========== */
+        @keyframes zaloPulse{
+            0%{
+                transform:scale(1);
+                opacity:.6;
+            }
+            70%{
+                transform:scale(1.6);
+                opacity:0;
+            }
+            100%{
+                opacity:0;
+            }
+        }
 
-/* ========== 分区名称：响应式导航 分区起始 ========== */
-.menu-toggle {
-  display: none;
-  cursor: pointer;
-}
-@media (max-width: 768px) {
-  .menu-area { display:flex; position:relative; align-items: center; }
-  .home-btn {
-    display: none;
-  }
-  .mobile-home-btn {
-    display: flex;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--primary);
-    padding: 0 8px;
-    height: 28px;
-    line-height: 28px;
-  }
-  .header-content {
-    flex: 1;
-    justify-content: center;
-  }
-  .header-logo {
-    font-size: 16px;
-  }
-  .home-btn, .menu-area {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--primary);
-    padding: 0 8px;
-    height: 28px;
-    line-height: 28px;
-  }
-  .menu-hint {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--primary);
-  }
-  .menu-toggle {
-    display: flex;
-    font-size: 14px;
-    height: 14px;
-    align-items: center;
-    justify-content: center;
-  }
-}
+        /* 在线红点 */
+        .zalo-online{
+            position:absolute;
+            top:6px;
+            right:6px;
+            width:12px;
+            height:12px;
+            background:#00c853;
+            border-radius:50%;
+            border:2px solid white;
+            box-shadow:0 0 6px rgba(0,200,83,.8);
+            animation:onlineBlink 1.8s infinite;
+        }
 
-@media (max-width:480px) {
-  .header {
-    padding: 0 16px;
-  }
-  .header-logo {
-    font-size: 14px;
-  }
-  .home-btn, .mobile-home-btn, .menu-area {
-    font-size: 11px;
-    padding: 0 6px;
-    height: 24px;
-    line-height: 24px;
-    gap: 4px;
-  }
-  .menu-hint {
-    font-size: 11px;
-  }
-  .menu-toggle {
-    font-size: 12px;
-    height: 12px;
-  }
-}
-/* ========== 分区名称：终极移动端导航系统 结束 ========== */
-
-.nav-buttons {
-  display: flex;
-  gap: 16px;
-}
-
-@media (max-width: 768px) {
-  .nav-buttons {
-    display: none;
-    flex-direction: column;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    z-index: 999;
-    gap: 12px;
-  }
-  
-  .nav-buttons.active {
-    display: flex;
-  }
-}
-
-.nav-overlay { display: none; }
-@media (max-width: 768px) {
-  .nav-overlay.active {
-    display: block;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.25);
-    backdrop-filter: blur(4px);
-    z-index: 998;
-    pointer-events: auto;
-  }
-}
-
-/* ========== 分区名称：浮动头像 分区起始 ========== */
-.floating-avatar{
-  position:fixed;
-  top:62px;
-  left:50%;
-  width:58px;
-  height:58px;
-  border-radius:50%;
-  object-fit:cover;
-  transform:translateX(-50%) translateY(-80px) scale(.6);
-  opacity:0;
-  z-index:998;
-  cursor:pointer;
-  transition: transform .45s cubic-bezier(.22,1.4,.36,1), opacity .35s;
-  box-shadow: 0 14px 30px rgba(0,0,0,0.28);
-  filter:drop-shadow(0 10px 10px rgba(0,0,0,.25));
-}
-
-.floating-avatar.show{
-  transform:translateX(-50%) translateY(0) scale(1);
-  opacity:1;
-}
-
-@keyframes floatGlow {
-  0% { box-shadow: 0 14px 30px rgba(0,0,0,0.28); }
-  50% { box-shadow: 0 14px 40px rgba(0,113,227,0.4); }
-  100% { box-shadow: 0 14px 30px rgba(0,0,0,0.28); }
-}
-
-@keyframes gripBreath {
-  0% { transform:translateX(-50%) scale(1) }
-  50% { transform:translateX(-50%) scale(1.03) }
-  100% { transform:translateX(-50%) scale(1) }
-}
-
-@keyframes cliffShake {
-  0% { transform:translateX(-50%) rotate(0deg) }
-  20% { transform:translateX(-50%) rotate(-2deg) }
-  40% { transform:translateX(-50%) rotate(2deg) }
-  60% { transform:translateX(-50%) rotate(-1deg) }
-  80% { transform:translateX(-50%) rotate(1deg) }
-  100% { transform:translateX(-50%) rotate(0deg) }
-}
-
-.floating-avatar.tired{
-  animation:
-    floatGlow 3s ease-in-out infinite,
-    gripBreath 3s ease-in-out infinite,
-    cliffShake .6s ease-in-out;
-}
-
-@keyframes menuBreath {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
-}
-/* ========== 分区名称：浮动头像 分区结束 ========== */
-</style>
+        @keyframes onlineBlink{
+            0%{
+                transform:scale(1);
+            }
+            50%{
+                transform:scale(1.2);
+            }
+            100%{
+                transform:scale(1);
+            }
+        }
+        
+        /* 菜单呼吸动画 */
+        @keyframes menuBreath {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.03);
+            }
+        }
+        
+        /* 修复 card 样式 */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 28px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* ========== 通用内容区 ========== */
+        .section {
+            width: 100%;
+            padding: var(--space-xl) 0;
+            margin-top: 50px;
+        }
+        .section:nth-child(even) {
+            background: #f5f5f7;
+        }
+        .section:nth-child(odd) {
+            background: #ffffff;
+        }
+        .section-card {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            padding: 50px 30px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+        }
+        .section-title {
+            font-size: 32px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+        .section-content {
+            font-size: 18px;
+            line-height: 1.9;
+            color: var(--text-gray);
+            white-space: pre-line;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-top: 0;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        
+        h2 {
+            font-size: 20px;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+        
+        p {
+            color: var(--text-light);
+            font-size: 16px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .progress {
+            height: 8px;
+            background: #eee;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .bar {
+            height: 8px;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+        
+        .option {
+            display: block;
+            width: 100%;
+            padding: 14px 18px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border: none;
+            background: var(--option-bg);
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+        }
+        
+        .option:hover {
+            background: var(--option-hover);
+            transform: translateX(5px);
+        }
+        
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(74, 124, 255, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 124, 255, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        #audioBtn {
+            margin-bottom: 12px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        #audioBtn:hover {
+            background: var(--accent-dark);
+            transform: translateY(-2px);
+        }
+        
+        .score {
+            font-size: 44px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 20px 0;
+        }
+        
+        canvas {
+            display: none;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .card {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            h2 {
+                font-size: 18px;
+            }
+            
+            p {
+                font-size: 14px;
+                margin-bottom: 20px;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 16px;
+            }
+            
+            .option {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+            
+            .score {
+                font-size: 36px;
+            }
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 按钮点击反馈 */
+        .option:active,
+        .btn:active,
+        #audioBtn:active {
+            transform: scale(0.98);
+        }
+        
+        /* 分享按钮特殊样式 */
+        #download {
+            margin-top: 10px;
+        }
+        
+        /* 拖拽游戏样式 */
+        .rule-box {
+            background: #f1f5f9;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .example {
+            font-size: 22px;
+            margin-top: 10px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .drop-zone {
+            height: 90px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 40px;
+            transition: all 0.3s ease;
+            background-color: rgba(248, 250, 252, 0.8);
+        }
+        
+        .drop-zone:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(74, 124, 255, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .drop-zone.active {
+            border-color: var(--primary-color);
+            background-color: rgba(74, 124, 255, 0.1);
+        }
+        
+        .token {
+            font-size: 42px;
+            cursor: grab;
+            transition: all 0.2s ease;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        
+        .token:hover {
+            transform: scale(1.2);
+        }
+        
+        .token:active {
+            cursor: grabbing;
+            transform: scale(1.1);
+        }
+        
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .check-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 26px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(74, 124, 255, 0.3);
+        }
+        
+        .check-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(74, 124, 255, 0.4);
+        }
+        
+        .check-btn:active {
+            transform: translateY(0);
+        }
+        
+        .logic-result {
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-color);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .correct {
+            color: #10b981;
+            font-weight: bold;
+            animation: pulse 0.5s ease;
+        }
+        
+        .wrong {
+            color: var(--accent-color);
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        /* 关卡过渡动画 */
+        .level-transition {
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 拖拽提示 */
+        .drag-hint {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+        
+        /* 已拖拽元素 */
+        .dropped {
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 0 5px;
+        }
+        
+        .dropped:hover {
+            transform: scale(1.1);
+            color: var(--accent-color);
+        }
+        
+        /* 清空按钮 */
+        .reset-btn {
+            background: #f1f5f9;
+            color: var(--text-dark);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+        
+        .reset-btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+        
+        /* 动物卡片 */
+        .animal-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .animal-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+        
+        /* 竖版分享海报 */
+        .poster-vertical {
+            width: 360px;
+            height: 640px;
+            padding: 40px;
+            border-radius: 30px;
+            background: linear-gradient(160deg, #4f7cff, #7c9cff);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            margin: 0 auto 20px;
+        }
+        
+        .poster-vertical h2 {
+            font-size: 28px;
+            margin: 0;
+        }
+        
+        .poster-score {
+            font-size: 64px;
+            font-weight: bold;
+        }
+        
+        .poster-percent {
+            font-size: 20px;
+        }
+        
+        .poster-animal {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        
+        .poster-desc {
+            font-size: 18px;
+        }
+        
+        .poster-bottom {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .poster-cta {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        .share-btn {
+            margin-top: 20px;
+            background: #111;
+            color: white;
+            border: none;
+            padding: 14px 22px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .share-btn:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
-
-<div class="header" id="floatingHeader">
-  <a href="#" class="mobile-home-btn" id="mobileHomeBtn">Home</a>
-  <div class="header-content">
-    <div class="header-logo">Lớp học trực tuyến HSK</div>
-    <a href="#" class="nav-btn home-btn" id="homeBtn">Trang chủ</a>
-  </div>
-  <div class="menu-area" id="menuArea">
-    <div class="menu-hint">Menu</div>
-    <div class="menu-toggle" id="menuToggle">☰</div>
-  </div>
-  <div class="nav-overlay" id="navOverlay"></div>
-  <div class="nav-buttons" id="navMenu">
-    <a href="https://xufanhsk.github.io/#learn" class="nav-btn">Cách học tiếng Trung hiệu quả</a>
-    <a href="https://xufanhsk.github.io/#contact" class="nav-btn">Cách liên hệ với tôi</a>
-    <a href="https://xufanhsk.github.io/#download" class="nav-btn download">Tải tài liệu miễn phí</a>
-  </div>
-</div>
-
-<div class="hero-section">
-  <div class="container">
-    <div class="hero-card">
-      <h1 class="hero-title">测试你学习汉语的天赋</h1>
-      <p class="hero-subtitle">
-        这个测试将帮助你了解自己学习汉语的潜力和优势，为你的汉语学习之旅提供参考。
-      </p>
-    </div>
-  </div>
-</div>
-
-<div class="test-section">
-  <div class="container">
-    <div class="test-card">
-      <h2 class="test-title">天赋测试</h2>
-      <div class="test-content">
-        请回答以下问题，选择最符合你情况的选项。测试结果将帮助你了解自己学习汉语的天赋和优势。
+    <div class="header" id="floatingHeader">
+      <a href="#" class="mobile-home-btn" id="mobileHomeBtn">Home</a>
+      <div class="header-content">
+        <div class="header-logo">Lớp học trực tuyến HSK</div>
       </div>
-      <form class="test-form" id="talentTestForm">
-        <div class="test-question">
-          <div class="question-text">1. 你对学习新语言有多大兴趣？</div>
-          <div class="option-group">
-            <div class="option-item">
-              <input type="radio" name="q1" value="5" id="q1a">
-              <label for="q1a">非常感兴趣，我总是主动学习新语言</label>
+      <a href="#contact" class="nav-btn contact-btn" id="contactBtn">Contact</a>
+    </div>
+    
+    <div id="floatingAvatar" class="floating-avatar">
+      <img src="https://raw.githubusercontent.com/xufanhsk/xufanhsk.github.io/main/Pic/avatar.JPG" class="floating-avatar-img">
+      <div class="floating-avatar-top">Top</div>
+    </div>
+    
+    <a class="zalo-float" href="zalo://conversation?phone=8613377970080" onclick="setTimeout(function(){ window.location='https://zalo.me/8613377970080'; },600);" aria-label="Chat Zalo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" width="28">
+      <span class="zalo-online"></span>
+    </a>
+    
+    <div class="container">
+        <div id="start" class="card">
+            <h1>🧠 Bạn có năng khiếu học tiếng Trung?</h1>
+            <p>
+                90% người làm bài test này<br>
+                không ngờ kết quả của mình
+            </p>
+            <p>Bạn không cần biết tiếng Trung.<br>Hãy quan sát quy luật và suy luận.</p>
+            <p>20 câu hỏi • 3 phút</p>
+            <button class="btn" onclick="startTest()">Bắt đầu</button>
+        </div>
+        
+        <div id="game" class="card" style="display:none">
+            <div class="progress">
+                <div class="bar" id="bar"></div>
             </div>
-            <div class="option-item">
-              <input type="radio" name="q1" value="4" id="q1b">
-              <label for="q1b">比较感兴趣，愿意花时间学习</label>
+            <h2 id="question"></h2>
+            <button id="audioBtn" onclick="playAudio()">🔊 Nghe</button>
+            <div id="options"></div>
+        </div>
+        
+        <div id="result" class="card" style="display:none">
+            <h2>Kết quả của bạn</h2>
+            <div class="score" id="score"></div>
+            <p id="analysis"></p>
+            <br>
+            
+            <!-- 竖版分享海报 -->
+            <div id="sharePoster" class="poster-vertical">
+                <div class="poster-top">
+                    <h2>Chỉ số năng khiếu học tiếng Trung</h2>
+                </div>
+                <div class="poster-score" id="posterScore">
+                    86/100
+                </div>
+                <div class="poster-percent" id="posterPercent">
+                    Bạn vượt qua 92% người khác
+                </div>
+                <div class="poster-animal" id="posterAnimal">
+                    🦜 Vẹt ngôn ngữ
+                </div>
+                <p class="poster-desc" id="posterDesc">
+                    Bạn có năng khiếu bắt chước âm thanh rất mạnh
+                </p>
+                <div class="poster-bottom">
+                    <p>
+                        90% người làm bài test này  
+                        không ngờ kết quả của mình
+                    </p>
+                    <p class="poster-cta">
+                        Thử bài test này!
+                    </p>
+                </div>
             </div>
-            <div class="option-item">
-              <input type="radio" name="q1" value="3" id="q1c">
-              <label for="q1c">一般，需要一定的动力才会学习</label>
+            
+            <button onclick="downloadPoster()" class="share-btn">
+                Tải ảnh kết quả
+            </button>
+            
+            <br><br>
+            <a id="download" style="display:none" class="btn">Tải ảnh</a>
+        </div>
+    </div>
+    
+    <!-- 联系方式区 -->
+    <div id="contact" class="section">
+      <div class="container">
+        <div class="section-card">
+          <h2 class="section-title">Cách liên hệ với tôi</h2>
+          <div class="contact-wrapper">
+            <div class="contact-qr-row">
+              <div class="contact-card">
+                <h3>Zalo</h3>
+                <img src="https://xufanhsk.github.io/Pic/zalo.JPG" alt="Zalo QR">
+              </div>
+              <div class="contact-card">
+                <h3>WeChat</h3>
+                <img src="https://xufanhsk.github.io/Pic/wechat.JPG" alt="WeChat QR">
+              </div>
             </div>
-            <div class="option-item">
-              <input type="radio" name="q1" value="2" id="q1d">
-              <label for="q1d">不太感兴趣，只是为了特定目的学习</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q1" value="1" id="q1e">
-              <label for="q1e">完全不感兴趣，被迫学习</label>
+            <div class="contact-info-box">
+              <div>Facebook: <a href="https://www.facebook.com/share/1HkARNg9Ug/?mibextid=wwXIfr" target="_blank">Truy cập trang FB</a></div>
+              <div>Email: xufanokok@gmail.com</div>
+              <div>🇨🇳 +86 13377970080 (Thêm Zalo/WeChat)<br>🇻🇳 +84 357 7693703 (Chỉ nhận tin/gọi)</div>
             </div>
           </div>
         </div>
-        
-        <div class="test-question">
-          <div class="question-text">2. 你学习新事物的速度如何？</div>
-          <div class="option-group">
-            <div class="option-item">
-              <input type="radio" name="q2" value="5" id="q2a">
-              <label for="q2a">非常快，一点就通</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q2" value="4" id="q2b">
-              <label for="q2b">比较快，能够迅速掌握</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q2" value="3" id="q2c">
-              <label for="q2c">一般，需要一定时间理解</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q2" value="2" id="q2d">
-              <label for="q2d">比较慢，需要反复练习</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q2" value="1" id="q2e">
-              <label for="q2e">非常慢，很难理解新事物</label>
-            </div>
-          </div>
-        </div>
-        
-        <div class="test-question">
-          <div class="question-text">3. 你对声音和语调的敏感度如何？</div>
-          <div class="option-group">
-            <div class="option-item">
-              <input type="radio" name="q3" value="5" id="q3a">
-              <label for="q3a">非常敏感，能够分辨细微的声音差异</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q3" value="4" id="q3b">
-              <label for="q3b">比较敏感，能够分辨明显的声音差异</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q3" value="3" id="q3c">
-              <label for="q3c">一般，能够分辨基本的声音差异</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q3" value="2" id="q3d">
-              <label for="q3d">不太敏感，需要努力才能分辨声音差异</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q3" value="1" id="q3e">
-              <label for="q3e">完全不敏感，很难分辨声音差异</label>
-            </div>
-          </div>
-        </div>
-        
-        <div class="test-question">
-          <div class="question-text">4. 你对图形和符号的记忆力如何？</div>
-          <div class="option-group">
-            <div class="option-item">
-              <input type="radio" name="q4" value="5" id="q4a">
-              <label for="q4a">非常好，能够快速记住图形和符号</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q4" value="4" id="q4b">
-              <label for="q4b">比较好，能够记住大部分图形和符号</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q4" value="3" id="q4c">
-              <label for="q4c">一般，需要一定时间才能记住</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q4" value="2" id="q4d">
-              <label for="q4d">比较差，需要反复记忆</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q4" value="1" id="q4e">
-              <label for="q4e">非常差，很难记住图形和符号</label>
-            </div>
-          </div>
-        </div>
-        
-        <div class="test-question">
-          <div class="question-text">5. 你在学习过程中遇到困难时会怎么做？</div>
-          <div class="option-group">
-            <div class="option-item">
-              <input type="radio" name="q5" value="5" id="q5a">
-              <label for="q5a">积极寻找解决方案，不轻易放弃</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q5" value="4" id="q5b">
-              <label for="q5b">尝试不同的方法，直到解决问题</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q5" value="3" id="q5c">
-              <label for="q5c">寻求帮助，然后继续学习</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q5" value="2" id="q5d">
-              <label for="q5d">暂时搁置，等以后再解决</label>
-            </div>
-            <div class="option-item">
-              <input type="radio" name="q5" value="1" id="q5e">
-              <label for="q5e">放弃，认为自己无法解决</label>
-            </div>
-          </div>
-        </div>
-        
-        <button type="button" class="submit-btn" onclick="calculateResult()">提交测试</button>
-      </form>
-      <div id="testResult" style="margin-top: 32px; text-align: center; display: none;">
-        <h3>测试结果</h3>
-        <p id="resultText" style="font-size: 18px; margin-top: 16px;"></p>
       </div>
     </div>
-  </div>
-</div>
+    
+    <canvas id="shareCanvas" width="800" height="800"></canvas>
+    
+    <!-- html2canvas 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas"></script>
+    
+    <script>
+    // 导航和浮动头像相关脚本
+    let ticking = false;
+    let isContactSection = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const header = document.getElementById('floatingHeader');
+          header.classList.toggle('shrink', window.scrollY > 50);
+          
+          // 调整浮动头像位置，使其吸附在导航栏最下沿
+          const headerHeight = header.offsetHeight;
+          floatingAvatar.style.top = headerHeight + "px";
+          
+          ticking = false;
+        });
+        ticking = true;
+      }
 
-<img id="floatingAvatar" class="floating-avatar"
-src="https://raw.githubusercontent.com/xufanhsk/xufanhsk.github.io/main/Pic/avatar.JPG">
-
-<script>
-let ticking = false;
-window.addEventListener('scroll', () => {
-  if (!ticking) {
-    window.requestAnimationFrame(() => {
-      const header = document.getElementById('floatingHeader');
-      header.classList.toggle('shrink', window.scrollY > 50);
-      ticking = false;
+      // 检测是否滚动到了联系方式区
+      const contactSection = document.getElementById('contact');
+      const rect = contactSection.getBoundingClientRect();
+      const isInView = rect.top <= window.innerHeight && rect.bottom >= 0;
+      
+      const avatarImg = floatingAvatar.querySelector('.floating-avatar-img');
+      const topBtn = floatingAvatar.querySelector('.floating-avatar-top');
+      
+      if (isInView) {
+        isContactSection = true;
+        // 显示Top按钮，隐藏头像
+        avatarImg.style.opacity = '0';
+        topBtn.style.opacity = '1';
+      } else {
+        isContactSection = false;
+        // 显示头像，隐藏Top按钮
+        avatarImg.style.opacity = '1';
+        topBtn.style.opacity = '0';
+      }
     });
-    ticking = true;
-  }
 
-  const navMenu = document.getElementById('navMenu');
-  const toggle = document.getElementById('menuToggle');
-  const navOverlay = document.getElementById('navOverlay');
+    /* ==============================================
+       浮动头像：巢穴 → 爬出 → 抓导航 → 紧张悬挂
+    =============================================== */
+    const floatingAvatar = document.getElementById("floatingAvatar");
+    let lastScroll = 0;
 
-  if (navMenu.classList.contains('active')) {
-    const scrollY = window.scrollY;
-    const opacity = Math.max(0, 1 - scrollY / 100);
-    const scale = Math.max(0.8, 1 - scrollY / 200);
-    navMenu.style.opacity = opacity;
-    navMenu.style.transform = `translateY(0) scale(${scale})`;
-    if (scrollY > 100) {
-      closeMenu();
-      navMenu.style.opacity = '';
-      navMenu.style.transform = '';
+    // 初始化浮动头像位置
+    function initFloatingAvatar() {
+      const header = document.querySelector(".header");
+      const headerHeight = header.offsetHeight;
+      
+      // 始终显示浮动头像
+      floatingAvatar.classList.add("show");
+      
+      // 调整浮动头像位置，使其吸附在导航栏最下沿
+      floatingAvatar.style.top = headerHeight + "px";
     }
-  }
-});
 
-function toggleAudio() {
-  document.getElementById('audioDesc').style.display = 'none';
-  document.getElementById('audioSub').style.display = 'block';
-}
+    // 页面加载时初始化
+    window.addEventListener("load", initFloatingAvatar);
 
-const toggle = document.getElementById('menuToggle');
-const menuArea = document.getElementById('menuArea');
-const navMenu = document.getElementById('navMenu');
-const navOverlay = document.getElementById('navOverlay');
-const navLinks = document.querySelectorAll('#navMenu a');
+    window.addEventListener("scroll",()=>{
+      // 始终显示浮动头像
+      floatingAvatar.classList.add("show");
 
-function closeMenu() {
-  navMenu.classList.remove('active');
-  toggle.classList.remove('active');
-  navOverlay.classList.remove('active');
-  document.body.classList.remove('menu-open');
-  setTimeout(() => {
-    navMenu.style.opacity = '';
-    navMenu.style.transform = '';
-    toggle.style.animationPlayState = 'running';
-  }, 350);
-}
-
-function toggleMenu(e) {
-  e.stopPropagation();
-  const isActive = navMenu.classList.contains('active');
-  if (isActive) {
-    closeMenu();
-  } else {
-    navMenu.classList.add('active');
-    toggle.classList.add('active');
-    navOverlay.classList.add('active');
-    document.body.classList.add('menu-open');
-    navMenu.style.opacity = '';
-    navMenu.style.transform = '';
-    toggle.style.animationPlayState = 'paused';
-  }
-}
-
-toggle.addEventListener('click', toggleMenu);
-menuArea.addEventListener('click', toggleMenu);
-navOverlay.addEventListener('click', closeMenu);
-navLinks.forEach(link => link.addEventListener('click', closeMenu));
-
-document.addEventListener('click', (e) => {
-  const isClickInsideMenu = menuArea.contains(e.target);
-  const isClickInsideNav = navMenu.contains(e.target);
-  const isClickOnOverlay = navOverlay.contains(e.target);
-  if (!isClickInsideMenu && !isClickInsideNav && !isClickOnOverlay && navMenu.classList.contains('active')) {
-    closeMenu();
-  }
-});
-navMenu.addEventListener('click', (e) => e.stopPropagation());
-
-/* ==============================================
-   浮动头像：巢穴 → 爬出 → 抓导航 → 紧张悬挂
-============================================== */
-const floatingAvatar = document.getElementById("floatingAvatar");
-let lastScroll = 0;
-
-window.addEventListener("scroll",()=>{
-  // 获取导航栏高度
-  const headerHeight = document.querySelector(".header").offsetHeight;
-  
-  // 当页面滚动到一定程度时显示浮动头像
-  if(window.scrollY > 300){
-    floatingAvatar.classList.add("show");
-  }else{
-    floatingAvatar.classList.remove("show");
-  }
-
-  const speed = Math.abs(window.scrollY - lastScroll);
-  floatingAvatar.style.transitionDuration =
-    Math.min(0.6, 0.35 + speed/1000) + "s";
-  lastScroll = window.scrollY;
-});
-
-floatingAvatar.addEventListener("click",()=>{
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-});
-
-setInterval(()=>{
-  if(floatingAvatar.classList.contains("show")){
-    floatingAvatar.classList.add("tired");
-    setTimeout(()=>{
-      floatingAvatar.classList.remove("tired");
-    }, 600);
-  }
-}, 5000);
-
-// 主页按钮点击事件
-function handleHomeClick(e) {
-  e.preventDefault();
-  // 检查当前页面是否为主页
-  const currentPath = window.location.pathname;
-  if (currentPath === '/' || currentPath.endsWith('index.html')) {
-    // 如果是主页，滚动到顶部
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
+      const speed = Math.abs(window.scrollY - lastScroll);
+      floatingAvatar.style.transitionDuration =
+        Math.min(0.6, 0.35 + speed/1000) + "s";
+      lastScroll = window.scrollY;
     });
-  } else {
-    // 如果不是主页，跳转到主页
-    window.location.href = 'https://xufanhsk.github.io';
-  }
-  // 如果是移动端，点击后关闭菜单
-  closeMenu();
-}
 
-// 为桌面端主页按钮添加事件监听
-const homeBtn = document.getElementById('homeBtn');
-homeBtn.addEventListener('click', handleHomeClick);
+    floatingAvatar.addEventListener("click",()=>{
+      // 点击时将不透明度设置为1
+      floatingAvatar.style.opacity = '1';
+      
+      // 1.5秒后恢复为0.5
+      setTimeout(() => {
+        if (floatingAvatar.classList.contains('show')) {
+          floatingAvatar.style.opacity = '0.5';
+        }
+      }, 1500);
+      
+      if (isContactSection) {
+        // 如果在联系方式区，回到页面顶端
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      } else {
+        // 否则跳转到联系方式区
+        document.getElementById("contact").scrollIntoView({
+          behavior:"smooth"
+        });
+      }
+      
+      // 跳转后调整头像位置
+      setTimeout(() => {
+        const header = document.querySelector(".header");
+        const headerHeight = header.offsetHeight;
+        floatingAvatar.style.top = headerHeight + "px";
+      }, 500);
+    });
 
-// 为移动端主页按钮添加事件监听
-const mobileHomeBtn = document.getElementById('mobileHomeBtn');
-mobileHomeBtn.addEventListener('click', handleHomeClick);
+    setInterval(()=>{
+      if(floatingAvatar.classList.contains("show")){
+        floatingAvatar.classList.add("tired");
+        setTimeout(()=>{
+          floatingAvatar.classList.remove("tired");
+        }, 600);
+      }
+    }, 5000);
 
-// 天赋测试结果计算
-function calculateResult() {
-  let score = 0;
-  const questions = ['q1', 'q2', 'q3', 'q4', 'q5'];
-  
-  for (let q of questions) {
-    const selected = document.querySelector(`input[name="${q}"]:checked`);
-    if (selected) {
-      score += parseInt(selected.value);
+    // 主页按钮点击事件
+    function handleHomeClick(e) {
+      e.preventDefault();
+      // 检查当前页面是否为主页
+      const currentPath = window.location.pathname;
+      if (currentPath === '/' || currentPath.endsWith('index.html')) {
+        // 如果是主页，滚动到顶部
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      } else {
+        // 如果不是主页，跳转到主页
+        window.location.href = 'https://xufanhsk.github.io';
+      }
     }
-  }
-  
-  let resultText = '';
-  if (score >= 20) {
-    resultText = `你的得分是 ${score}/25，你具有很强的汉语学习天赋！你对语言学习充满热情，学习能力强，对声音和符号敏感，并且具有坚韧的学习态度。只要你投入时间和精力，一定能够在汉语学习中取得优异的成绩。`;
-  } else if (score >= 15) {
-    resultText = `你的得分是 ${score}/25，你具有良好的汉语学习天赋。你对语言学习有一定的兴趣，学习能力中等，对声音和符号有一定的敏感度。只要你保持学习的热情和毅力，一定能够在汉语学习中取得不错的成绩。`;
-  } else if (score >= 10) {
-    resultText = `你的得分是 ${score}/25，你具有一般的汉语学习天赋。你对语言学习的兴趣和能力都处于中等水平，需要更多的努力和时间来学习汉语。不过，只要你坚持学习，相信你一定能够取得进步。`;
-  } else {
-    resultText = `你的得分是 ${score}/25，你可能需要更多的努力来学习汉语。不过，天赋并不是决定因素，只要你有足够的热情和毅力，通过系统的学习和练习，你仍然可以在汉语学习中取得进步。`;
-  }
-  
-  document.getElementById('resultText').textContent = resultText;
-  document.getElementById('testResult').style.display = 'block';
-  
-  // 滚动到结果区域
-  document.getElementById('testResult').scrollIntoView({
-    behavior: 'smooth'
-  });
-}
-</script>
+
+    // 为移动端主页按钮添加事件监听
+    const mobileHomeBtn = document.getElementById('mobileHomeBtn');
+    mobileHomeBtn.addEventListener('click', handleHomeClick);
+    
+    
+        const questions=[
+            {audio:"ma",question:"Âm nào giống nhất?",options:["ma","ba","na","pa"],answer:0},
+            {audio:"shi",question:"Chọn phát âm đúng",options:["si","shi","xi","chi"],answer:1},
+            {audio:"zhu",question:"Âm nào bạn nghe được?",options:["zu","chu","zhu","ju"],answer:2},
+            {audio:"qing",question:"Âm nào đúng?",options:["qing","qin","jin","jing"],answer:0},
+            {audio:"chang",question:"Âm nào giống?",options:["can","chang","zang","chan"],answer:1},
+            
+            {type:"logic",question:`已知：
+mao = 🐱
+gou = 🐶
+
+mao mao = 🐱🐱
+
+gou gou = ?`,options:["🐶","🐶🐶","🐱🐶"],answer:1},
+            {type:"logic",question:`已知：
+mao = 🐱
+gou = 🐶
+
+mao gou = 🐱🐶
+
+gou mao = ?`,options:["🐶🐱","🐱🐶","🐱🐱"],answer:0},
+            {type:"logic",question:`已知：
+hong mao = 🔴🐱
+lan mao = 🔵🐱
+
+hong gou = ?`,options:["🔴🐶","🐶🔴","🔵🐶"],answer:0},
+            {type:"logic",question:`已知：
+yi mao = 🐱
+er mao = 🐱🐱
+
+er gou = ?`,options:["🐶","🐶🐶","🐶🐶🐶"],answer:1},
+            {type:"logic",question:`已知：
+wo ai mao = 👤 ❤️ 🐱
+ni ai mao = 🙂 ❤️ 🐱
+
+wo ai gou = ?`,options:["👤 ❤️ 🐶","🐶 ❤️ 👤","👤 🐶 ❤️"],answer:0}
+        ];
+        
+        let current=0
+        let score=0
+        
+        function startTest(){
+            const button = document.querySelector('.btn');
+            button.innerHTML = '<span class="loading"></span> Đang chuẩn bị...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                document.getElementById("start").style.display="none"
+                document.getElementById("game").style.display="block"
+                load()
+            }, 1000);
+        }
+        
+        function load(){
+            let q=questions[current]
+            document.getElementById("question").innerText=q.question
+            document.getElementById("bar").style.width=(current/questions.length*100)+"%"
+            
+            let html=""
+            
+            if(q.type === "logic"){
+                // 根据不同的逻辑题生成不同的拖拽游戏界面
+                switch(current){
+                    case 5: // 第一题逻辑题 - 重复规则
+                        html=`
+                            <div class="rule-box">
+                                <p>mao = 🐱</p>
+                                <p>gou = 🐶</p>
+                                <p class="example">Ví dụ: mao mao → 🐱🐱</p>
+                            </div>
+                            <h3>Suy luận</h3>
+                            <p class="question">Vậy: gou gou → ?</p>
+                            <p class="drag-hint">Kéo các biểu tượng vào ô trả lời để hoàn thành quy luật</p>
+                            <div id="drop-zone" class="drop-zone"></div>
+                            <div class="choices">
+                                <div class="token" draggable="true">🐱</div>
+                                <div class="token" draggable="true">🐶</div>
+                            </div>
+                            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
+                                <button class="reset-btn" onclick="resetAnswer()">Xóa đáp án</button>
+                                <button class="check-btn" onclick="checkDragAnswer()">Kiểm tra</button>
+                            </div>
+                            <p id="logic-result" class="logic-result"></p>
+                        `
+                        break
+                    case 6: // 第二题逻辑题 - 词序规则
+                        html=`
+                            <div class="rule-box">
+                                <p>mao = 🐱</p>
+                                <p>gou = 🐶</p>
+                                <p class="example">Ví dụ: mao gou → 🐱🐶</p>
+                            </div>
+                            <h3>Suy luận</h3>
+                            <p class="question">Vậy: gou mao → ?</p>
+                            <p class="drag-hint">Kéo các biểu tượng vào ô trả lời để hoàn thành quy luật</p>
+                            <div id="drop-zone" class="drop-zone"></div>
+                            <div class="choices">
+                                <div class="token" draggable="true">🐱</div>
+                                <div class="token" draggable="true">🐶</div>
+                            </div>
+                            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
+                                <button class="reset-btn" onclick="resetAnswer()">Xóa đáp án</button>
+                                <button class="check-btn" onclick="checkDragAnswer()">Kiểm tra</button>
+                            </div>
+                            <p id="logic-result" class="logic-result"></p>
+                        `
+                        break
+                    case 7: // 第三题逻辑题 - 形容词+名词
+                        html=`
+                            <div class="rule-box">
+                                <p>hong mao = 🔴🐱</p>
+                                <p>lan mao = 🔵🐱</p>
+                            </div>
+                            <h3>Suy luận</h3>
+                            <p class="question">Vậy: hong gou → ?</p>
+                            <p class="drag-hint">Kéo các biểu tượng vào ô trả lời để hoàn thành quy luật</p>
+                            <div id="drop-zone" class="drop-zone"></div>
+                            <div class="choices">
+                                <div class="token" draggable="true">🔴</div>
+                                <div class="token" draggable="true">🔵</div>
+                                <div class="token" draggable="true">🐱</div>
+                                <div class="token" draggable="true">🐶</div>
+                            </div>
+                            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
+                                <button class="reset-btn" onclick="resetAnswer()">Xóa đáp án</button>
+                                <button class="check-btn" onclick="checkDragAnswer()">Kiểm tra</button>
+                            </div>
+                            <p id="logic-result" class="logic-result"></p>
+                        `
+                        break
+                    case 8: // 第四题逻辑题 - 数量规则
+                        html=`
+                            <div class="rule-box">
+                                <p>yi mao = 🐱</p>
+                                <p>er mao = 🐱🐱</p>
+                            </div>
+                            <h3>Suy luận</h3>
+                            <p class="question">Vậy: er gou → ?</p>
+                            <p class="drag-hint">Kéo các biểu tượng vào ô trả lời để hoàn thành quy luật</p>
+                            <div id="drop-zone" class="drop-zone"></div>
+                            <div class="choices">
+                                <div class="token" draggable="true">🐱</div>
+                                <div class="token" draggable="true">🐶</div>
+                            </div>
+                            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
+                                <button class="reset-btn" onclick="resetAnswer()">Xóa đáp án</button>
+                                <button class="check-btn" onclick="checkDragAnswer()">Kiểm tra</button>
+                            </div>
+                            <p id="logic-result" class="logic-result"></p>
+                        `
+                        break
+                    case 9: // 第五题逻辑题 - 句子结构
+                        html=`
+                            <div class="rule-box">
+                                <p>wo ai mao = 👤 ❤️ 🐱</p>
+                                <p>ni ai mao = 🙂 ❤️ 🐱</p>
+                            </div>
+                            <h3>Suy luận</h3>
+                            <p class="question">Vậy: wo ai gou → ?</p>
+                            <p class="drag-hint">Kéo các biểu tượng vào ô trả lời để hoàn thành quy luật</p>
+                            <div id="drop-zone" class="drop-zone"></div>
+                            <div class="choices">
+                                <div class="token" draggable="true">👤</div>
+                                <div class="token" draggable="true">🙂</div>
+                                <div class="token" draggable="true">❤️</div>
+                                <div class="token" draggable="true">🐱</div>
+                                <div class="token" draggable="true">🐶</div>
+                            </div>
+                            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
+                                <button class="reset-btn" onclick="resetAnswer()">Xóa đáp án</button>
+                                <button class="check-btn" onclick="checkDragAnswer()">Kiểm tra</button>
+                            </div>
+                            <p id="logic-result" class="logic-result"></p>
+                        `
+                        break
+                }
+            } else {
+                // 生成普通选择题界面
+                q.options.forEach((o,i)=>{
+                    html+=`<button class="option" onclick="answer(${i})"><font size=4>${o}</font></button>`
+                })
+            }
+            
+            document.getElementById("options").innerHTML=html
+            
+            if(q.audio && q.type !== "logic"){
+                document.getElementById("audioBtn").style.display="inline-block"
+            }else{
+                document.getElementById("audioBtn").style.display="none"
+            }
+            
+            // 初始化拖拽功能
+            if(q.type === "logic"){
+                initDragAndDrop()
+            }
+        }
+        
+        let draggedAnswer=[]
+        
+        // 点击功能初始化
+        function initDragAndDrop(){
+            const tokens=document.querySelectorAll(".token")
+            const dropZone=document.getElementById("drop-zone")
+            const result=document.getElementById("logic-result")
+            
+            // 清空之前的答案
+            dropZone.innerHTML = ""
+            draggedAnswer = []
+            result.textContent = ""
+            
+            tokens.forEach(token=>{
+                // 移除拖拽相关事件
+                token.removeAttribute("draggable")
+                
+                // 添加点击事件
+                token.addEventListener("click",()=>{
+                    const emoji=token.textContent
+                    
+                    const span=document.createElement("span")
+                    span.textContent=emoji
+                    span.className="dropped"
+                    span.style.animation = "pulse 0.3s ease"
+                    
+                    // 添加点击删除功能
+                    span.onclick=()=>{
+                        span.remove()
+                        const index=draggedAnswer.indexOf(emoji)
+                        if(index>-1) draggedAnswer.splice(index,1)
+                    }
+                    
+                    dropZone.appendChild(span)
+                    draggedAnswer.push(emoji)
+                })
+            })
+        }
+        
+        // 清空答案
+        function resetAnswer(){
+            const dropZone=document.getElementById("drop-zone")
+            dropZone.innerHTML=""
+            draggedAnswer=[]
+        }
+        
+        // 检查拖拽答案
+        function checkDragAnswer(){
+            const dropZone=document.getElementById("drop-zone")
+            const result=document.getElementById("logic-result")
+            
+            // 根据当前题目判断正确答案
+            let correctAnswer = ""
+            switch(current){
+                case 5: // 第一题逻辑题
+                    correctAnswer = "🐶 🐶"
+                    break
+                case 6: // 第二题逻辑题
+                    correctAnswer = "🐶 🐱"
+                    break
+                case 7: // 第三题逻辑题
+                    correctAnswer = "🔴 🐶"
+                    break
+                case 8: // 第四题逻辑题
+                    correctAnswer = "🐶 🐶"
+                    break
+                case 9: // 第五题逻辑题
+                    correctAnswer = "👤 ❤️ 🐶"
+                    break
+            }
+            
+            // 使用draggedAnswer数组构建答案字符串，添加空格分隔
+            const userAnswer = draggedAnswer.join(" ")
+            
+            if(userAnswer===correctAnswer){
+                result.textContent="Chính xác!"
+                result.className="correct"
+                score+=10
+                
+                // 添加成功动画
+                dropZone.style.borderColor = "#10b981"
+                dropZone.style.backgroundColor = "rgba(16, 185, 129, 0.1)"
+                
+                // 延迟进入下一题
+                setTimeout(() => {
+                    current++
+                    if(current<questions.length){
+                        // 添加关卡过渡动画
+                        const gameCard=document.getElementById("game")
+                        gameCard.classList.add("level-transition")
+                        
+                        setTimeout(() => {
+                            load()
+                            gameCard.classList.remove("level-transition")
+                        }, 300)
+                    }else{
+                        finish()
+                    }
+                }, 1000)
+            }else{
+                // 只第一题必须通过正确答案，后面的题目直接提交
+                if(current === 5){
+                    result.textContent="Thử lại nhé!"
+                    result.className="wrong"
+                    
+                    // 添加错误动画
+                    dropZone.style.borderColor = "var(--accent-color)"
+                    dropZone.style.backgroundColor = "rgba(255, 138, 74, 0.1)"
+                    dropZone.style.animation = "shake 0.5s ease"
+                    
+                    setTimeout(() => {
+                        dropZone.style.borderColor = "#cbd5e1"
+                        dropZone.style.backgroundColor = "rgba(248, 250, 252, 0.8)"
+                        dropZone.style.animation = ""
+                    }, 500)
+                }else{
+                    // 后面的题目直接进入下一题
+                    result.textContent="Đã提交答案!"
+                    result.className="correct"
+                    
+                    // 延迟进入下一题
+                    setTimeout(() => {
+                        current++
+                        if(current<questions.length){
+                            // 添加关卡过渡动画
+                            const gameCard=document.getElementById("game")
+                            gameCard.classList.add("level-transition")
+                            
+                            setTimeout(() => {
+                                load()
+                                gameCard.classList.remove("level-transition")
+                            }, 300)
+                        }else{
+                            finish()
+                        }
+                    }, 1000)
+                }
+            }
+        }
+        
+        function playAudio(){
+            let q=questions[current]
+            let utter=new SpeechSynthesisUtterance(q.audio)
+            utter.lang="zh-CN"
+            speechSynthesis.speak(utter)
+        }
+        
+        function answer(i){
+            if(i===questions[current].answer){
+                score+=10
+            }
+            current++
+            if(current<questions.length){
+                load()
+            }else{
+                finish()
+            }
+        }
+        
+        // 计算击败百分比
+        function calculateBeatPercent(score){
+            // 极低分情况
+            if(score < 20){
+                return Math.floor(40 + Math.random()*40)
+            }
+            
+            // 正常激励区间
+            let percent = 85 + (score/100)*13
+            
+            // 随机浮动
+            percent += Math.random()*2
+            
+            if(percent > 98){
+                percent = 98
+            }
+            
+            return Math.round(percent)
+        }
+        
+        // 天赋等级评定
+        function getTalentLevel(score){
+            if(score < 20)
+                return "Kết quả chưa ổn định"
+            
+            if(score < 60)
+                return "Bạn có khả năng học ngoại ngữ khá tốt"
+            
+            if(score < 80)
+                return "Bạn có trực giác ngôn ngữ tốt"
+            
+            return "Bạn có năng khiếu học tiếng Trung rất mạnh"
+        }
+        
+        // 语言天赋动物人格
+        function getLanguageAnimal(score){
+            if(score < 40){
+                return {
+                    animal:"🐯",
+                    name:"Hổ kiên trì",
+                    desc:"Bạn học tốt khi luyện tập đều đặn."
+                }
+            }
+            
+            if(score < 70){
+                return {
+                    animal:"🐬",
+                    name:"Cá heo giao tiếp",
+                    desc:"Bạn có trực giác giao tiếp khá tốt."
+                }
+            }
+            
+            if(score < 85){
+                return {
+                    animal:"🦉",
+                    name:"Cú phân tích",
+                    desc:"Bạn học ngôn ngữ bằng khả năng phân tích."
+                }
+            }
+            
+            return {
+                animal:"🦜",
+                name:"Vẹt ngôn ngữ",
+                desc:"Bạn có năng khiếu bắt chước âm thanh rất mạnh."
+            }
+        }
+        
+        // 重新测试
+        function restartTest(){
+            location.reload()
+        }
+        
+        // 显示结果
+        function showResult(score){
+            const beatPercent = calculateBeatPercent(score)
+            const level = getTalentLevel(score)
+            const animal = getLanguageAnimal(score)
+            const resultBox = document.getElementById("score")
+            
+            // 极低分提示
+            if(score < 20){
+                resultBox.innerHTML = `
+                    <h2>${score}/100</h2>
+                    <p>Kết quả chưa phản ánh chính xác khả năng của bạn.</p>
+                    <p>Hãy thử làm lại bài test nhé!</p>
+                    <button onclick="restartTest()">Làm lại bài test</button>
+                `
+                return
+            }
+            
+            // 正常结果
+            resultBox.innerHTML = `
+                <h2>${score}/100</h2>
+                <p>
+                    Bạn có năng khiếu học tiếng Trung
+                    hơn <b>${beatPercent}%</b> người khác
+                </p>
+                <div class="animal-card">
+                    <div class="animal-icon">${animal.animal}</div>
+                    <h3>${animal.name}</h3>
+                    <p>${animal.desc}</p>
+                </div>
+            `
+            
+            updatePoster(score, beatPercent, animal)
+        }
+        
+        // 更新竖版海报数据
+        function updatePoster(score, beatPercent, animal){
+            document.getElementById("posterScore").innerText = score + "/100"
+            document.getElementById("posterPercent").innerText = `Bạn vượt qua ${beatPercent}% người khác`
+            document.getElementById("posterAnimal").innerText = animal.animal + " " + animal.name
+            document.getElementById("posterDesc").innerText = animal.desc
+        }
+        
+        // 生成竖版分享图
+        function downloadPoster(){
+            html2canvas(document.getElementById("sharePoster"), {
+                scale: 3
+            }).then(canvas => {
+                const link = document.createElement("a")
+                link.download = "ket-qua-test-tieng-trung.png"
+                link.href = canvas.toDataURL()
+                link.click()
+            })
+        }
+        
+        function finish(){
+            document.getElementById("game").style.display="none"
+            document.getElementById("result").style.display="block"
+            
+            // 使用新的结果显示函数
+            showResult(score)
+            
+            let text=""
+            if(score>80){
+                text="Bạn có năng khiếu học tiếng Trung rất cao."
+            }
+            else if(score>60){
+                text="Bạn khá phù hợp để học tiếng Trung."
+            }
+            else{
+                text="Bạn có thể học nhưng cần luyện tập."
+            }
+            document.getElementById("analysis").innerText=text
+        }
+        
+        function generateImage(){
+            const button = document.querySelector('#result .btn');
+            button.innerHTML = '<span class="loading"></span> Đang tạo ảnh...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                let canvas=document.getElementById("shareCanvas")
+                let ctx=canvas.getContext("2d")
+                
+                // 绘制渐变背景
+                const gradient = ctx.createLinearGradient(0, 0, 800, 800);
+                gradient.addColorStop(0, '#6b8cff');
+                gradient.addColorStop(1, '#7fe0ff');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0,0,800,800)
+                
+                // 添加装饰元素
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.beginPath();
+                ctx.arc(100, 100, 50, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(700, 700, 80, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(200, 700, 40, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(600, 200, 60, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // 计算天赋百分比、等级和动物人格
+                const talentPercentage = calculateBeatPercent(score);
+                const talentLevel = getTalentLevel(score);
+                const animal = getLanguageAnimal(score);
+                
+                // 绘制文字
+                ctx.fillStyle="white"
+                ctx.font="bold 40px Arial"
+                ctx.textAlign = "center";
+                ctx.fillText("Chỉ số năng khiếu", 400, 130)
+                ctx.fillText("học tiếng Trung", 400, 180)
+                
+                ctx.font="bold 80px Arial"
+                ctx.fillText(score+"/100 điểm", 400, 260)
+                
+                // 绘制天赋排名信息
+                ctx.font="24px Arial"
+                ctx.fillText(`Bạn vượt qua ${talentPercentage}% người khác`, 400, 330)
+                
+                // 绘制动物人格
+                ctx.font="36px Arial"
+                ctx.fillText(`${animal.animal} ${animal.name}`, 400, 380)
+                
+                // 绘制结果文本
+                let resultText = "";
+                if(score>80){
+                    resultText="Bạn có năng khiếu học tiếng Trung rất cao.";
+                }
+                else if(score>60){
+                    resultText="Bạn khá phù hợp để học tiếng Trung.";
+                }
+                else{
+                    resultText="Bạn có thể học nhưng cần luyện tập.";
+                }
+                ctx.font="24px Arial"
+                ctx.fillText(resultText, 400, 460)
+                
+                // 添加底部文本
+                ctx.font="20px Arial"
+                ctx.fillText("90% người làm bài test này không ngờ kết quả của mình", 400, 600)
+                
+                ctx.font="20px Arial"
+                ctx.fillText("Chia sẻ kết quả với bạn bè!", 400, 750)
+                
+                let url=canvas.toDataURL()
+                let link=document.getElementById("download")
+                link.href=url
+                link.download="ket-qua-test.png"
+                link.style.display="inline-block"
+                link.innerText="Tải ảnh chia sẻ"
+                
+                // 恢复按钮状态
+                button.innerHTML = "📸 Tạo ảnh chia sẻ";
+                button.disabled = false;
+            }, 1000);
+        }
+        
+        // 添加页面加载动画
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+        
+        // 添加键盘支持
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const startButton = document.querySelector('#start .btn');
+                if (startButton && startButton.style.display !== 'none') {
+                    startButton.click();
+                }
+            }
+        });
+    </script>
 </body>
 </html>
