@@ -952,68 +952,125 @@
         }
         
         /* 竖版分享海报 */
+        .poster-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+        }
+        
+        /* 主海报 */
         .poster-vertical {
             width: 360px;
-            height: 640px;
-            padding: 40px;
-            border-radius: 30px;
-            background: linear-gradient(160deg, #4f7cff, #7c9cff);
+            max-width: 92vw;
+            aspect-ratio: 9/16;
+            padding: 36px;
+            border-radius: 34px;
+            background: 
+                radial-gradient(circle at 50% 30%, #ffffff22, transparent 60%),
+                linear-gradient(160deg, #4f7cff, #7c9cff);
             color: white;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             text-align: center;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
-            margin: 0 auto 20px;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.35);
+            margin: 0 auto;
+            overflow: hidden;
         }
         
-        .poster-vertical h2 {
-            font-size: 28px;
-            margin: 0;
+        /* 顶部 */
+        .poster-question {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 6px;
         }
-        
-        .poster-score {
-            font-size: 64px;
-            font-weight: bold;
-        }
-        
-        .poster-percent {
+        .poster-top h2 {
             font-size: 20px;
         }
         
-        .poster-animal {
-            font-size: 36px;
-            font-weight: bold;
+        /* 成绩光圈 */
+        .score-glow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .score-glow::before {
+            content: "";
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: 
+                radial-gradient(circle, #ffffff40, transparent 70%);
+            filter: blur(8px);
         }
         
-        .poster-desc {
+        /* 成绩数字 */
+        .poster-score {
+            font-size: 64px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* 排名 */
+        .poster-percent {
             font-size: 18px;
+            margin-top: 10px;
         }
         
+        /* 动物人格 */
+        .poster-animal-box {
+            margin-top: 20px;
+        }
+        .poster-animal {
+            font-size: 46px;
+        }
+        .poster-animal-box h3 {
+            margin: 8px 0;
+            font-size: 20px;
+        }
+        .poster-animal-box p {
+            font-size: 15px;
+            opacity: 0.95;
+        }
+        
+        /* 底部 */
         .poster-bottom {
             font-size: 14px;
             opacity: 0.9;
         }
-        
         .poster-cta {
-            margin-top: 10px;
+            margin-top: 8px;
             font-weight: bold;
         }
         
+        /* 分享按钮 */
         .share-btn {
             margin-top: 20px;
             background: #111;
             color: white;
             border: none;
-            padding: 14px 22px;
-            border-radius: 12px;
+            padding: 14px 24px;
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
         
-        .share-btn:hover {
-            background: #333;
-            transform: translateY(-2px);
+        /* 手机优化 */
+        @media (max-width: 480px) {
+            .poster-score {
+                font-size: 52px;
+            }
+            .poster-animal {
+                font-size: 40px;
+            }
+            .poster-vertical {
+                padding: 28px;
+            }
         }
     </style>
 </head>
@@ -1064,30 +1121,46 @@
             <br>
             
             <!-- 竖版分享海报 -->
-            <div id="sharePoster" class="poster-vertical">
-                <div class="poster-top">
-                    <h2>Chỉ số năng khiếu học tiếng Trung</h2>
-                </div>
-                <div class="poster-score" id="posterScore">
-                    86/100
-                </div>
-                <div class="poster-percent" id="posterPercent">
-                    Bạn vượt qua 92% người khác
-                </div>
-                <div class="poster-animal" id="posterAnimal">
-                    🦜 Vẹt ngôn ngữ
-                </div>
-                <p class="poster-desc" id="posterDesc">
-                    Bạn có năng khiếu bắt chước âm thanh rất mạnh
-                </p>
-                <div class="poster-bottom">
-                    <p>
-                        90% người làm bài test này  
-                        không ngờ kết quả của mình
-                    </p>
-                    <p class="poster-cta">
-                        Thử bài test này!
-                    </p>
+            <div class="poster-wrapper">
+                <div id="sharePoster" class="poster-vertical">
+                    <div class="poster-top">
+                        <p class="poster-question">
+                            Bạn có năng khiếu học tiếng Trung không?
+                        </p>
+                        <h2>Chỉ số năng khiếu</h2>
+                    </div>
+                    
+                    <div class="score-glow">
+                        <div id="posterScore" class="poster-score">
+                            86/100
+                        </div>
+                    </div>
+                    
+                    <div id="posterPercent" class="poster-percent">
+                        Bạn vượt qua 92% người khác
+                    </div>
+                    
+                    <div class="poster-animal-box">
+                        <div id="posterAnimal" class="poster-animal">
+                            🦜
+                        </div>
+                        <h3 id="posterAnimalName">
+                            Vẹt ngôn ngữ
+                        </h3>
+                        <p id="posterDesc">
+                            Bạn có năng khiếu bắt chước âm thanh rất mạnh
+                        </p>
+                    </div>
+                    
+                    <div class="poster-bottom">
+                        <p>
+                            90% người làm bài test này  
+                            không ngờ kết quả của mình
+                        </p>
+                        <p class="poster-cta">
+                            Thử bài test này!
+                        </p>
+                    </div>
                 </div>
             </div>
             
@@ -1272,35 +1345,40 @@
             {audio:"qing",question:"Âm nào đúng?",options:["qing","qin","jin","jing"],answer:0},
             {audio:"chang",question:"Âm nào giống?",options:["can","chang","zang","chan"],answer:1},
             
-            {type:"logic",question:`已知：
+            {type:"logic",question:`Biết rằng:
+
 mao = 🐱
 gou = 🐶
 
 mao mao = 🐱🐱
 
-gou gou = ?`,options:["🐶","🐶🐶","🐱🐶"],answer:1},
-            {type:"logic",question:`已知：
+gou gou = ?`,options:["🐶🐶","🐱🐶","🐶🐱","🐱🐱"],answer:0},
+            {type:"logic",question:`Biết rằng:
+
 mao = 🐱
 gou = 🐶
 
 mao gou = 🐱🐶
 
-gou mao = ?`,options:["🐶🐱","🐱🐶","🐱🐱"],answer:0},
-            {type:"logic",question:`已知：
+gou mao = ?`,options:["🐶🐱","🐱🐱","🐶🐶","🐱🐶"],answer:0},
+            {type:"logic",question:`Biết rằng:
+
 hong mao = 🔴🐱
 lan mao = 🔵🐱
 
-hong gou = ?`,options:["🔴🐶","🐶🔴","🔵🐶"],answer:0},
-            {type:"logic",question:`已知：
+hong gou = ?`,options:["🔴🐶","🔵🐶","🐶🔴","🐱🔴"],answer:0},
+            {type:"logic",question:`Biết rằng:
+
 yi mao = 🐱
 er mao = 🐱🐱
 
-er gou = ?`,options:["🐶","🐶🐶","🐶🐶🐶"],answer:1},
-            {type:"logic",question:`已知：
+er gou = ?`,options:["🐶🐶","🐱🐶","🐶🐱","🐶"],answer:0},
+            {type:"logic",question:`Biết rằng:
+
 wo ai mao = 👤 ❤️ 🐱
 ni ai mao = 🙂 ❤️ 🐱
 
-wo ai gou = ?`,options:["👤 ❤️ 🐶","🐶 ❤️ 👤","👤 🐶 ❤️"],answer:0}
+wo ai gou = ?`,options:["👤 ❤️ 🐶","🙂 ❤️ 🐶","🐶 ❤️ 👤","👤 🐶 ❤️"],answer:0}
         ];
         
         let current=0
@@ -1579,7 +1657,7 @@ wo ai gou = ?`,options:["👤 ❤️ 🐶","🐶 ❤️ 👤","👤 🐶 ❤️"
                     }, 500)
                 }else{
                     // 后面的题目直接进入下一题
-                    result.textContent="Đã提交答案!"
+                    result.textContent="Đã gửi câu trả lời!"
                     result.className="correct"
                     
                     // 延迟进入下一题
@@ -1728,24 +1806,73 @@ wo ai gou = ?`,options:["👤 ❤️ 🐶","🐶 ❤️ 👤","👤 🐶 ❤️"
             updatePoster(score, beatPercent, animal)
         }
         
+        // 数字动画（TikTok常见效果）
+        function animateScore(score){
+            let current = 0
+            const el = document.getElementById("posterScore")
+            const timer = setInterval(()=>{
+                current += 2
+                if(current >= score){
+                    current = score
+                    clearInterval(timer)
+                }
+                el.innerText = current + "/100"
+            }, 20)
+        }
+        
         // 更新竖版海报数据
         function updatePoster(score, beatPercent, animal){
-            document.getElementById("posterScore").innerText = score + "/100"
+            animateScore(score)
             document.getElementById("posterPercent").innerText = `Bạn vượt qua ${beatPercent}% người khác`
-            document.getElementById("posterAnimal").innerText = animal.animal + " " + animal.name
+            document.getElementById("posterAnimal").innerText = animal.animal
+            document.getElementById("posterAnimalName").innerText = animal.name
             document.getElementById("posterDesc").innerText = animal.desc
         }
         
         // 生成竖版分享图
         function downloadPoster(){
-            html2canvas(document.getElementById("sharePoster"), {
-                scale: 3
+            const poster = document.getElementById("sharePoster")
+            html2canvas(poster, {
+                scale: 3,
+                useCORS: true
             }).then(canvas => {
-                const link = document.createElement("a")
-                link.download = "ket-qua-test-tieng-trung.png"
-                link.href = canvas.toDataURL()
-                link.click()
+                const dataURL = canvas.toDataURL("image/png")
+                
+                // 检测是否为移动设备
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+                
+                if (isMobile) {
+                    // 移动设备处理
+                    if (navigator.share) {
+                        // 使用 Web Share API（现代移动浏览器）
+                        canvas.toBlob(blob => {
+                            const file = new File([blob], "ket-qua-test-tieng-trung.png", { type: "image/png" })
+                            navigator.share({
+                                title: "Kết quả test năng khiếu học tiếng Trung",
+                                text: "Xem kết quả test năng khiếu học tiếng Trung của tôi!",
+                                files: [file]
+                            }).catch(err => {
+                                // 如果 Web Share API 不可用或失败，回退到传统下载
+                                downloadImage(dataURL)
+                            })
+                        }, "image/png")
+                    } else {
+                        // 回退到传统下载
+                        downloadImage(dataURL)
+                    }
+                } else {
+                    // 桌面设备处理
+                    downloadImage(dataURL)
+                }
             })
+        }
+        
+        // 下载图片的辅助函数
+        function downloadImage(dataURL){
+            const link = document.createElement("a")
+            link.download = "ket-qua-test-tieng-trung.png"
+            link.href = dataURL
+            link.click()
         }
         
         function finish(){
