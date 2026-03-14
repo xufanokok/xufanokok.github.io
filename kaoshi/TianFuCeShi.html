@@ -1759,9 +1759,8 @@ wo ai gou = ?`,options:["👤 ❤️ 🐶","🙂 ❤️ 🐶","🐶 ❤️ 👤"
         
         function playAudio(){
             let q=questions[current]
-            let utter=new SpeechSynthesisUtterance(q.audio)
-            utter.lang="zh-CN"
-            speechSynthesis.speak(utter)
+            let audio = new Audio(`https://xufanhsk.github.io/kaoshi/audio/${q.audio}.m4a`)
+            audio.play()
         }
         
         function answer(i){
