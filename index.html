@@ -1011,6 +1011,7 @@ body {
         </div>
         <div id="player-container" style="display: none;">
           <div class="player-controls">
+            <button id="replay-btn" onclick="replayAudio()">🔄</button>
             <button id="prev-btn" onclick="skipTime(-5)">⏪</button>
             <button id="play-pause-btn" onclick="togglePlayPause()">⏸</button>
             <button id="next-btn" onclick="skipTime(5)">⏩</button>
@@ -1314,6 +1315,17 @@ function togglePlayPause() {
 function skipTime(seconds) {
   if (audio) {
     audio.currentTime = Math.max(0, Math.min(audio.currentTime + seconds, audio.duration));
+    updateProgress();
+  }
+}
+
+// 重播音频
+function replayAudio() {
+  if (audio) {
+    audio.currentTime = 0;
+    audio.play();
+    isPlaying = true;
+    document.getElementById('play-pause-btn').textContent = '⏸';
     updateProgress();
   }
 }

@@ -726,7 +726,22 @@ body {
     <div class="section-card">
       <h2 class="section-title">Giáo Trình HSK</h2>
       <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 30px;">
-        <a href="#" class="hero-btn">听听老师说什么</a>
+        <button class="hero-btn" id="play-btn" onclick="toggleAudio()">▶ Nghe thử thầy nói gì nhé</button>
+        <div id="player-container" style="display: none; width: 100%; max-width: 400px; margin: 0 auto;">
+          <div class="player-controls" style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+            <button id="replay-btn" onclick="replayAudio()" style="background: var(--primary); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 16px; cursor: pointer; margin: 0 10px;">🔄</button>
+            <button id="prev-btn" onclick="skipTime(-5)" style="background: var(--primary); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 16px; cursor: pointer; margin: 0 10px;">⏪</button>
+            <button id="play-pause-btn" onclick="togglePlayPause()" style="background: var(--primary); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 16px; cursor: pointer; margin: 0 10px;">⏸</button>
+            <button id="next-btn" onclick="skipTime(5)" style="background: var(--primary); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 16px; cursor: pointer; margin: 0 10px;">⏩</button>
+          </div>
+          <div class="progress-container" style="width: 100%;">
+            <div class="progress-bar" id="progress-bar" style="width: 0%; height: 4px; background: var(--primary); border-radius: 2px; margin-bottom: 5px;"></div>
+            <div class="time-display" style="font-size: 12px; color: var(--text-gray); text-align: center;">
+              <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+            </div>
+          </div>
+        </div>
+        <div class="audio-subtitle" id="audioSub" style="display: none; text-align: center; min-height: 80px; display: flex; align-items: center; justify-content: center; margin-top: 20px; font-size: 15px; color: var(--text-gray); line-height: 1.8;"></div>
       </div>
       <div class="section-content">
         <!-- 在这里添加页面内容 -->
@@ -999,6 +1014,141 @@ if (jumpBtn) {
 // 为移动端主页按钮添加事件监听
 const mobileHomeBtn = document.getElementById('mobileHomeBtn');
 mobileHomeBtn.addEventListener('click', handleHomeClick);
+
+// 音频播放功能
+let audio = null;
+let isPlaying = false;
+
+function toggleAudio() {
+  // 创建音频对象
+  audio = new Audio('https://xufanhsk.github.io/au/xiazai.MP3');
+  
+  // 添加错误处理
+  audio.onerror = function(e) {
+    console.error('音频加载错误:', e);
+    alert('音频加载失败，请检查网络连接或文件路径');
+  };
+  
+  // 显示/隐藏元素
+  document.getElementById('play-btn').style.display = 'none';
+  document.getElementById('player-container').style.display = 'block';
+  const audioSub = document.getElementById('audioSub');
+  audioSub.style.display = 'flex';
+  
+  // 字幕数据
+  const subtitles = [
+    {start: 1.200, end: 2.633, text: 'Zuòwéi yī míng Zhōngguó rén<br>作为一名中国人<br>Là một người Trung Quốc'},
+    {start: 2.700, end: 4.333, text: 'Yě shì yī míng Hànyǔ lǎoshī<br>也是一名汉语老师<br>đồng thời cũng là một giáo viên tiếng Trung'},
+    {start: 4.500, end: 6.133, text: 'Wǒ fēicháng gāoxìng de kàndào<br>我非常高兴地看到<br>Tôi rất vui khi thấy'},
+    {start: 6.133, end: 7.833, text: 'Yuèláiyuè duō de wàiguó rén<br>越来越多的外国人<br>ngày càng nhiều người nước ngoài'},
+    {start: 7.866, end: 10.300, text: 'Duì Zhōngguó wénhuà chǎnshēng xìngqù<br>对中国文化产生兴趣<br>bắt đầu quan tâm đến văn hóa Trung Quốc'},
+    {start: 10.533, end: 14.533, text: 'Yě hěn lèyì yǔ dàjiā fēnxiǎng Zhōngguó yǔyán yǔ wénhuà<br>也很乐意与大家分享中国语言与文化<br>và tôi cũng rất sẵn lòng chia sẻ ngôn ngữ và văn hóa Trung Quốc với mọi người'},
+    {start: 15.000, end: 18.333, text: 'Zài zhèlǐ wǒ wèi nàxiē duì Hànyǔ gǎn xìngqù<br>在这里我为那些对汉语感兴趣<br>Ở đây tôi muốn dành cho những bạn quan tâm đến tiếng Trung'},
+    {start: 18.333, end: 22.666, text: 'Dàn yīnwèi gèzhǒng yuányīn zànshí zhǐ néng zìxué de péngyǒu<br>但因为各种原因暂时只能自学的朋友<br>nhưng vì nhiều lý do khác nhau nên tạm thời chỉ có thể tự học'},
+    {start: 22.733, end: 25.433, text: 'Zhěnglǐ le yīxiē miǎnfèi de xuéxí zīliào<br>整理了一些免费的学习资料<br>tôi đã tổng hợp một số tài liệu học miễn phí'},
+    {start: 26.000, end: 30.100, text: 'Zhèxiē zīliào bāohán 《HSK Biāozhǔn Jiàochéng》<br>这些资料包含《HSK标准教程》<br>Những tài liệu này bao gồm bộ giáo trình HSK Standard Course'},
+    {start: 30.100, end: 33.500, text: 'Kèběn, liànxí cè, Hànzì zìtiē<br>课本、练习册、汉字字帖<br>sách giáo khoa, sách bài tập và tập luyện viết chữ Hán'},
+    {start: 33.833, end: 36.800, text: 'HSK mónǐ kǎoshì tíkù<br>HSK模拟考试题库<br>ngân hàng đề thi thử HSK'},
+    {start: 36.800, end: 39.433, text: 'Yǐjí pèitào de yīnpín wénjiàn<br>以及配套的音频文件<br>cùng với các file âm thanh đi kèm'},
+    {start: 39.866, end: 42.100, text: 'Nǐ zhǐ xūyào zhǎodào duìyìng de liànjiē<br>你只需要找到对应的链接<br>Bạn chỉ cần tìm đúng đường link tương ứng'},
+    {start: 42.100, end: 45.666, text: 'Diǎnjī jí kě miǎnfèi xiàzǎi bìng kāishǐ xuéxí<br>点击即可免费下载并开始学习<br>nhấn vào là có thể tải miễn phí và bắt đầu học'},
+    {start: 46.000, end: 48.733, text: 'Rúguǒ zài zìxué de guòchéng zhōng yù dào kùnnán<br>如果在自学的过程中遇到困难<br>Nếu trong quá trình tự học bạn gặp khó khăn'},
+    {start: 48.900, end: 53.033, text: 'Huòzhě xiǎng yào chángshì hé Zhōngguó rén liànxí Hànyǔ jiāoliú<br>或者想要尝试和中国人练习汉语交流<br>hoặc muốn thử luyện nói tiếng Trung với người Trung Quốc'},
+    {start: 53.266, end: 55.500, text: 'Yě huānyíng suíshí liánxì wǒ<br>也欢迎随时联系我<br>bạn cũng có thể liên hệ với tôi bất cứ lúc nào'},
+    {start: 55.833, end: 58.833, text: 'Nǐ kěyǐ diǎnjī yèmiàn zhōng de fúdòng tóuxiàng<br>你可以点击页面中的浮动头像<br>Bạn có thể nhấn vào avatar nổi trên trang'},
+    {start: 58.866, end: 62.233, text: 'Huòzhě tōngguò Zalo yǔ wǒ qǔdé liánxì<br>或者通过Zalo与我取得联系<br>hoặc liên hệ với tôi qua Zalo'},
+    {start: 62.700, end: 65.000, text: 'Xīwàng zhèxiē zīliào nénggòu bāngzhù nǐ<br>希望这些资料能够帮助你<br>Hy vọng những tài liệu này có thể giúp bạn'},
+    {start: 65.000, end: 67.666, text: 'Gèng qīngsōng de kāishǐ xuéxí Hànyǔ<br>更轻松地开始学习汉语<br>bắt đầu học tiếng Trung một cách dễ dàng hơn'},
+    {start: 68.333, end: 72.266, text: 'Yě zhù nǐ zài xuéxí Hànyǔ de dàolù shàng bùduàn jìnbù<br>也祝你在学习汉语的道路上不断进步<br>và chúc bạn không ngừng tiến bộ trên con đường học tiếng Trung'}
+  ];
+  
+  // 初始化字幕显示
+  audioSub.innerHTML = '';
+  
+  // 监听音频播放时间更新
+  audio.addEventListener('timeupdate', function() {
+    const currentTime = audio.currentTime;
+    let currentSubtitle = null;
+    
+    // 找到当前时间对应的字幕
+    for (let i = 0; i < subtitles.length; i++) {
+      if (currentTime >= subtitles[i].start && currentTime <= subtitles[i].end) {
+        currentSubtitle = subtitles[i];
+        break;
+      }
+    }
+    
+    // 更新字幕显示
+    if (currentSubtitle) {
+      audioSub.innerHTML = currentSubtitle.text;
+    } else {
+      // 如果没有对应的字幕，显示空
+      audioSub.innerHTML = '';
+    }
+    
+    // 更新进度条
+    updateProgress();
+  });
+  
+  // 监听音频加载完成
+  audio.addEventListener('loadedmetadata', function() {
+    document.getElementById('duration').textContent = formatTime(audio.duration);
+  });
+  
+  // 播放音频
+  audio.play();
+  isPlaying = true;
+  document.getElementById('play-pause-btn').textContent = '⏸';
+}
+
+// 播放/暂停切换
+function togglePlayPause() {
+  if (audio) {
+    if (isPlaying) {
+      audio.pause();
+      document.getElementById('play-pause-btn').textContent = '▶';
+    } else {
+      audio.play();
+      document.getElementById('play-pause-btn').textContent = '⏸';
+    }
+    isPlaying = !isPlaying;
+  }
+}
+
+// 跳转到指定时间
+function skipTime(seconds) {
+  if (audio) {
+    audio.currentTime = Math.max(0, Math.min(audio.currentTime + seconds, audio.duration));
+    updateProgress();
+  }
+}
+
+// 重播音频
+function replayAudio() {
+  if (audio) {
+    audio.currentTime = 0;
+    audio.play();
+    isPlaying = true;
+    document.getElementById('play-pause-btn').textContent = '⏸';
+    updateProgress();
+  }
+}
+
+// 更新进度条
+function updateProgress() {
+  if (audio && audio.duration) {
+    const progress = (audio.currentTime / audio.duration) * 100;
+    document.getElementById('progress-bar').style.width = progress + '%';
+    document.getElementById('current-time').textContent = formatTime(audio.currentTime);
+  }
+}
+
+// 格式化时间
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
 </script>
 <a class="zalo-float" href="zalo://conversation?phone=8613377970080" onclick="setTimeout(function(){ window.location='https://zalo.me/8613377970080'; },600);" aria-label="Chat Zalo">
   <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" width="28">
