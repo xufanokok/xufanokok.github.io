@@ -1,9 +1,49 @@
 <!DOCTYPE html>
+<!--
+    模板母版使用说明
+    1. 复制本文件后，优先修改：课次编号、课程标题、教师名称。
+    2. 主体内容建议按板块逐段替换，不要随意删除现有 id，便于导航与后续功能复用。
+    3. 如需新增知识点，优先使用工具栏中的“新增知识点”按钮，保持统一样式。
+    4. 如需制作新课程，建议保留当前工具栏、导航、字幕捕捉、批注系统，主要替换正文教学内容。
+    5. 如需让 AI 继续基于此母版制作页面，可直接引用下方板块名称与 id。
+    6. 最高权限备注：下方“母版唤醒提示表”与相关模板说明属于母版核心备注，任何时候都不要删除或覆盖。
+    7. 如需修改这段母版提示表，必须先得到用户连续 2 次明确确认。
+    8. 如需删除这段母版提示表，必须先得到用户连续 3 次明确确认。
+    9. AI 工具执行任务时，默认应优先保留本段备注、板块对照、脚本说明与提示表。
+
+    母版唤醒提示表
+    1. 课程首页 sheetTop
+       提示词：基于当前母版，修改课程首页为第 X 课，标题改为《XXX》，教师改为 XXX，保留现有工具栏和版式。
+    2. 学习目标总表 learningGoals
+       提示词：替换学习目标总表内容，按重点句型、语音、汉字、功能四行重写，保持表格结构不变。
+    3. 复习板块 reviewSection
+       提示词：重写复习板块内容，适配《XXX》这节课，保留当前卡片样式。
+    4. 热身板块 warmupSection
+       提示词：生成 3 条热身活动，适合《XXX》课程，保留当前热身板块结构。
+    5. 生词板块 vocabSection
+       提示词：将生词板块改成《XXX》课程的核心词汇，保持当前网格样式。
+    6. 生词练习板块 vocabPracticeSection
+       提示词：为《XXX》课程生成 2 个生词练习，保留当前练习盒子样式。
+    7. 课文板块 textSection
+       提示词：把课文板块替换成《XXX》课程的对话或短文，保留当前排版。
+    8. 语法板块 grammarSection
+       提示词：重写语法板块，解释《XXX》课程的核心语法点，保持当前简洁卡片样式。
+    9. 语法练习板块 grammarPracticeSection
+       提示词：生成 2 个语法练习，适配《XXX》课程，保留当前练习区结构。
+    10. 总结及作业板块 summarySection
+        提示词：重写总结及作业板块，适配《XXX》课程，保留当前版式。
+    11. 知识点入口 knowledge-*
+        提示词：在《XXX》课程中为某句重点内容新增知识点入口，并写入说明文本，保持当前知识点样式。
+    12. 区域捕捉字幕窗 capturePanel
+        提示词：保留实时字幕功能，不改现有交互，只优化字幕窗文案或位置。
+    13. 整页生成
+        提示词：请基于本母版制作一节新课《XXX》，保留现有工具栏、导航、批注、知识点、实时字幕功能，只替换课程标题、学习目标和各教学板块内容，并保持当前视觉风格不变。
+-->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>效果 - 创意工具</title>
+    <title>假装老师HSK在线课程</title>
     <style>
         * {
             margin: 0;
@@ -30,42 +70,14 @@
             color: var(--text);
             min-height: 100vh;
             position: relative;
-            cursor: crosshair;
+            cursor: default;
             transition: background 0.3s ease;
             padding: 88px 10px 40px;
             overflow-x: hidden;
         }
 
-        body.pen-scroll-lock {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            overflow: hidden;
-            touch-action: none;
-            overscroll-behavior: none;
-        }
-
-        html.pen-scroll-lock {
-            overflow: hidden;
-            touch-action: none;
-            overscroll-behavior: none;
-        }
-
-        body.ipad-optimized {
-            -webkit-text-size-adjust: 100%;
-        }
-
-        body.ipad-pen-draw-mode,
-        body.ipad-pen-draw-mode .lesson-sheet,
-        body.ipad-pen-draw-mode .info-panel,
-        body.ipad-pen-draw-mode .knowledge-card {
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-        }
-
-        body.ipad-pen-draw-mode .editable-block {
-            caret-color: transparent;
+        body.draw-mode {
+            cursor: none;
         }
 
         .template-stage {
@@ -270,21 +282,26 @@
             left: 0;
             right: 0;
             transform: none;
-            padding: 12px 18px;
-            border-radius: 0 0 22px 22px;
+            padding: 6px 12px;
+            border-radius: 0 0 16px 16px;
             background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(30px) saturate(180%);
+            backdrop-filter: blur(22px) saturate(170%);
             border: 1px solid rgba(255, 255, 255, 0.55);
             box-shadow: 
-                0 8px 30px rgba(0, 0, 0, 0.08),
+                0 6px 20px rgba(0, 0, 0, 0.07),
                 inset 0 1px 0 rgba(255, 255, 255, 0.6);
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
             z-index: 1000;
-            transition: all 0.2s ease;
+            transition: transform 0.22s ease, opacity 0.22s ease, box-shadow 0.2s ease;
             box-sizing: border-box;
+        }
+
+        body.toolbar-collapsed .toolbar {
+            transform: translateY(calc(-100% + 8px));
+            opacity: 0.94;
         }
         
         .toolbar:hover {
@@ -294,135 +311,53 @@
             transform: translateY(0);
         }
         
-        .brand {
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--primary);
-            margin-right: 15px;
-            padding-right: 15px;
-            border-right: 1px solid var(--border);
-        }
-
+        /* 工具栏：课程信息区 */
         .course-title-box {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 0 14px 0 2px;
+            gap: 6px;
+            padding: 0 10px 0 0;
             border-right: 1px solid var(--border);
         }
 
         .course-meta {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
         .course-pill {
-            padding: 5px 10px;
+            padding: 4px 8px;
             border-radius: 999px;
             background: rgba(10, 132, 255, 0.08);
             color: var(--text-secondary);
-            font-size: 12px;
+            font-size: 11px;
             white-space: nowrap;
         }
 
         .course-title-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
             white-space: nowrap;
         }
 
         .course-title-value {
-            min-width: 110px;
-            max-width: 240px;
-            padding: 6px 10px;
+            min-width: 88px;
+            max-width: 156px;
+            padding: 4px 8px;
             border-radius: 999px;
             background: rgba(10, 132, 255, 0.1);
             color: var(--text);
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             outline: none;
         }
 
-        .lock-button.locked {
-            background: rgba(255, 59, 48, 0.14);
-            color: #d92c22;
-        }
-
-        .teaching-mode .toolbar {
-            transform: translateY(-100%);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        body.teaching-mode {
-            padding-top: 18px;
-        }
-
-        .teaching-mode .info-panel,
-        .teaching-mode .layer-panel,
-        .teaching-mode .status-bar {
-            opacity: 0.18;
-            transform: scale(0.96);
-        }
-
-        .teaching-mode .template-stage {
-            max-width: 1460px;
-        }
-
-        .teaching-exit {
-            position: fixed;
-            top: 14px;
-            right: 14px;
-            z-index: 1005;
-            display: none;
-            padding: 10px 14px;
-            border: none;
-            border-radius: 999px;
-            background: rgba(15, 23, 42, 0.72);
-            color: #fff;
-            backdrop-filter: blur(20px);
-            cursor: pointer;
-        }
-
-        .teaching-mode .teaching-exit {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .ipad-optimized .toolbar,
-        .ipad-optimized .status-bar,
-        .ipad-optimized .info-panel,
-        .ipad-optimized .knowledge-card,
-        .ipad-optimized #brushCursor {
-            backdrop-filter: none;
-        }
-
-        .ipad-optimized .toolbar,
-        .ipad-optimized .info-panel,
-        .ipad-optimized .knowledge-card,
-        .ipad-optimized .section-shell,
-        .ipad-optimized .simple-card,
-        .ipad-optimized .practice-box,
-        .ipad-optimized .lesson-sheet {
-            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
-        }
-
-        .ipad-optimized .knowledge-trigger {
-            animation: pulseGlowLite 2.8s ease-in-out infinite;
-            box-shadow: none;
-        }
-
-        .ipad-optimized #brushCursor {
-            display: none;
-        }
-
         .tool-button {
-            width: 32px;
-            height: 32px;
-            border-radius: 10px;
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
             background: transparent;
             border: none;
             cursor: pointer;
@@ -493,9 +428,14 @@
         .tool-group {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 0 15px;
+            gap: 5px;
+            padding: 0 8px;
             border-left: 1px solid var(--border);
+        }
+
+        .tool-group:first-of-type {
+            border-left: none;
+            padding-left: 0;
         }
 
         .toolbar-inner {
@@ -503,31 +443,36 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
+            gap: 8px;
         }
 
         .toolbar-main {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
             min-width: 0;
             flex-wrap: wrap;
         }
 
+        .toolbar-group-label {
+            display: none;
+        }
+
         .nav-wrapper {
-            position: fixed;
-            top: 14px;
-            right: 20px;
+            position: relative;
+            margin-left: auto;
             z-index: 1001;
+            display: flex;
+            align-items: center;
         }
 
         .nav-toggle {
             border: none;
             border-radius: 999px;
-            padding: 8px 14px;
+            padding: 5px 10px;
             background: rgba(10, 132, 255, 0.1);
             color: var(--text);
-            font-size: 13px;
+            font-size: 11px;
             cursor: pointer;
         }
 
@@ -574,27 +519,7 @@
             background: rgba(10, 132, 255, 0.16);
         }
         
-        .tool-label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            white-space: nowrap;
-        }
-        
-        .tool-select {
-            padding: 4px 8px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: var(--surface);
-            color: var(--text);
-            font-size: 12px;
-            outline: none;
-            cursor: pointer;
-        }
-        
-
-        
-
-        
+        /* 工具栏：按钮提示 */
         .tooltip {
             position: absolute;
             bottom: -40px;
@@ -683,40 +608,6 @@
             transform: translateX(-50%) translateY(-5px);
         }
         
-        .drawing {
-            position: absolute;
-            pointer-events: none;
-            z-index: 10;
-        }
-        
-        .intro {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 5;
-            opacity: 0.8;
-            transition: opacity 0.3s ease;
-        }
-        
-        .intro h1 {
-            font-size: 48px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .intro p {
-            font-size: 18px;
-            color: var(--text-secondary);
-            max-width: 400px;
-            line-height: 1.5;
-        }
-        
         .status-bar {
             position: fixed;
             bottom: 20px;
@@ -730,20 +621,14 @@
             color: var(--text-secondary);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             z-index: 999;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.18s ease, transform 0.18s ease;
         }
 
-        .info-panel {
-            position: fixed;
-            left: 20px;
-            top: 104px;
-            z-index: 998;
-            width: min(320px, calc(100vw - 40px));
-            padding: 16px 18px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(24px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.42);
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
+        .status-bar.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .editable-block {
@@ -756,8 +641,6 @@
 
         .lesson-sheet,
         .lesson-sheet *:not(button),
-        .info-panel,
-        .info-panel *:not(button),
         .knowledge-card,
         .knowledge-card *:not(button) {
             user-select: text;
@@ -769,8 +652,7 @@
         .tool-button,
         .nav-button,
         .knowledge-trigger,
-        .knowledge-action,
-        .teaching-exit {
+        .knowledge-action {
             user-select: none;
             -webkit-user-select: none;
             -webkit-touch-callout: none;
@@ -779,6 +661,10 @@
         .editable-block:focus {
             box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.18);
             border-radius: 12px;
+        }
+
+        body.draw-mode .editable-block {
+            cursor: default;
         }
 
         .knowledge-inline {
@@ -810,12 +696,6 @@
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 149, 0, 0.42); }
             70% { transform: scale(1.05); box-shadow: 0 0 0 18px rgba(255, 149, 0, 0); }
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 149, 0, 0); }
-        }
-
-        @keyframes pulseGlowLite {
-            0% { transform: scale(1); opacity: 0.92; }
-            50% { transform: scale(1.04); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.92; }
         }
 
         .knowledge-card {
@@ -898,62 +778,7 @@
             cursor: nwse-resize;
         }
 
-        .info-panel h2 {
-            font-size: 15px;
-            margin-bottom: 8px;
-        }
-
-        .info-panel p {
-            font-size: 13px;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-
-        .info-chip-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .info-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            background: rgba(0, 113, 227, 0.08);
-            color: var(--text);
-            font-size: 12px;
-        }
-
-        .info-chip-swatch {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--swatch, #007AFF);
-            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
-        }
-
-        kbd {
-            display: inline-block;
-            padding: 1px 6px;
-            border-radius: 6px;
-            background: rgba(15, 23, 42, 0.08);
-            border: 1px solid rgba(15, 23, 42, 0.12);
-            font: inherit;
-            font-size: 12px;
-        }
-        
-        .layer-panel {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            display: flex;
-            gap: 10px;
-            z-index: 999;
-        }
-        
+        /* 批注层：主画布与跟随光标 */
         #drawCanvas {
             position: absolute;
             top: 0;
@@ -975,6 +800,176 @@
             backdrop-filter: blur(6px);
             transition: opacity 0.08s linear, transform 0.02s linear;
         }
+
+        .capture-panel {
+            position: fixed;
+            right: 20px;
+            bottom: 74px;
+            width: 360px;
+            min-width: 240px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            box-shadow: 0 18px 46px rgba(15, 23, 42, 0.16);
+            z-index: 1002;
+            display: none;
+        }
+
+        .capture-panel.open {
+            display: block;
+        }
+
+        .capture-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            padding: 3px 7px;
+            background: rgba(10, 132, 255, 0.08);
+            cursor: move;
+        }
+
+        .capture-panel-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .capture-panel-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .capture-mini-button {
+            width: 16px;
+            height: 16px;
+            border: none;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            font: inherit;
+            font-size: 10px;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .capture-opacity-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 8px;
+            border-left: 1px solid var(--border);
+        }
+
+        .capture-opacity-slider {
+            width: 72px;
+            accent-color: #0a84ff;
+        }
+
+        .capture-panel-body {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background: #0f172a;
+        }
+
+        .capture-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: #020617;
+        }
+
+        .capture-empty {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            text-align: center;
+            color: rgba(255,255,255,0.72);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .capture-panel.has-feed .capture-empty {
+            display: none;
+        }
+
+        .capture-resize {
+            position: absolute;
+            right: 8px;
+            bottom: 8px;
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            background:
+                linear-gradient(135deg, transparent 0 40%, rgba(255, 255, 255, 0.35) 40% 58%, transparent 58% 100%),
+                linear-gradient(135deg, transparent 0 62%, rgba(255, 255, 255, 0.82) 62% 80%, transparent 80% 100%);
+            cursor: nwse-resize;
+        }
+
+        .capture-selection-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1006;
+            display: none;
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(4px);
+        }
+
+        .capture-selection-overlay.open {
+            display: block;
+        }
+
+        .capture-selection-topbar {
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+            z-index: 2;
+        }
+
+        .capture-selection-tip {
+            font-size: 12px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .capture-selection-stage {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        .capture-selection-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        .capture-selection-box {
+            position: absolute;
+            border: 2px solid #0a84ff;
+            background: rgba(10, 132, 255, 0.14);
+            box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.32);
+            display: none;
+            pointer-events: none;
+        }
         
         @media (max-width: 768px) {
             body {
@@ -983,22 +978,16 @@
 
             .toolbar {
                 top: 0;
-                padding: 10px 12px;
-                gap: 10px;
+                padding: 6px 8px;
+                gap: 6px;
                 width: 100%;
                 justify-content: flex-start;
                 overflow-x: visible;
             }
             
-            .brand {
-                font-size: 14px;
-                margin-right: 15px;
-                padding-right: 15px;
-            }
-            
             .tool-button {
-                width: 28px;
-                height: 28px;
+                width: 24px;
+                height: 24px;
             }
 
             .course-title-box {
@@ -1009,15 +998,6 @@
                 max-width: 140px;
             }
             
-            .intro h1 {
-                font-size: 32px;
-            }
-            
-            .intro p {
-                font-size: 16px;
-                max-width: 300px;
-            }
-
             .toolbar-inner {
                 align-items: flex-start;
                 flex-direction: column;
@@ -1030,16 +1010,10 @@
                 padding-bottom: 2px;
             }
 
-            .info-panel {
-                top: auto;
-                bottom: 76px;
-                left: 12px;
-                width: calc(100vw - 24px);
-            }
-
             .nav-wrapper {
                 position: static;
                 align-self: flex-end;
+                margin-left: 0;
             }
 
             .status-bar {
@@ -1108,7 +1082,14 @@
     <div class="toolbar">
         <div class="toolbar-inner">
             <div class="toolbar-main">
-                <div class="course-title-box">
+                <div class="tool-group">
+                    <a class="tool-button" href="https://xufanhsk.github.io" target="_self" title="返回主页" style="text-decoration:none;color:inherit;">
+                        ⌂
+                        <span class="tooltip">返回主页</span>
+                    </a>
+                </div>
+                <div class="tool-group course-title-box">
+                    <span class="toolbar-group-label">课程信息</span>
                     <div class="course-meta">
                         <span class="course-pill">第 1 课</span>
                         <span class="course-pill">教师：假装老师</span>
@@ -1116,28 +1097,34 @@
                     <span class="course-title-label">本课标题</span>
                     <span class="course-title-value" id="courseTitleValue" contenteditable="true">你好</span>
                 </div>
-                <button class="tool-button lock-button" id="textLockButton" type="button" title="锁定文本">
-                    🔒
-                    <span class="tooltip">锁定文本</span>
-                </button>
-                <button class="tool-button" data-tool="select" onclick="setTool('select')" title="选择">
-                    ⌖
-                    <span class="tooltip">选择</span>
-                </button>
-                <button class="tool-button active" data-tool="guide" onclick="setTool('guide')" title="引导笔">
-                    ✏️
-                    <span class="tooltip">引导笔</span>
-                </button>
-                <button class="tool-button" data-tool="marker" onclick="setTool('marker')" title="标记笔">
-                    🖍️
-                    <span class="tooltip">标记笔</span>
-                </button>
-                <button class="tool-button" data-tool="erase" onclick="setTool('erase')" title="橡皮擦">
-                    🧽
-                    <span class="tooltip">橡皮擦</span>
-                </button>
-                <div class="color-picker">
-                    <button class="tool-button" id="colorToggle">🎨</button>
+                <div class="tool-group">
+                    <span class="toolbar-group-label">编辑模式</span>
+                    <button class="tool-button" data-tool="select" onclick="setTool('select')" title="选择">
+                        ⌖
+                        <span class="tooltip">选择</span>
+                    </button>
+                </div>
+                <div class="tool-group">
+                    <span class="toolbar-group-label">批注工具</span>
+                    <button class="tool-button active" data-tool="guide" onclick="setTool('guide')" title="引导笔">
+                        ✏️
+                        <span class="tooltip">引导笔</span>
+                    </button>
+                    <button class="tool-button" data-tool="marker" onclick="setTool('marker')" title="标记笔">
+                        🖍️
+                        <span class="tooltip">标记笔</span>
+                    </button>
+                    <button class="tool-button" data-tool="erase" onclick="setTool('erase')" title="橡皮擦">
+                        🧽
+                        <span class="tooltip">橡皮擦</span>
+                    </button>
+                </div>
+                <div class="tool-group color-picker">
+                    <span class="toolbar-group-label">颜色</span>
+                    <button class="tool-button" id="colorToggle" type="button" title="颜色面板">
+                        🎨
+                        <span class="tooltip">颜色面板</span>
+                    </button>
 
                     <div class="color-panel" id="colorPanel">
                         <div class="color-group">
@@ -1156,13 +1143,20 @@
                     </div>
                 </div>
                 <div class="tool-group">
+                    <span class="toolbar-group-label">页面操作</span>
                     <input type="file" id="imageUpload" accept="image/*" style="display:none">
-                    <button class="tool-button" onclick="addKnowledgePointAtSelection()" title="新增知识点">❗</button>
+                    <button class="tool-button" onclick="addKnowledgePointAtSelection()" title="新增知识点">
+                        ❗
+                        <span class="tooltip">新增知识点</span>
+                    </button>
                     <button class="tool-button" onclick="toggleFullscreen()" title="全屏">
                         ⛶
                         <span class="tooltip">全屏</span>
                     </button>
-                    <button class="tool-button" onclick="document.getElementById('imageUpload').click()" title="导入图片">🖼️</button>
+                    <button class="tool-button" onclick="document.getElementById('imageUpload').click()" title="导入图片">
+                        🖼️
+                        <span class="tooltip">导入图片</span>
+                    </button>
                     <button class="tool-button" onclick="undo()" title="撤销">
                         ↶
                         <span class="tooltip">撤销</span>
@@ -1175,6 +1169,29 @@
                         📤
                         <span class="tooltip">导出PNG</span>
                     </button>
+                    <button class="tool-button" onclick="clearAll()" title="清空标注">
+                        ⌫
+                        <span class="tooltip">清空标注</span>
+                    </button>
+                </div>
+                <div class="tool-group">
+                    <span class="toolbar-group-label">字幕捕捉</span>
+                    <button class="tool-button" id="captureStartButton" type="button" title="开启区域捕捉">
+                        ⌗
+                        <span class="tooltip">开启区域捕捉</span>
+                    </button>
+                    <button class="tool-button" id="captureReselectButton" type="button" title="重新框选">
+                        ▣
+                        <span class="tooltip">重新框选</span>
+                    </button>
+                    <button class="tool-button" id="captureToggleButton" type="button" title="显示或隐藏捕捉窗">
+                        ◫
+                        <span class="tooltip">显示或隐藏捕捉窗</span>
+                    </button>
+                    <div class="capture-opacity-control">
+                        <span class="toolbar-group-label" style="display:inline;">透</span>
+                        <input class="capture-opacity-slider" id="captureOpacitySlider" type="range" min="35" max="100" step="5" value="100" title="调整字幕窗透明度">
+                    </div>
                 </div>
             </div>
             <div class="nav-wrapper" id="navWrapper">
@@ -1194,15 +1211,30 @@
         </div>
     </div>
 
-    <!-- 模板页面：课程模板主体 -->
+    <!--
+        模板板块对照
+        sheetTop: 课程首页
+        learningGoals: 学习目标总表
+        reviewSection: 复习板块
+        warmupSection: 热身板块
+        vocabSection: 生词板块
+        vocabPracticeSection: 生词练习板块
+        textSection: 课文板块
+        grammarSection: 语法板块
+        grammarPracticeSection: 语法练习板块
+        summarySection: 总结及作业板块
+    -->
+    <!-- 模板主体：后续新课程页面主要替换这里的课程标题与各教学板块内容 -->
     <main class="template-stage" id="templateStage">
         <section class="lesson-sheet selectable-item" id="sheetTop">
+            <!-- 模板区块：课次编号与课程标题 -->
             <header class="sheet-header">
                 <div class="sheet-index">1</div>
                 <div class="sheet-title selectable-item editable-block" id="sheetTitle" contenteditable="true">你好</div>
             </header>
 
             <div class="sheet-content">
+                <!-- 模板区块：学习目标总表，可按课程内容直接替换 -->
                 <div class="section-heading">
                     <span class="section-mark" aria-hidden="true"></span>
                     <h2>一、教学内容和学习目标</h2>
@@ -1271,7 +1303,7 @@
                     </tbody>
                 </table>
 
-                <!-- 预设模板板块：后续导入课程内容时按此结构替换 -->
+                <!-- 模板区块：以下板块建议按课程顺序逐块替换内容，保留结构可快速复用 -->
                 <section class="template-section selectable-item" id="reviewSection">
                     <div class="section-shell">
                         <div class="section-heading">
@@ -1385,76 +1417,99 @@
         </section>
     </main>
 
-    <div class="info-panel selectable-item" id="learningGoalPanel">
-        <h2>学习目标</h2>
-        <div class="editable-block" id="goalEditable" contenteditable="true">
-            <p>这里作为备注功能板块使用。你可以在课件页面上直接圈画、标注重点，也可以把这一块当作模板说明区。</p>
-            <p>测试文本：本节课重点关注问候表达、发音节奏和情景运用。</p>
-        </div>
-        <div class="info-chip-row">
-            <span class="info-chip" id="activeToolChip">当前工具: 引导笔</span>
-            <span class="info-chip">
-                <span class="info-chip-swatch" id="activeColorSwatch"></span>
-                <span id="activeColorLabel">#007AFF</span>
-            </span>
-        </div>
-    </div>
-    
     <div class="status-bar">
         点击引导笔开始创作
     </div>
     
-    <div class="layer-panel">
-        <button onclick="clearAll()" class="tool-button">清空</button>
-    </div>
+    <section class="capture-panel" id="capturePanel">
+        <!-- 浮动功能：实时字幕/区域捕捉显示窗 -->
+        <div class="capture-panel-header" id="capturePanelHeader">
+            <span class="capture-panel-title">实时字幕</span>
+            <div class="capture-panel-actions">
+                <button class="capture-mini-button" id="captureHideButton" type="button">×</button>
+            </div>
+        </div>
+        <div class="capture-panel-body" id="capturePanelBody">
+            <canvas class="capture-canvas" id="captureCanvas"></canvas>
+            <div class="capture-empty">先开启区域捕捉并框选字幕区域，之后这里会持续显示该区域。</div>
+            <span class="capture-resize" id="captureResizeHandle"></span>
+        </div>
+    </section>
 
-    <button class="teaching-exit" id="teachingExit" type="button">退出授课模式</button>
-    
+    <section class="capture-selection-overlay" id="captureSelectionOverlay">
+        <div class="capture-selection-topbar">
+            <span class="capture-selection-tip">拖动框选要嵌入网页的屏幕区域，按 Esc 可取消。</span>
+            <button class="capture-mini-button" id="captureCancelButton" type="button">×</button>
+        </div>
+        <div class="capture-selection-stage" id="captureSelectionStage">
+            <video class="capture-selection-video" id="captureSelectionVideo" autoplay muted playsinline></video>
+            <div class="capture-selection-box" id="captureSelectionBox"></div>
+        </div>
+    </section>
+
     <canvas id="drawCanvas"></canvas>
     <div id="brushCursor"></div>
-    <div id="pageBottom"></div>
-
     <script>
+        /*
+            模板脚本说明
+            1. setTool: 控制选择/批注模式切换。
+            2. addKnowledgePointAtSelection: 在当前可编辑区域插入统一样式知识点。
+            3. toggleFullscreen: 进入或退出页面全屏。
+            4. startCaptureFlow / reselectCaptureRegion / toggleCapturePanel: 区域捕捉与字幕窗控制。
+            5. 如无明确需求，复制模板时不要删除脚本中的 id 绑定与现有函数名。
+        */
+
         // =========================
-        // 画布批注系统
-        // 说明：所有笔迹以页面坐标保存，滚动后仍跟随页面内容
+        // 模板功能一：画布批注系统
+        // 说明：所有笔迹以页面坐标保存，方便后续课程页面直接复用
         // =========================
         const canvas = document.getElementById('drawCanvas');
-        const ctx = canvas.getContext('2d', { desynchronized: true });
-        const isIPadLikeDevice = /iPad|Macintosh/.test(navigator.userAgent) && 'ontouchend' in document;
+        const ctx = canvas.getContext('2d');
         
-        // 工具与绘制状态
+        // 批注状态
         let drawing = false;
         let points = [];
         let currentTool = 'guide';
         let currentColor = '#FF2D55';
         let currentStroke = null;
         
-        // 笔迹数据
-        let layers = [];
+        // 批注数据
         let strokes = [];
         let redoStack = [];
         let erasing = false;
         let bgImage = null;
         
-        // DOM 引用
+        // 页面元素引用
         const toolButtons = document.querySelectorAll('.tool-button');
         const toolSwitcherButtons = document.querySelectorAll('.tool-button[data-tool]');
+        const toolbar = document.querySelector('.toolbar');
         const statusBar = document.querySelector('.status-bar');
         const brush = document.getElementById('brushCursor');
-        const activeToolChip = document.getElementById('activeToolChip');
-        const activeColorSwatch = document.getElementById('activeColorSwatch');
-        const activeColorLabel = document.getElementById('activeColorLabel');
         const courseTitleValue = document.getElementById('courseTitleValue');
         const sheetTitle = document.getElementById('sheetTitle');
         const templateStage = document.getElementById('templateStage');
         const navButtons = document.querySelectorAll('.nav-button');
         const navWrapper = document.getElementById('navWrapper');
         const navToggle = document.getElementById('navToggle');
-        const textLockButton = document.getElementById('textLockButton');
-        const teachingExit = document.getElementById('teachingExit');
+        const captureStartButton = document.getElementById('captureStartButton');
+        const captureReselectButton = document.getElementById('captureReselectButton');
+        const captureToggleButton = document.getElementById('captureToggleButton');
+        const capturePanel = document.getElementById('capturePanel');
+        const capturePanelHeader = document.getElementById('capturePanelHeader');
+        const capturePanelBody = document.getElementById('capturePanelBody');
+        const captureHideButton = document.getElementById('captureHideButton');
+        const captureCanvas = document.getElementById('captureCanvas');
+        const captureEmpty = capturePanel.querySelector('.capture-empty');
+        const captureResizeHandle = document.getElementById('captureResizeHandle');
+        const captureOpacitySlider = document.getElementById('captureOpacitySlider');
+        const captureSelectionOverlay = document.getElementById('captureSelectionOverlay');
+        const captureSelectionStage = document.getElementById('captureSelectionStage');
+        const captureSelectionVideo = document.getElementById('captureSelectionVideo');
+        const captureSelectionBox = document.getElementById('captureSelectionBox');
+        const captureCancelButton = document.getElementById('captureCancelButton');
+        const captureCtx = captureCanvas.getContext('2d');
         
-        // 笔刷光标状态
+        // 交互状态
         let lastX = 0;
         let lastY = 0;
         let selectedElement = null;
@@ -1475,20 +1530,29 @@
         let activePressure = 0.5;
         let activeDrawSurface = 'page';
         let activeKnowledgeSurface = null;
-        let teachingMode = false;
-        let textLocked = true;
-        let penScrollLocked = false;
-        let lockedScrollY = 0;
-        let lockedScrollX = 0;
-        let renderScheduled = false;
-        let renderLoopStarted = false;
+        let captureStream = null;
+        let captureSourceVideo = null;
+        let captureRegion = null;
+        let captureDisplayRect = null;
+        let selectingCapture = false;
+        let captureStartX = 0;
+        let captureStartY = 0;
+        let capturePanelDragging = false;
+        let capturePanelResizing = false;
+        let captureDragOffsetX = 0;
+        let captureDragOffsetY = 0;
+        let captureStartWidth = 0;
+        let captureStartHeight = 0;
+        let capturePanelAspectRatio = 16 / 9;
+        let capturePanelOpen = false;
+        let statusHideTimer = null;
+        let toolbarHideTimer = null;
         
         // =========================
-        // 基础初始化
+        // 初始化：尺寸与事件
         // =========================
         function resizeCanvas() {
-            const deviceRatio = window.devicePixelRatio || 1;
-            const dpr = isIPadLikeDevice ? Math.min(deviceRatio, 1.6) : deviceRatio;
+            const dpr = window.devicePixelRatio || 1;
             canvasWidth = Math.max(
                 document.documentElement.clientWidth,
                 document.documentElement.scrollWidth,
@@ -1504,10 +1568,9 @@
             canvas.style.width = canvasWidth + 'px';
             canvas.style.height = canvasHeight + 'px';
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            requestRender();
         }
         
-        // 设置事件监听器
+        // 事件绑定：工具栏、导航、知识点、区域捕捉
         function setupEventListeners() {
             document.querySelectorAll('[contenteditable]').forEach(element => {
                 element.dataset.editableRoot = 'true';
@@ -1515,7 +1578,6 @@
 
             // 窗口大小变化
             window.addEventListener('resize', resizeCanvas);
-            window.addEventListener('scroll', handleWindowScroll, { passive: true });
             
             toolButtons.forEach(button => {
                 button.addEventListener('click', function() {
@@ -1524,9 +1586,6 @@
                     }
                 });
             });
-
-            textLockButton.addEventListener('click', toggleTextLock);
-            teachingExit.addEventListener('click', exitTeachingMode);
             
             // 颜色选择器
             const toggle = document.getElementById('colorToggle');
@@ -1551,13 +1610,24 @@
                     setColor(color);
                 });
             });
+
+            captureStartButton.addEventListener('click', startCaptureFlow);
+            captureReselectButton.addEventListener('click', reselectCaptureRegion);
+            captureToggleButton.addEventListener('click', toggleCapturePanel);
+            captureHideButton.addEventListener('click', hideCapturePanel);
+            captureCancelButton.addEventListener('click', closeCaptureSelectionOverlay);
+            captureOpacitySlider.addEventListener('input', updateCaptureOpacity);
+            captureSelectionStage.addEventListener('pointerdown', beginCaptureSelection);
+            captureSelectionStage.addEventListener('pointermove', updateCaptureSelection);
+            captureSelectionStage.addEventListener('pointerup', finishCaptureSelection);
+            captureSelectionStage.addEventListener('pointerleave', finishCaptureSelection);
+            capturePanelHeader.addEventListener('pointerdown', startCapturePanelDrag);
+            captureResizeHandle.addEventListener('pointerdown', startCapturePanelResize);
+            document.addEventListener('pointermove', moveCapturePanel);
+            document.addEventListener('pointermove', resizeCapturePanel);
+            document.addEventListener('pointerup', stopCapturePanelInteractions);
             
-            // 文档级输入监听：
-            // 1. 手指可以正常选中文本
-            // 2. Apple Pencil / 鼠标仍然可以在任何区域书写
-            document.addEventListener('pointerdown', suppressPenPagePan, { capture: true, passive: false });
             document.addEventListener('pointerdown', handleDocumentPointerDown);
-            document.addEventListener('pointermove', suppressPenPagePan, { capture: true, passive: false });
             document.addEventListener('pointermove', handleTrackedPointerMove);
             document.addEventListener('pointerup', finishTrackedPointer);
             document.addEventListener('pointercancel', finishTrackedPointer);
@@ -1570,8 +1640,7 @@
                 const img = new Image();
                 img.onload = function(){
                     bgImage = img;
-                    statusBar.textContent = '背景图片已导入';
-                    requestRender();
+                    setStatus('背景图片已导入');
                 };
                 img.src = URL.createObjectURL(file);
             });
@@ -1617,10 +1686,21 @@
             document.addEventListener('pointermove', dragKnowledgeCard);
             document.addEventListener('pointermove', resizeKnowledgeCard);
             document.addEventListener('pointerup', stopKnowledgeDrag);
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeCaptureSelectionOverlay();
+                }
+            });
+
+            document.addEventListener('mousemove', handleToolbarMouseMove);
+            toolbar.addEventListener('mouseenter', showToolbar);
+            toolbar.addEventListener('mouseleave', scheduleToolbarHide);
+            navWrapper.addEventListener('mouseenter', showToolbar);
+            navWrapper.addEventListener('mouseleave', scheduleToolbarHide);
         }
         
         // =========================
-        // 绘制逻辑
+        // 批注逻辑：开始、绘制、结束
         // =========================
         function startDraw(e) {
             if (document.activeElement && document.activeElement !== document.body && typeof document.activeElement.blur === 'function') {
@@ -1644,9 +1724,6 @@
             points.push(p);
             currentStroke.points.push(p);
 
-            if (activePointerType === 'pen') {
-                lockPageScroll();
-            }
         }
         
         // 绘制
@@ -1674,43 +1751,38 @@
             
             // 只处理绘制工具，橡皮擦在pointerdown中处理
             if (currentTool !== 'erase') {
-                if (!isIPadLikeDevice) {
-                    let width = 2;
-                    width *= (0.7 + pressure);
-                    
-                    ctx.lineWidth = width;
-                    ctx.strokeStyle = currentColor;
-                    ctx.globalCompositeOperation = 'source-over';
-                    
-                    if (currentTool === 'guide') {
-                        ctx.globalAlpha = 1;
-                        ctx.shadowColor = currentColor;
-                        ctx.shadowBlur = 8;
-                    } else {
-                        ctx.globalAlpha = 1;
-                        ctx.shadowBlur = 0;
-                    }
-                    
-                    ctx.beginPath();
-                    const activeRect = activeDrawSurface === 'knowledge' && activeKnowledgeSurface
-                        ? activeKnowledgeSurface.getBoundingClientRect()
-                        : null;
-                    ctx.moveTo(
-                        activeRect ? activeRect.left + window.scrollX + prev.x : prev.x,
-                        activeRect ? activeRect.top + window.scrollY + prev.y : prev.y
-                    );
-                    ctx.quadraticCurveTo(
-                        activeRect ? activeRect.left + window.scrollX + prev.x : prev.x,
-                        activeRect ? activeRect.top + window.scrollY + prev.y : prev.y,
-                        activeRect ? activeRect.left + window.scrollX + midX : midX,
-                        activeRect ? activeRect.top + window.scrollY + midY : midY
-                    );
-                    ctx.stroke();
-                    return;
+                let width = 2;
+                width *= (0.7 + pressure);
+                
+                ctx.lineWidth = width;
+                ctx.strokeStyle = currentColor;
+                ctx.globalCompositeOperation = 'source-over';
+                
+                if (currentTool === 'guide') {
+                    ctx.globalAlpha = 1;
+                    ctx.shadowColor = currentColor;
+                    ctx.shadowBlur = 8;
+                } else {
+                    ctx.globalAlpha = 1;
+                    ctx.shadowBlur = 0;
                 }
+                
+                ctx.beginPath();
+                const activeRect = activeDrawSurface === 'knowledge' && activeKnowledgeSurface
+                    ? activeKnowledgeSurface.getBoundingClientRect()
+                    : null;
+                ctx.moveTo(
+                    activeRect ? activeRect.left + window.scrollX + prev.x : prev.x,
+                    activeRect ? activeRect.top + window.scrollY + prev.y : prev.y
+                );
+                ctx.quadraticCurveTo(
+                    activeRect ? activeRect.left + window.scrollX + prev.x : prev.x,
+                    activeRect ? activeRect.top + window.scrollY + prev.y : prev.y,
+                    activeRect ? activeRect.left + window.scrollX + midX : midX,
+                    activeRect ? activeRect.top + window.scrollY + midY : midY
+                );
+                ctx.stroke();
             }
-
-            requestRender();
         }
         
         // 结束绘制
@@ -1721,27 +1793,12 @@
             activePressure = 0.5;
             activeDrawSurface = 'page';
             activeKnowledgeSurface = null;
-            unlockPageScroll();
-
             if (currentStroke && currentStroke.points.length > 1) {
                 strokes.push(currentStroke);
                 redoStack = []; // 新操作清空重做栈
             }
 
             currentStroke = null;
-            requestRender();
-        }
-        
-        // 保存图层
-        function saveLayer() {
-            const snapshot = document.createElement('canvas');
-            snapshot.width = canvas.width;
-            snapshot.height = canvas.height;
-            
-            const sctx = snapshot.getContext('2d');
-            sctx.drawImage(canvas, 0, 0);
-            
-            layers.push(snapshot);
         }
         
         // 获取坐标
@@ -1773,11 +1830,15 @@
         }
 
         function updateBrushPosition(e) {
+            if (currentTool === 'select') {
+                brush.style.opacity = '0';
+                return;
+            }
             if (e.pointerType === 'touch' && !drawing) {
                 brush.style.opacity = '0';
                 return;
             }
-            const size = currentTool === 'erase' ? 22 : currentTool === 'select' ? 18 : 8;
+            const size = currentTool === 'erase' ? 22 : 8;
             lastX = e.clientX;
             lastY = e.clientY;
 
@@ -1785,7 +1846,7 @@
             brush.style.top = lastY + 'px';
             brush.style.width = size + 'px';
             brush.style.height = size + 'px';
-            brush.style.borderWidth = currentTool === 'select' ? '2px' : '1px';
+            brush.style.borderWidth = '1px';
             brush.style.borderStyle = 'solid';
 
             if (currentTool === 'guide' || currentTool === 'marker') {
@@ -1810,12 +1871,12 @@
         function drawStroke(stroke) {
             const pts = stroke.visiblePoints || stroke.points;
             if (pts.length < 2) return;
-            const maxSegmentDistance = isIPadLikeDevice ? 140 : 220;
+            const maxSegmentDistance = 220;
             ctx.strokeStyle = stroke.color;
             
             if (stroke.tool === 'guide') {
                 ctx.shadowColor = stroke.color;
-                ctx.shadowBlur = isIPadLikeDevice ? 0 : 8;
+                ctx.shadowBlur = 8;
                 ctx.lineWidth = 2;      // 细线
                 
                 // 透明度渐变
@@ -1851,9 +1912,8 @@
             ctx.stroke();
         }
         
-        // 渲染循环
+        // 渲染循环：重绘笔迹与字幕捕捉窗
         function render() {
-            renderScheduled = false;
             const nextCanvasWidth = Math.max(
                 document.documentElement.clientWidth,
                 document.documentElement.scrollWidth,
@@ -1879,10 +1939,6 @@
             
             strokes = strokes.filter(stroke => {
                 if (stroke.tool === 'guide') {
-                    if (isIPadLikeDevice) {
-                        stroke.visiblePoints = stroke.points;
-                        return true;
-                    }
                     const life = now - stroke.time;
                     
                     // ① 先完整显示 1.5s
@@ -1909,53 +1965,39 @@
             if (currentStroke && currentStroke.points.length > 1) {
                 drawStroke(currentStroke);
             }
-        }
 
-        function requestRender() {
-            if (isIPadLikeDevice) {
-                if (renderScheduled) return;
-                renderScheduled = true;
-                requestAnimationFrame(render);
-                return;
-            }
-
-            if (renderLoopStarted) return;
-            renderLoopStarted = true;
-            requestAnimationFrame(function renderFrame() {
-                render();
-                requestAnimationFrame(renderFrame);
-            });
+            renderCapturePanel();
+            
+            requestAnimationFrame(render);
         }
 
         // =========================
-        // 工具状态
+        // 工具状态：选择模式与批注模式切换
         // =========================
         function setTool(t) {
             currentTool = t;
             updateCursor();
             templateStage.classList.toggle('select-mode', t === 'select');
-            document.body.style.cursor = 'none';
+            document.body.classList.toggle('draw-mode', t !== 'select');
 
             toolSwitcherButtons.forEach(button => {
                 button.classList.toggle('active', button.dataset.tool === t);
             });
             
             if (currentTool === 'select') {
-                statusBar.textContent = '选择工具已激活';
-                activeToolChip.textContent = '当前工具: 选择';
+                setStatus('选择工具已激活');
             } else if (currentTool === 'guide') {
-                statusBar.textContent = '引导笔已激活';
-                activeToolChip.textContent = '当前工具: 引导笔';
+                setStatus('引导笔已激活');
             } else if (currentTool === 'marker') {
-                statusBar.textContent = '标记笔已激活';
-                activeToolChip.textContent = '当前工具: 标记笔';
+                setStatus('标记笔已激活');
             } else if (currentTool === 'erase') {
-                statusBar.textContent = '橡皮擦已激活';
-                activeToolChip.textContent = '当前工具: 橡皮擦';
+                setStatus('橡皮擦已激活');
             }
 
-            applyTextLockState();
-            requestRender();
+            applyEditingState();
+            if (t === 'select') {
+                brush.style.opacity = '0';
+            }
         }
 
         function handleDocumentPointerDown(e) {
@@ -1970,7 +2012,7 @@
             if (currentTool === 'select') return;
             if (!shouldHandlePointer(e)) return;
 
-            const blockedTarget = e.target.closest('.toolbar, .nav-wrapper, .layer-panel, .tool-button, .color-panel, .nav-button, .knowledge-action');
+            const blockedTarget = e.target.closest('.toolbar, .nav-wrapper, .tool-button, .color-panel, .nav-button, .knowledge-action');
             if (blockedTarget) return;
 
             activePointerId = e.pointerId;
@@ -1987,57 +2029,53 @@
             startDraw(e);
         }
 
-        function applyTextLockState() {
-            const suspendEditableForIPadPen = isIPadPenDrawMode();
+        function applyEditingState() {
+            const editable = currentTool === 'select';
             document.querySelectorAll('[data-editable-root="true"]').forEach(element => {
-                element.setAttribute('contenteditable', (textLocked || suspendEditableForIPadPen) ? 'false' : 'true');
+                element.setAttribute('contenteditable', editable ? 'true' : 'false');
             });
+        }
 
-            document.body.classList.toggle('ipad-pen-draw-mode', suspendEditableForIPadPen);
+        function setStatus(message) {
+            statusBar.textContent = message;
+            statusBar.classList.add('visible');
+            clearTimeout(statusHideTimer);
+            statusHideTimer = setTimeout(() => {
+                statusBar.classList.remove('visible');
+            }, 1000);
+        }
 
-            textLockButton.classList.toggle('locked', textLocked);
-            textLockButton.innerHTML = textLocked
-                ? '🔒<span class="tooltip">文本已锁定</span>'
-                : '🔓<span class="tooltip">文本已解锁</span>';
-            textLockButton.title = textLocked ? '文本已锁定' : '文本已解锁';
-            if (textLocked) {
-                statusBar.textContent = '文本编辑已锁定，仍可划词';
-            } else if (suspendEditableForIPadPen) {
-                statusBar.textContent = '文本已解锁，当前 Pencil 画笔模式会临时挂起文本输入';
-            } else {
-                statusBar.textContent = '文本编辑已解锁';
+        function showToolbar() {
+            clearTimeout(toolbarHideTimer);
+            document.body.classList.remove('toolbar-collapsed');
+        }
+
+        function scheduleToolbarHide() {
+            clearTimeout(toolbarHideTimer);
+            toolbarHideTimer = setTimeout(() => {
+                document.body.classList.add('toolbar-collapsed');
+            }, 700);
+        }
+
+        function handleToolbarMouseMove(e) {
+            if (e.clientY <= 64) {
+                showToolbar();
+            } else if (!toolbar.matches(':hover') && !navWrapper.matches(':hover')) {
+                scheduleToolbarHide();
             }
-        }
-
-        function toggleTextLock() {
-            textLocked = !textLocked;
-            applyTextLockState();
-        }
-
-        function exitTeachingMode() {
-            teachingMode = false;
-            document.body.classList.remove('teaching-mode');
-            statusBar.textContent = '已退出授课模式';
         }
 
         async function toggleFullscreen() {
-            if (isIPadLikeDevice) {
-                teachingMode = !teachingMode;
-                document.body.classList.toggle('teaching-mode', teachingMode);
-                statusBar.textContent = teachingMode ? '已进入授课模式' : '已退出授课模式';
-                return;
-            }
-
             try {
                 if (!document.fullscreenElement) {
                     await document.documentElement.requestFullscreen();
-                    statusBar.textContent = '已进入全屏模式';
+                    setStatus('已进入全屏模式');
                 } else {
                     await document.exitFullscreen();
-                    statusBar.textContent = '已退出全屏模式';
+                    setStatus('已退出全屏模式');
                 }
             } catch (error) {
-                statusBar.textContent = '当前环境不支持全屏';
+                setStatus('当前环境不支持全屏');
             }
         }
 
@@ -2046,33 +2084,6 @@
             if (e.pointerType === 'pen') return true;
             if (e.pointerType === 'touch') return currentTool === 'select';
             return false;
-        }
-
-        function isIPadPenDrawMode() {
-            return isIPadLikeDevice && currentTool !== 'select';
-        }
-
-        function lockPageScroll() {
-            if (isIPadLikeDevice) return;
-            if (penScrollLocked) return;
-            penScrollLocked = true;
-            lockedScrollX = window.scrollX;
-            lockedScrollY = window.scrollY;
-            document.documentElement.classList.add('pen-scroll-lock');
-            document.body.classList.add('pen-scroll-lock');
-            document.body.style.top = `${-lockedScrollY}px`;
-            document.body.style.left = `${-lockedScrollX}px`;
-        }
-
-        function unlockPageScroll() {
-            if (isIPadLikeDevice) return;
-            if (!penScrollLocked) return;
-            penScrollLocked = false;
-            document.documentElement.classList.remove('pen-scroll-lock');
-            document.body.classList.remove('pen-scroll-lock');
-            document.body.style.top = '';
-            document.body.style.left = '';
-            window.scrollTo(lockedScrollX, lockedScrollY);
         }
 
         function getStrokeRenderPoint(stroke, point) {
@@ -2106,23 +2117,6 @@
                 e.preventDefault();
                 draw(e);
             }
-        }
-
-        function suppressPenPagePan(e) {
-            if (!isIPadPenDrawMode()) return;
-            if (e.pointerType !== 'pen') return;
-
-            const allowTarget = e.target.closest('.toolbar, .tool-button, .nav-wrapper, .nav-button, .nav-toggle, .knowledge-trigger, .knowledge-action, .knowledge-header, .knowledge-resize');
-            if (allowTarget) return;
-
-            e.preventDefault();
-        }
-
-        function handleWindowScroll() {
-            if (!isIPadLikeDevice) return;
-            if (!drawing || activePointerType !== 'pen') return;
-            endDraw();
-            statusBar.textContent = '检测到页面滚动，已结束当前笔迹，避免异常长线';
         }
 
         function finishTrackedPointer(e) {
@@ -2282,13 +2276,11 @@
             const parentRect = activeKnowledgeCard.offsetParent.getBoundingClientRect();
             activeKnowledgeCard.style.left = (e.clientX - parentRect.left - dragKnowledgeOffsetX) + 'px';
             activeKnowledgeCard.style.top = (e.clientY - parentRect.top - dragKnowledgeOffsetY) + 'px';
-            requestRender();
         }
 
         function stopKnowledgeDrag() {
             draggingKnowledge = false;
             resizingKnowledge = false;
-            requestRender();
         }
 
         function startKnowledgeResize(e) {
@@ -2311,7 +2303,6 @@
             const nextHeight = Math.max(140, resizeStartHeight + (e.clientY - resizeStartY));
             activeKnowledgeCard.style.width = nextWidth + 'px';
             activeKnowledgeCard.style.height = nextHeight + 'px';
-            requestRender();
         }
 
         function createKnowledgeInline(id, title = '知识点', content = '测试文本：\n请在这里输入知识点内容。') {
@@ -2350,7 +2341,7 @@
                     range.collapse(true);
                     selection.removeAllRanges();
                     selection.addRange(range);
-                    statusBar.textContent = '已插入新的知识点入口';
+                    setStatus('已插入新的知识点入口');
                     return;
                 }
             }
@@ -2359,20 +2350,17 @@
             if (fallbackHost) {
                 fallbackHost.appendChild(document.createTextNode(' '));
                 fallbackHost.appendChild(inline);
-                statusBar.textContent = '已在学习目标区域末尾插入知识点入口';
+                setStatus('已在学习目标区域末尾插入知识点入口');
             }
         }
 
         function setColor(color) {
             currentColor = color;
-            statusBar.textContent = '颜色已更改: ' + color;
-            activeColorLabel.textContent = color;
-            activeColorSwatch.style.setProperty('--swatch', color);
+            setStatus('颜色已更改: ' + color);
             document.querySelectorAll('.color-item').forEach(item => {
                 item.classList.toggle('active', item.dataset.color === color);
             });
             updateCursor();
-            requestRender();
         }
         
         // 更新鼠标光标
@@ -2395,12 +2383,287 @@
                 selectedElement = target.classList.contains('selectable-item') ? target : target.closest('.selectable-item') || target;
                 if (selectedElement) {
                     selectedElement.classList.add('selected');
-                    statusBar.textContent = '已选中元素，可编辑文本或复制内容';
+                    setStatus('已选中元素，可编辑文本或复制内容');
                 }
             }
         }
+
+        async function startCaptureFlow() {
+            try {
+                if (!captureStream) {
+                    captureStream = await navigator.mediaDevices.getDisplayMedia({
+                        video: { frameRate: 30 },
+                        audio: false
+                    });
+                    captureSourceVideo = document.createElement('video');
+                    captureSourceVideo.srcObject = captureStream;
+                    captureSourceVideo.muted = true;
+                    captureSourceVideo.playsInline = true;
+                    await captureSourceVideo.play();
+                    captureSelectionVideo.srcObject = captureStream;
+                    await captureSelectionVideo.play();
+                    const [track] = captureStream.getVideoTracks();
+                    if (track) {
+                        track.addEventListener('ended', resetCaptureState, { once: true });
+                    }
+                }
+
+                if (captureRegion) {
+                    showCapturePanel();
+                    setStatus('已恢复区域捕捉窗口');
+                    return;
+                }
+
+                openCaptureSelectionOverlay();
+            } catch (error) {
+                setStatus('区域捕捉未开启或权限被取消');
+            }
+        }
+
+        function openCaptureSelectionOverlay() {
+            if (!captureStream) return;
+            selectingCapture = false;
+            captureSelectionBox.style.display = 'none';
+            captureSelectionOverlay.classList.add('open');
+            setStatus('请拖动框选要嵌入网页的区域');
+        }
+
+        function closeCaptureSelectionOverlay() {
+            captureSelectionOverlay.classList.remove('open');
+            selectingCapture = false;
+            captureSelectionBox.style.display = 'none';
+        }
+
+        function getCaptureDisplayRect() {
+            const stageRect = captureSelectionStage.getBoundingClientRect();
+            const videoWidth = captureSelectionVideo.videoWidth || 1;
+            const videoHeight = captureSelectionVideo.videoHeight || 1;
+            const stageRatio = stageRect.width / stageRect.height;
+            const videoRatio = videoWidth / videoHeight;
+
+            let width = stageRect.width;
+            let height = stageRect.height;
+            let left = 0;
+            let top = 0;
+
+            if (videoRatio > stageRatio) {
+                height = width / videoRatio;
+                top = (stageRect.height - height) / 2;
+            } else {
+                width = height * videoRatio;
+                left = (stageRect.width - width) / 2;
+            }
+
+            return { left, top, width, height };
+        }
+
+        function beginCaptureSelection(e) {
+            if (!captureSelectionOverlay.classList.contains('open')) return;
+            captureDisplayRect = getCaptureDisplayRect();
+            const localX = e.clientX - captureSelectionStage.getBoundingClientRect().left;
+            const localY = e.clientY - captureSelectionStage.getBoundingClientRect().top;
+
+            if (
+                localX < captureDisplayRect.left ||
+                localY < captureDisplayRect.top ||
+                localX > captureDisplayRect.left + captureDisplayRect.width ||
+                localY > captureDisplayRect.top + captureDisplayRect.height
+            ) {
+                return;
+            }
+
+            selectingCapture = true;
+            captureStartX = localX;
+            captureStartY = localY;
+            captureSelectionBox.style.display = 'block';
+            captureSelectionBox.style.left = captureStartX + 'px';
+            captureSelectionBox.style.top = captureStartY + 'px';
+            captureSelectionBox.style.width = '0px';
+            captureSelectionBox.style.height = '0px';
+            e.preventDefault();
+        }
+
+        function updateCaptureSelection(e) {
+            if (!selectingCapture) return;
+            const stageRect = captureSelectionStage.getBoundingClientRect();
+            const localX = Math.min(Math.max(e.clientX - stageRect.left, captureDisplayRect.left), captureDisplayRect.left + captureDisplayRect.width);
+            const localY = Math.min(Math.max(e.clientY - stageRect.top, captureDisplayRect.top), captureDisplayRect.top + captureDisplayRect.height);
+            const left = Math.min(captureStartX, localX);
+            const top = Math.min(captureStartY, localY);
+            const width = Math.abs(localX - captureStartX);
+            const height = Math.abs(localY - captureStartY);
+
+            captureSelectionBox.style.left = left + 'px';
+            captureSelectionBox.style.top = top + 'px';
+            captureSelectionBox.style.width = width + 'px';
+            captureSelectionBox.style.height = height + 'px';
+        }
+
+        function finishCaptureSelection() {
+            if (!selectingCapture) return;
+            selectingCapture = false;
+
+            const left = parseFloat(captureSelectionBox.style.left) || 0;
+            const top = parseFloat(captureSelectionBox.style.top) || 0;
+            const width = parseFloat(captureSelectionBox.style.width) || 0;
+            const height = parseFloat(captureSelectionBox.style.height) || 0;
+
+            if (width < 24 || height < 24) {
+                captureSelectionBox.style.display = 'none';
+                setStatus('框选区域太小，请重新选择');
+                return;
+            }
+
+            const offsetX = left - captureDisplayRect.left;
+            const offsetY = top - captureDisplayRect.top;
+            const scaleX = captureSourceVideo.videoWidth / captureDisplayRect.width;
+            const scaleY = captureSourceVideo.videoHeight / captureDisplayRect.height;
+
+            captureRegion = {
+                x: Math.round(offsetX * scaleX),
+                y: Math.round(offsetY * scaleY),
+                width: Math.round(width * scaleX),
+                height: Math.round(height * scaleY)
+            };
+
+            capturePanelAspectRatio = captureRegion.width / captureRegion.height;
+            const nextWidth = Math.max(260, Math.min(420, captureRegion.width / 2));
+            capturePanel.style.width = nextWidth + 'px';
+            capturePanelBody.style.aspectRatio = `${captureRegion.width} / ${captureRegion.height}`;
+            capturePanel.classList.add('has-feed');
+            captureEmpty.style.display = 'none';
+            closeCaptureSelectionOverlay();
+            showCapturePanel();
+            setStatus('已完成区域捕捉，可随时隐藏或重新框选');
+        }
+
+        function showCapturePanel() {
+            if (!captureRegion) {
+                setStatus('请先开启区域捕捉并框选目标区域');
+                return;
+            }
+            capturePanelOpen = true;
+            capturePanel.classList.add('open');
+            capturePanel.classList.add('has-feed');
+            updateCaptureOpacity();
+        }
+
+        function hideCapturePanel() {
+            capturePanelOpen = false;
+            capturePanel.classList.remove('open');
+        }
+
+        function toggleCapturePanel() {
+            if (!captureRegion) {
+                startCaptureFlow();
+                return;
+            }
+            if (capturePanelOpen) {
+                hideCapturePanel();
+            } else {
+                showCapturePanel();
+            }
+        }
+
+        function reselectCaptureRegion() {
+            if (!captureStream) {
+                startCaptureFlow();
+                return;
+            }
+            openCaptureSelectionOverlay();
+        }
+
+        function startCapturePanelDrag(e) {
+            if (!capturePanel.classList.contains('open')) return;
+            capturePanelDragging = true;
+            const rect = capturePanel.getBoundingClientRect();
+            captureDragOffsetX = e.clientX - rect.left;
+            captureDragOffsetY = e.clientY - rect.top;
+            capturePanel.style.left = rect.left + 'px';
+            capturePanel.style.top = rect.top + 'px';
+            capturePanel.style.right = 'auto';
+            capturePanel.style.bottom = 'auto';
+            e.preventDefault();
+        }
+
+        function moveCapturePanel(e) {
+            if (!capturePanelDragging) return;
+            capturePanel.style.left = (e.clientX - captureDragOffsetX) + 'px';
+            capturePanel.style.top = (e.clientY - captureDragOffsetY) + 'px';
+        }
+
+        function startCapturePanelResize(e) {
+            if (!captureRegion) return;
+            capturePanelResizing = true;
+            captureStartX = e.clientX;
+            captureStartY = e.clientY;
+            captureStartWidth = capturePanel.offsetWidth;
+            captureStartHeight = capturePanel.offsetHeight;
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function resizeCapturePanel(e) {
+            if (!capturePanelResizing) return;
+            const deltaX = e.clientX - captureStartX;
+            const nextWidth = Math.max(240, captureStartWidth + deltaX);
+            capturePanel.style.width = nextWidth + 'px';
+            capturePanelBody.style.aspectRatio = `${capturePanelAspectRatio}`;
+        }
+
+        function stopCapturePanelInteractions() {
+            capturePanelDragging = false;
+            capturePanelResizing = false;
+        }
+
+        function renderCapturePanel() {
+            if (!capturePanelOpen || !captureRegion || !captureSourceVideo || captureSourceVideo.readyState < 2) return;
+
+            const dpr = window.devicePixelRatio || 1;
+            const targetWidth = Math.max(1, Math.floor(capturePanelBody.clientWidth * dpr));
+            const targetHeight = Math.max(1, Math.floor(capturePanelBody.clientHeight * dpr));
+
+            if (captureCanvas.width !== targetWidth || captureCanvas.height !== targetHeight) {
+                captureCanvas.width = targetWidth;
+                captureCanvas.height = targetHeight;
+            }
+
+            captureCtx.setTransform(1, 0, 0, 1, 0, 0);
+            captureCtx.clearRect(0, 0, captureCanvas.width, captureCanvas.height);
+            captureCtx.drawImage(
+                captureSourceVideo,
+                captureRegion.x,
+                captureRegion.y,
+                captureRegion.width,
+                captureRegion.height,
+                0,
+                0,
+                captureCanvas.width,
+                captureCanvas.height
+            );
+        }
+
+        function updateCaptureOpacity() {
+            const opacity = Number(captureOpacitySlider.value || 100) / 100;
+            capturePanel.style.opacity = String(opacity);
+        }
+
+        function resetCaptureState() {
+            if (captureStream) {
+                captureStream.getTracks().forEach(track => track.stop());
+            }
+            captureStream = null;
+            captureSourceVideo = null;
+            captureRegion = null;
+            capturePanelOpen = false;
+            capturePanel.classList.remove('open', 'has-feed');
+            capturePanel.style.opacity = '1';
+            captureSelectionVideo.srcObject = null;
+            closeCaptureSelectionOverlay();
+            setStatus('区域捕捉已结束');
+        }
         
-        // 命中检测
+        // 几何辅助：命中检测
         function hitStroke(stroke, p) {
             const pts = stroke.points;
 
@@ -2451,12 +2714,10 @@
                 currentStroke = null;
                 drawing = false;
             }
-
-            requestRender();
         }
 
         // =========================
-        // 选择与快捷键
+        // 快捷键：批注工具切换
         // =========================
         function handleKeydown(e) {
             if (document.activeElement && (document.activeElement.isContentEditable || ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName))) {
@@ -2490,13 +2751,13 @@
         function drawStrokeOn(ctx2, stroke){
             const pts = stroke.points;
             if(pts.length < 2) return;
-            const maxSegmentDistance = isIPadLikeDevice ? 140 : 220;
+            const maxSegmentDistance = 220;
 
             ctx2.strokeStyle = stroke.color;
 
             if(stroke.tool === 'guide'){
                 ctx2.shadowColor = stroke.color;
-                ctx2.shadowBlur = isIPadLikeDevice ? 0 : 8;
+                ctx2.shadowBlur = 8;
                 ctx2.lineWidth = 2;
             } else {
                 ctx2.shadowBlur = 0;
@@ -2526,16 +2787,14 @@
         function undo() {
             if (strokes.length === 0) return;
             redoStack.push(strokes.pop());
-            statusBar.textContent = '已撤销';
-            requestRender();
+            setStatus('已撤销');
         }
         
         // 重做
         function redo() {
             if (redoStack.length === 0) return;
             strokes.push(redoStack.pop());
-            statusBar.textContent = '已重做';
-            requestRender();
+            setStatus('已重做');
         }
         
         // 导出PNG
@@ -2559,32 +2818,28 @@
             link.download = 'annotation.png';
             link.href = exportCanvas.toDataURL('image/png');
             link.click();
-            statusBar.textContent = '已导出PNG';
+            setStatus('已导出PNG');
         }
         
         // 清空所有图层
         function clearAll() {
             strokes = [];
             redoStack = [];
-            statusBar.textContent = '已清空所有标注';
-            requestRender();
+            setStatus('已清空所有标注');
         }
         
         // =========================
-        // 页面初始化入口
+        // 页面入口：模板初始化
         // =========================
         function init() {
-            if (isIPadLikeDevice) {
-                document.body.classList.add('ipad-optimized');
-            }
             resizeCanvas();
             setupEventListeners();
-            applyTextLockState();
-            setTool(currentTool);
             setColor(currentColor);
+            setTool(currentTool);
             updateCursor();
             brush.style.opacity = '0';
-            requestRender();
+            scheduleToolbarHide();
+            render();
         }
         
         window.onload = init;

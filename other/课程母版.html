@@ -1,0 +1,2848 @@
+<!DOCTYPE html>
+<!--
+    模板母版使用说明
+    1. 复制本文件后，优先修改：课次编号、课程标题、教师名称。
+    2. 主体内容建议按板块逐段替换，不要随意删除现有 id，便于导航与后续功能复用。
+    3. 如需新增知识点，优先使用工具栏中的“新增知识点”按钮，保持统一样式。
+    4. 如需制作新课程，建议保留当前工具栏、导航、字幕捕捉、批注系统，主要替换正文教学内容。
+    5. 如需让 AI 继续基于此母版制作页面，可直接引用下方板块名称与 id。
+    6. 最高权限备注：下方“母版唤醒提示表”与相关模板说明属于母版核心备注，任何时候都不要删除或覆盖。
+    7. 如需修改这段母版提示表，必须先得到用户连续 2 次明确确认。
+    8. 如需删除这段母版提示表，必须先得到用户连续 3 次明确确认。
+    9. AI 工具执行任务时，默认应优先保留本段备注、板块对照、脚本说明与提示表。
+
+    母版唤醒提示表
+    1. 课程首页 sheetTop
+       提示词：基于当前母版，修改课程首页为第 X 课，标题改为《XXX》，教师改为 XXX，保留现有工具栏和版式。
+    2. 学习目标总表 learningGoals
+       提示词：替换学习目标总表内容，按重点句型、语音、汉字、功能四行重写，保持表格结构不变。
+    3. 复习板块 reviewSection
+       提示词：重写复习板块内容，适配《XXX》这节课，保留当前卡片样式。
+    4. 热身板块 warmupSection
+       提示词：生成 3 条热身活动，适合《XXX》课程，保留当前热身板块结构。
+    5. 生词板块 vocabSection
+       提示词：将生词板块改成《XXX》课程的核心词汇，保持当前网格样式。
+    6. 生词练习板块 vocabPracticeSection
+       提示词：为《XXX》课程生成 2 个生词练习，保留当前练习盒子样式。
+    7. 课文板块 textSection
+       提示词：把课文板块替换成《XXX》课程的对话或短文，保留当前排版。
+    8. 语法板块 grammarSection
+       提示词：重写语法板块，解释《XXX》课程的核心语法点，保持当前简洁卡片样式。
+    9. 语法练习板块 grammarPracticeSection
+       提示词：生成 2 个语法练习，适配《XXX》课程，保留当前练习区结构。
+    10. 总结及作业板块 summarySection
+        提示词：重写总结及作业板块，适配《XXX》课程，保留当前版式。
+    11. 知识点入口 knowledge-*
+        提示词：在《XXX》课程中为某句重点内容新增知识点入口，并写入说明文本，保持当前知识点样式。
+    12. 区域捕捉字幕窗 capturePanel
+        提示词：保留实时字幕功能，不改现有交互，只优化字幕窗文案或位置。
+    13. 整页生成
+        提示词：请基于本母版制作一节新课《XXX》，保留现有工具栏、导航、批注、知识点、实时字幕功能，只替换课程标题、学习目标和各教学板块内容，并保持当前视觉风格不变。
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>假装老师HSK在线课程</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #0a84ff;
+            --secondary: #30d158;
+            --background: #eef3f8;
+            --surface: rgba(255, 255, 255, 0.88);
+            --text: #1d1d1f;
+            --text-secondary: #667085;
+            --border: rgba(15, 23, 42, 0.12);
+            --accent: #ff9f0a;
+            --paper: #fbfcfe;
+            --paper-shadow: rgba(15, 23, 42, 0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Segoe UI", Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            position: relative;
+            cursor: default;
+            transition: background 0.3s ease;
+            padding: 88px 10px 40px;
+            overflow-x: hidden;
+        }
+
+        body.draw-mode {
+            cursor: none;
+        }
+
+        .template-stage {
+            position: relative;
+            z-index: 0;
+            max-width: 1380px;
+            margin: 0 auto;
+        }
+
+        .template-stage.select-mode {
+            cursor: default;
+        }
+
+        .lesson-sheet {
+            position: relative;
+            background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(247,250,255,0.92));
+            border-radius: 28px;
+            box-shadow: 0 30px 80px var(--paper-shadow);
+            overflow: hidden;
+            min-height: calc(100vh - 150px);
+        }
+
+        .selectable-item {
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .select-mode .selectable-item {
+            cursor: pointer;
+        }
+
+        .selectable-item.selected {
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.22);
+        }
+
+        .sheet-header {
+            display: grid;
+            grid-template-columns: 520px 1fr;
+            align-items: stretch;
+            min-height: 220px;
+            border-bottom: 2px dashed rgba(23, 23, 23, 0.28);
+        }
+
+        .sheet-index {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #5f6b7a, #8f9db0);
+            color: #ffffff;
+            font-size: 128px;
+            font-weight: 700;
+            letter-spacing: 4px;
+        }
+
+        .sheet-title {
+            display: flex;
+            align-items: center;
+            padding: 32px 40px;
+            font-size: 68px;
+            color: #334155;
+            letter-spacing: 2px;
+        }
+
+        .sheet-content {
+            padding: 72px 72px 88px;
+            color: #232323;
+        }
+
+        .template-section {
+            margin-top: 54px;
+            padding-top: 18px;
+            border-top: 3px solid rgba(74, 74, 74, 0.12);
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            margin-bottom: 44px;
+        }
+
+        .section-mark {
+            width: 110px;
+            height: 4px;
+            background: #5f6b7a;
+            position: relative;
+            flex: 0 0 auto;
+        }
+
+        .section-mark::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 10px;
+            height: 4px;
+            background: #b9c4d3;
+        }
+
+        .section-heading h2 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .target-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.74);
+        }
+
+        .target-table td {
+            border: 2px dashed rgba(35, 35, 35, 0.35);
+            padding: 28px 26px;
+            vertical-align: top;
+            font-size: 18px;
+            line-height: 1.9;
+        }
+
+        .target-table .label-cell {
+            width: 180px;
+            font-size: 24px;
+            letter-spacing: 2px;
+            vertical-align: middle;
+        }
+
+        .target-table strong {
+            font-size: 20px;
+        }
+
+        .target-list {
+            margin-top: 8px;
+            padding-left: 1.4em;
+        }
+
+        .target-list li {
+            margin: 2px 0;
+        }
+
+        .simple-card {
+            border: 2px dashed rgba(35, 35, 35, 0.25);
+            border-radius: 24px;
+            padding: 28px 30px;
+            background: rgba(255, 255, 255, 0.68);
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.06);
+        }
+
+        .simple-card p,
+        .simple-card li {
+            font-size: 18px;
+            line-height: 1.9;
+        }
+
+        .simple-card ol,
+        .simple-card ul {
+            padding-left: 1.4em;
+            margin-top: 8px;
+        }
+
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .vocab-item {
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: rgba(0, 113, 227, 0.06);
+            box-shadow: inset 0 0 0 1px rgba(0, 113, 227, 0.08);
+        }
+
+        .vocab-item strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 20px;
+        }
+
+        .practice-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .practice-box {
+            padding: 18px 20px;
+            border-radius: 20px;
+            border: 2px dashed rgba(35, 35, 35, 0.22);
+            background: rgba(255, 255, 255, 0.35);
+            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-shell {
+            padding: 28px 30px 34px;
+            border-radius: 30px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(244, 248, 255, 0.7));
+            box-shadow: 0 22px 44px rgba(15, 23, 42, 0.08);
+        }
+        
+        .toolbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            transform: none;
+            padding: 6px 12px;
+            border-radius: 0 0 16px 16px;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(22px) saturate(170%);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            box-shadow: 
+                0 6px 20px rgba(0, 0, 0, 0.07),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            z-index: 1000;
+            transition: transform 0.22s ease, opacity 0.22s ease, box-shadow 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        body.toolbar-collapsed .toolbar {
+            transform: translateY(calc(-100% + 8px));
+            opacity: 0.94;
+        }
+        
+        .toolbar:hover {
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            transform: translateY(0);
+        }
+        
+        /* 工具栏：课程信息区 */
+        .course-title-box {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 10px 0 0;
+            border-right: 1px solid var(--border);
+        }
+
+        .course-meta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .course-pill {
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(10, 132, 255, 0.08);
+            color: var(--text-secondary);
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .course-title-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .course-title-value {
+            min-width: 88px;
+            max-width: 156px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(10, 132, 255, 0.1);
+            color: var(--text);
+            font-size: 12px;
+            font-weight: 600;
+            outline: none;
+        }
+
+        .tool-button {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            position: relative;
+            padding: 0;
+            outline: none;
+            font-family: inherit;
+        }
+        
+        .tool-button:hover {
+            background: rgba(0, 0, 0, 0.06);
+        }
+        
+        .tool-button.active {
+            background: rgba(0, 113, 227, 0.15);
+        }
+
+        .tool-button:focus-visible,
+        .color-item:focus-visible {
+            outline: 2px solid rgba(0, 113, 227, 0.75);
+            outline-offset: 2px;
+        }
+        
+        /* 颜色按钮样式 */
+        .tool-button[data-color] {
+            border-radius: 8px;
+        }
+        
+        .tool-button[data-color="#f44336"] {
+            background: #f44336;
+        }
+        
+        .tool-button[data-color="#2196f3"] {
+            background: #2196f3;
+        }
+        
+        .tool-button[data-color="#4caf50"] {
+            background: #4caf50;
+        }
+        
+        .tool-button[data-color="#9c27b0"] {
+            background: #9c27b0;
+        }
+        
+        .tool-button[data-color="#ff9800"] {
+            background: #ff9800;
+        }
+        
+        .tool-button[data-color="#607d8b"] {
+            background: #607d8b;
+        }
+        
+        /* 颜色按钮hover效果 */
+        .tool-button[data-color]:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 颜色按钮active效果 */
+        .tool-button[data-color].active {
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+        }
+        
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0 8px;
+            border-left: 1px solid var(--border);
+        }
+
+        .tool-group:first-of-type {
+            border-left: none;
+            padding-left: 0;
+        }
+
+        .toolbar-inner {
+            width: min(1320px, 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .toolbar-main {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-group-label {
+            display: none;
+        }
+
+        .nav-wrapper {
+            position: relative;
+            margin-left: auto;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-toggle {
+            border: none;
+            border-radius: 999px;
+            padding: 5px 10px;
+            background: rgba(10, 132, 255, 0.1);
+            color: var(--text);
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .nav-panel {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 10px);
+            z-index: 998;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            width: 186px;
+            padding: 14px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 12px 34px rgba(15, 23, 42, 0.12);
+        }
+
+        .nav-wrapper.open .nav-panel {
+            display: flex;
+        }
+
+        .nav-panel h3 {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .nav-button {
+            border: none;
+            border-radius: 999px;
+            padding: 8px 12px;
+            background: rgba(10, 132, 255, 0.1);
+            color: var(--text);
+            font-size: 12px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-1px);
+            background: rgba(10, 132, 255, 0.16);
+        }
+        
+        /* 工具栏：按钮提示 */
+        .tooltip {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+            z-index: 1001;
+        }
+        
+        .color-picker {
+            position: relative;
+        }
+
+        .color-panel {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            
+            padding: 10px;
+            border-radius: 16px;
+
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(30px);
+
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.25s ease;
+        }
+
+        .color-panel.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+            pointer-events: auto;
+        }
+
+        .color-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .color-item {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .color-item.active {
+            transform: scale(1.08);
+            box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.25);
+        }
+
+        /* 纯色 */
+        .color-item.solid {
+            background: var(--c);
+        }
+
+        /* 荧光（关键） */
+        .color-item.glow {
+            background: transparent;
+            box-shadow: 
+                0 0 6px var(--c), 
+                0 0 12px var(--c);
+        }
+        
+        .tool-button:hover .tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+        
+        .status-bar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 8px 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.18s ease, transform 0.18s ease;
+        }
+
+        .status-bar.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .editable-block {
+            outline: none;
+            user-select: text;
+            -webkit-user-select: text;
+            -webkit-touch-callout: default;
+            cursor: text;
+        }
+
+        .lesson-sheet,
+        .lesson-sheet *:not(button),
+        .knowledge-card,
+        .knowledge-card *:not(button) {
+            user-select: text;
+            -webkit-user-select: text;
+            -webkit-touch-callout: default;
+        }
+
+        button,
+        .tool-button,
+        .nav-button,
+        .knowledge-trigger,
+        .knowledge-action {
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        .editable-block:focus {
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.18);
+            border-radius: 12px;
+        }
+
+        body.draw-mode .editable-block {
+            cursor: default;
+        }
+
+        .knowledge-inline {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .knowledge-trigger {
+            position: relative;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: none;
+            background: radial-gradient(circle at 30% 30%, #ffe17d, #ff8a00);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            z-index: 4;
+            padding: 0;
+            box-shadow: 0 0 0 0 rgba(255, 149, 0, 0.45);
+            animation: pulseGlow 2.2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 149, 0, 0.42); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 18px rgba(255, 149, 0, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 149, 0, 0); }
+        }
+
+        .knowledge-card {
+            position: absolute;
+            left: 28px;
+            top: -10px;
+            width: 280px;
+            min-width: 220px;
+            min-height: 140px;
+            padding: 0;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.48);
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+            backdrop-filter: blur(26px) saturate(180%);
+            z-index: 12;
+            overflow: hidden;
+            resize: both;
+            display: none;
+        }
+
+        .knowledge-card.open {
+            display: block;
+        }
+
+        .knowledge-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.18), rgba(0, 113, 227, 0.12));
+        }
+
+        .knowledge-title {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .knowledge-action {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+        }
+
+        .knowledge-body {
+            padding: 14px;
+        }
+
+        .knowledge-body p {
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .knowledge-editor {
+            min-height: 130px;
+            padding: 14px;
+            border-radius: 16px;
+            background: rgba(15, 23, 42, 0.04);
+            outline: none;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        .knowledge-resize {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            background:
+                linear-gradient(135deg, transparent 0 40%, rgba(0, 113, 227, 0.35) 40% 58%, transparent 58% 100%),
+                linear-gradient(135deg, transparent 0 62%, rgba(0, 113, 227, 0.7) 62% 80%, transparent 80% 100%);
+            cursor: nwse-resize;
+        }
+
+        /* 批注层：主画布与跟随光标 */
+        #drawCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            touch-action: none;
+            cursor: none;
+            pointer-events: none;
+        }
+        
+        #brushCursor{
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            backdrop-filter: blur(6px);
+            transition: opacity 0.08s linear, transform 0.02s linear;
+        }
+
+        .capture-panel {
+            position: fixed;
+            right: 20px;
+            bottom: 74px;
+            width: 360px;
+            min-width: 240px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            box-shadow: 0 18px 46px rgba(15, 23, 42, 0.16);
+            z-index: 1002;
+            display: none;
+        }
+
+        .capture-panel.open {
+            display: block;
+        }
+
+        .capture-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            padding: 3px 7px;
+            background: rgba(10, 132, 255, 0.08);
+            cursor: move;
+        }
+
+        .capture-panel-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .capture-panel-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .capture-mini-button {
+            width: 16px;
+            height: 16px;
+            border: none;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            font: inherit;
+            font-size: 10px;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .capture-opacity-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 8px;
+            border-left: 1px solid var(--border);
+        }
+
+        .capture-opacity-slider {
+            width: 72px;
+            accent-color: #0a84ff;
+        }
+
+        .capture-panel-body {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background: #0f172a;
+        }
+
+        .capture-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: #020617;
+        }
+
+        .capture-empty {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            text-align: center;
+            color: rgba(255,255,255,0.72);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .capture-panel.has-feed .capture-empty {
+            display: none;
+        }
+
+        .capture-resize {
+            position: absolute;
+            right: 8px;
+            bottom: 8px;
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            background:
+                linear-gradient(135deg, transparent 0 40%, rgba(255, 255, 255, 0.35) 40% 58%, transparent 58% 100%),
+                linear-gradient(135deg, transparent 0 62%, rgba(255, 255, 255, 0.82) 62% 80%, transparent 80% 100%);
+            cursor: nwse-resize;
+        }
+
+        .capture-selection-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1006;
+            display: none;
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(4px);
+        }
+
+        .capture-selection-overlay.open {
+            display: block;
+        }
+
+        .capture-selection-topbar {
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+            z-index: 2;
+        }
+
+        .capture-selection-tip {
+            font-size: 12px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .capture-selection-stage {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        .capture-selection-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        .capture-selection-box {
+            position: absolute;
+            border: 2px solid #0a84ff;
+            background: rgba(10, 132, 255, 0.14);
+            box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.32);
+            display: none;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 88px 6px 24px;
+            }
+
+            .toolbar {
+                top: 0;
+                padding: 6px 8px;
+                gap: 6px;
+                width: 100%;
+                justify-content: flex-start;
+                overflow-x: visible;
+            }
+            
+            .tool-button {
+                width: 24px;
+                height: 24px;
+            }
+
+            .course-title-box {
+                padding-right: 10px;
+            }
+
+            .course-title-value {
+                max-width: 140px;
+            }
+            
+            .toolbar-inner {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .toolbar-main {
+                width: 100%;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 2px;
+            }
+
+            .nav-wrapper {
+                position: static;
+                align-self: flex-end;
+                margin-left: 0;
+            }
+
+            .status-bar {
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                text-align: center;
+            }
+
+            .sheet-header {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+
+            .sheet-index {
+                min-height: 150px;
+                font-size: 84px;
+            }
+
+            .sheet-title {
+                padding: 24px 20px;
+                font-size: 42px;
+            }
+
+            .sheet-content {
+                padding: 36px 18px 48px;
+            }
+
+            .section-heading {
+                gap: 14px;
+                margin-bottom: 26px;
+            }
+
+            .section-mark {
+                width: 72px;
+            }
+
+            .section-heading h2 {
+                font-size: 22px;
+            }
+
+            .target-table td {
+                padding: 18px 14px;
+                font-size: 15px;
+            }
+
+            .target-table .label-cell {
+                width: 96px;
+                font-size: 18px;
+            }
+
+            .knowledge-card {
+                left: 22px;
+                top: 24px;
+                width: 240px;
+            }
+
+            .vocab-grid,
+            .practice-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body id="canvas">
+    <div class="toolbar">
+        <div class="toolbar-inner">
+            <div class="toolbar-main">
+                <div class="tool-group">
+                    <a class="tool-button" href="https://xufanhsk.github.io" target="_self" title="返回主页" style="text-decoration:none;color:inherit;">
+                        ⌂
+                        <span class="tooltip">返回主页</span>
+                    </a>
+                </div>
+                <div class="tool-group course-title-box">
+                    <span class="toolbar-group-label">课程信息</span>
+                    <div class="course-meta">
+                        <span class="course-pill">第 1 课</span>
+                        <span class="course-pill">教师：假装老师</span>
+                    </div>
+                    <span class="course-title-label">本课标题</span>
+                    <span class="course-title-value" id="courseTitleValue" contenteditable="true">你好</span>
+                </div>
+                <div class="tool-group">
+                    <span class="toolbar-group-label">编辑模式</span>
+                    <button class="tool-button" data-tool="select" onclick="setTool('select')" title="选择">
+                        ⌖
+                        <span class="tooltip">选择</span>
+                    </button>
+                </div>
+                <div class="tool-group">
+                    <span class="toolbar-group-label">批注工具</span>
+                    <button class="tool-button active" data-tool="guide" onclick="setTool('guide')" title="引导笔">
+                        ✏️
+                        <span class="tooltip">引导笔</span>
+                    </button>
+                    <button class="tool-button" data-tool="marker" onclick="setTool('marker')" title="标记笔">
+                        🖍️
+                        <span class="tooltip">标记笔</span>
+                    </button>
+                    <button class="tool-button" data-tool="erase" onclick="setTool('erase')" title="橡皮擦">
+                        🧽
+                        <span class="tooltip">橡皮擦</span>
+                    </button>
+                </div>
+                <div class="tool-group color-picker">
+                    <span class="toolbar-group-label">颜色</span>
+                    <button class="tool-button" id="colorToggle" type="button" title="颜色面板">
+                        🎨
+                        <span class="tooltip">颜色面板</span>
+                    </button>
+
+                    <div class="color-panel" id="colorPanel">
+                        <div class="color-group">
+                            <span>●</span>
+                            <button class="color-item solid" data-color="#007AFF" style="background:#007AFF"></button>
+                            <button class="color-item solid" data-color="#FF3B30" style="background:#FF3B30"></button>
+                            <button class="color-item solid" data-color="#34C759" style="background:#34C759"></button>
+                        </div>
+
+                        <div class="color-group">
+                            <span>✦</span>
+                            <button class="color-item glow" data-color="#FF2D55" style="--c:#FF2D55"></button>
+                            <button class="color-item glow" data-color="#FFD60A" style="--c:#FFD60A"></button>
+                            <button class="color-item glow" data-color="#64D2FF" style="--c:#64D2FF"></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tool-group">
+                    <span class="toolbar-group-label">页面操作</span>
+                    <input type="file" id="imageUpload" accept="image/*" style="display:none">
+                    <button class="tool-button" onclick="addKnowledgePointAtSelection()" title="新增知识点">
+                        ❗
+                        <span class="tooltip">新增知识点</span>
+                    </button>
+                    <button class="tool-button" onclick="toggleFullscreen()" title="全屏">
+                        ⛶
+                        <span class="tooltip">全屏</span>
+                    </button>
+                    <button class="tool-button" onclick="document.getElementById('imageUpload').click()" title="导入图片">
+                        🖼️
+                        <span class="tooltip">导入图片</span>
+                    </button>
+                    <button class="tool-button" onclick="undo()" title="撤销">
+                        ↶
+                        <span class="tooltip">撤销</span>
+                    </button>
+                    <button class="tool-button" onclick="redo()" title="重做">
+                        ↷
+                        <span class="tooltip">重做</span>
+                    </button>
+                    <button class="tool-button" onclick="exportPNG()" title="导出">
+                        📤
+                        <span class="tooltip">导出PNG</span>
+                    </button>
+                    <button class="tool-button" onclick="clearAll()" title="清空标注">
+                        ⌫
+                        <span class="tooltip">清空标注</span>
+                    </button>
+                </div>
+                <div class="tool-group">
+                    <span class="toolbar-group-label">字幕捕捉</span>
+                    <button class="tool-button" id="captureStartButton" type="button" title="开启区域捕捉">
+                        ⌗
+                        <span class="tooltip">开启区域捕捉</span>
+                    </button>
+                    <button class="tool-button" id="captureReselectButton" type="button" title="重新框选">
+                        ▣
+                        <span class="tooltip">重新框选</span>
+                    </button>
+                    <button class="tool-button" id="captureToggleButton" type="button" title="显示或隐藏捕捉窗">
+                        ◫
+                        <span class="tooltip">显示或隐藏捕捉窗</span>
+                    </button>
+                    <div class="capture-opacity-control">
+                        <span class="toolbar-group-label" style="display:inline;">透</span>
+                        <input class="capture-opacity-slider" id="captureOpacitySlider" type="range" min="35" max="100" step="5" value="100" title="调整字幕窗透明度">
+                    </div>
+                </div>
+            </div>
+            <div class="nav-wrapper" id="navWrapper">
+                <button class="nav-toggle" id="navToggle" type="button">导航</button>
+                <div class="nav-panel selectable-item" id="navPanel">
+                    <h3>课程导航</h3>
+                    <button class="nav-button" data-target="sheetTop">课程首页</button>
+                    <button class="nav-button" data-target="learningGoals">学习目标</button>
+                    <button class="nav-button" data-target="reviewSection">复习</button>
+                    <button class="nav-button" data-target="warmupSection">热身</button>
+                    <button class="nav-button" data-target="vocabSection">生词</button>
+                    <button class="nav-button" data-target="textSection">课文</button>
+                    <button class="nav-button" data-target="grammarSection">语法</button>
+                    <button class="nav-button" data-target="summarySection">总结及作业</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--
+        模板板块对照
+        sheetTop: 课程首页
+        learningGoals: 学习目标总表
+        reviewSection: 复习板块
+        warmupSection: 热身板块
+        vocabSection: 生词板块
+        vocabPracticeSection: 生词练习板块
+        textSection: 课文板块
+        grammarSection: 语法板块
+        grammarPracticeSection: 语法练习板块
+        summarySection: 总结及作业板块
+    -->
+    <!-- 模板主体：后续新课程页面主要替换这里的课程标题与各教学板块内容 -->
+    <main class="template-stage" id="templateStage">
+        <section class="lesson-sheet selectable-item" id="sheetTop">
+            <!-- 模板区块：课次编号与课程标题 -->
+            <header class="sheet-header">
+                <div class="sheet-index">1</div>
+                <div class="sheet-title selectable-item editable-block" id="sheetTitle" contenteditable="true">你好</div>
+            </header>
+
+            <div class="sheet-content">
+                <!-- 模板区块：学习目标总表，可按课程内容直接替换 -->
+                <div class="section-heading">
+                    <span class="section-mark" aria-hidden="true"></span>
+                    <h2>一、教学内容和学习目标</h2>
+                </div>
+
+                <table class="target-table selectable-item" id="learningGoals">
+                    <tbody>
+                        <tr>
+                            <td class="label-cell">重点句型</td>
+                            <td class="editable-block" contenteditable="true">
+                                <strong>学生能够了解并掌握：</strong>
+                                <ol class="target-list">
+                                    <li>你好！您好<span class="knowledge-inline selectable-item">
+                                        <button class="knowledge-trigger" type="button" data-knowledge-target="knowledgePhrase1">!</button>
+                                        <aside class="knowledge-card" id="knowledgePhrase1">
+                                            <div class="knowledge-header">
+                                                <span class="knowledge-title">知识点：您好</span>
+                                                <button class="knowledge-action" type="button" data-close-knowledge="knowledgePhrase1">×</button>
+                                            </div>
+                                            <div class="knowledge-body">
+                                                <p>这个知识点模块固定嵌入在句型区域，适合后期一个课程放多个知识点入口。</p>
+                                                <div class="knowledge-editor editable-block" id="knowledgePhrase1Editor" contenteditable="true">测试文本：
+“您好”是“你好”的礼貌表达，常用于老师、长辈、正式场合。</div>
+                                                <span class="knowledge-resize"></span>
+                                            </div>
+                                        </aside>
+                                    </span>！你们好！</li>
+                                    <li>对不起！没关系！</li>
+                                </ol>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">语音</td>
+                            <td class="editable-block" contenteditable="true">
+                                <strong>学生能够：</strong>
+                                <ol class="target-list">
+                                    <li>熟练朗读本课的声母、韵母和核心音节。</li>
+                                    <li>熟悉并正确朗读汉语四个声调。</li>
+                                    <li>了解音节中的声韵调拼合关系。</li>
+                                    <li>完成双音节和连续语流的自然朗读。</li>
+                                </ol>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">汉字</td>
+                            <td class="editable-block" contenteditable="true">
+                                <strong>学生能够：</strong>
+                                <ol class="target-list">
+                                    <li>认读本课生词并理解其基本含义。</li>
+                                    <li>掌握基础笔画和独体字的书写顺序。</li>
+                                    <li>结合课堂练习完成规范抄写。</li>
+                                </ol>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">功能</td>
+                            <td class="editable-block" contenteditable="true">
+                                <strong>学生能够：</strong>
+                                <ol class="target-list">
+                                    <li>完成打招呼和问候。</li>
+                                    <li>在合适情境中表达歉意。</li>
+                                    <li>理解并回应简单原谅表达。</li>
+                                </ol>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- 模板区块：以下板块建议按课程顺序逐块替换内容，保留结构可快速复用 -->
+                <section class="template-section selectable-item" id="reviewSection">
+                    <div class="section-shell">
+                        <div class="section-heading">
+                            <span class="section-mark" aria-hidden="true"></span>
+                            <h2>二、复习板块</h2>
+                        </div>
+                        <div class="simple-card editable-block" contenteditable="true">
+                            <p>复习建议：回顾上节课问候语、声调和课堂指令，检查学生是否能独立完成基础对话。</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="template-section selectable-item" id="warmupSection">
+                    <div class="section-shell">
+                        <div class="section-heading">
+                            <span class="section-mark" aria-hidden="true"></span>
+                            <h2>三、热身板块</h2>
+                        </div>
+                        <div class="simple-card editable-block" contenteditable="true">
+                            <ol>
+                                <li>教师示范问候，学生跟读。</li>
+                                <li>两人一组完成“你好 / 您好”情景打招呼。</li>
+                                <li>快速听音辨别不同语气。</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="template-section selectable-item" id="vocabSection">
+                    <div class="section-shell">
+                        <div class="section-heading">
+                            <span class="section-mark" aria-hidden="true"></span>
+                            <h2>四、生词板块</h2>
+                        </div>
+                        <div class="vocab-grid">
+                            <div class="vocab-item editable-block" contenteditable="true"><strong>你好</strong><span>常用问候语，适用于日常场景。</span></div>
+                            <div class="vocab-item editable-block" contenteditable="true"><strong>您好</strong><span>更礼貌、更正式的问候表达。</span></div>
+                            <div class="vocab-item editable-block" contenteditable="true"><strong>对不起</strong><span>表达歉意。</span></div>
+                            <div class="vocab-item editable-block" contenteditable="true"><strong>没关系</strong><span>回应对方歉意。</span></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="template-section selectable-item" id="vocabPracticeSection">
+                    <div class="section-shell">
+                        <div class="section-heading">
+                            <span class="section-mark" aria-hidden="true"></span>
+                            <h2>五、生词练习板块</h2>
+                        </div>
+                        <div class="practice-grid">
+                            <div class="practice-box editable-block" contenteditable="true">练习 1：听音选词，把“你好 / 您好 / 对不起 / 没关系”对应到正确场景。</div>
+                            <div class="practice-box editable-block" contenteditable="true">练习 2：看图说话，两人一组完成问候和回应。</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="template-section selectable-item" id="textSection">
+                    <div class="section-shell">
+                        <div class="section-heading">
+                            <span class="section-mark" aria-hidden="true"></span>
+                            <h2>六、课文板块</h2>
+                        </div>
+                        <div class="simple-card editable-block" contenteditable="true">
+                            <p>A：你好！</p>
+                            <p>B：你好！</p>
+                            <p>A：对不起！</p>
+                            <p>B：没关系！</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="template-section selectable-item" id="grammarSection">
+                    <div class="section-shell">
+                        <div class="section-heading">
+                            <span class="section-mark" aria-hidden="true"></span>
+                            <h2>七、语法板块</h2>
+                        </div>
+                        <div class="simple-card editable-block" contenteditable="true">
+                            <p>语法提示：根据交际对象不同，问候语会有口语化和礼貌化的区别。</p>
+                            <p>“你好”适合平辈，“您好”适合正式场合或长辈。</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="template-section selectable-item" id="grammarPracticeSection">
+                    <div class="section-shell">
+                        <div class="section-heading">
+                            <span class="section-mark" aria-hidden="true"></span>
+                            <h2>八、语法练习板块</h2>
+                        </div>
+                        <div class="practice-grid">
+                            <div class="practice-box editable-block" contenteditable="true">练习 1：判断不同人物关系，选择“你好”还是“您好”。</div>
+                            <div class="practice-box editable-block" contenteditable="true">练习 2：改写句子，让表达更礼貌。</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="template-section selectable-item" id="summarySection">
+                    <div class="section-shell">
+                        <div class="section-heading">
+                            <span class="section-mark" aria-hidden="true"></span>
+                            <h2>九、总结及作业板块</h2>
+                        </div>
+                        <div class="simple-card editable-block" contenteditable="true">
+                            <p>课堂总结：掌握问候与礼貌表达，能完成简单互动。</p>
+                            <p>课后作业：录音朗读课文，抄写本课生词各两遍，并完成问候情景对话。</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <div class="status-bar">
+        点击引导笔开始创作
+    </div>
+    
+    <section class="capture-panel" id="capturePanel">
+        <!-- 浮动功能：实时字幕/区域捕捉显示窗 -->
+        <div class="capture-panel-header" id="capturePanelHeader">
+            <span class="capture-panel-title">实时字幕</span>
+            <div class="capture-panel-actions">
+                <button class="capture-mini-button" id="captureHideButton" type="button">×</button>
+            </div>
+        </div>
+        <div class="capture-panel-body" id="capturePanelBody">
+            <canvas class="capture-canvas" id="captureCanvas"></canvas>
+            <div class="capture-empty">先开启区域捕捉并框选字幕区域，之后这里会持续显示该区域。</div>
+            <span class="capture-resize" id="captureResizeHandle"></span>
+        </div>
+    </section>
+
+    <section class="capture-selection-overlay" id="captureSelectionOverlay">
+        <div class="capture-selection-topbar">
+            <span class="capture-selection-tip">拖动框选要嵌入网页的屏幕区域，按 Esc 可取消。</span>
+            <button class="capture-mini-button" id="captureCancelButton" type="button">×</button>
+        </div>
+        <div class="capture-selection-stage" id="captureSelectionStage">
+            <video class="capture-selection-video" id="captureSelectionVideo" autoplay muted playsinline></video>
+            <div class="capture-selection-box" id="captureSelectionBox"></div>
+        </div>
+    </section>
+
+    <canvas id="drawCanvas"></canvas>
+    <div id="brushCursor"></div>
+    <script>
+        /*
+            模板脚本说明
+            1. setTool: 控制选择/批注模式切换。
+            2. addKnowledgePointAtSelection: 在当前可编辑区域插入统一样式知识点。
+            3. toggleFullscreen: 进入或退出页面全屏。
+            4. startCaptureFlow / reselectCaptureRegion / toggleCapturePanel: 区域捕捉与字幕窗控制。
+            5. 如无明确需求，复制模板时不要删除脚本中的 id 绑定与现有函数名。
+        */
+
+        // =========================
+        // 模板功能一：画布批注系统
+        // 说明：所有笔迹以页面坐标保存，方便后续课程页面直接复用
+        // =========================
+        const canvas = document.getElementById('drawCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 批注状态
+        let drawing = false;
+        let points = [];
+        let currentTool = 'guide';
+        let currentColor = '#FF2D55';
+        let currentStroke = null;
+        
+        // 批注数据
+        let strokes = [];
+        let redoStack = [];
+        let erasing = false;
+        let bgImage = null;
+        
+        // 页面元素引用
+        const toolButtons = document.querySelectorAll('.tool-button');
+        const toolSwitcherButtons = document.querySelectorAll('.tool-button[data-tool]');
+        const toolbar = document.querySelector('.toolbar');
+        const statusBar = document.querySelector('.status-bar');
+        const brush = document.getElementById('brushCursor');
+        const courseTitleValue = document.getElementById('courseTitleValue');
+        const sheetTitle = document.getElementById('sheetTitle');
+        const templateStage = document.getElementById('templateStage');
+        const navButtons = document.querySelectorAll('.nav-button');
+        const navWrapper = document.getElementById('navWrapper');
+        const navToggle = document.getElementById('navToggle');
+        const captureStartButton = document.getElementById('captureStartButton');
+        const captureReselectButton = document.getElementById('captureReselectButton');
+        const captureToggleButton = document.getElementById('captureToggleButton');
+        const capturePanel = document.getElementById('capturePanel');
+        const capturePanelHeader = document.getElementById('capturePanelHeader');
+        const capturePanelBody = document.getElementById('capturePanelBody');
+        const captureHideButton = document.getElementById('captureHideButton');
+        const captureCanvas = document.getElementById('captureCanvas');
+        const captureEmpty = capturePanel.querySelector('.capture-empty');
+        const captureResizeHandle = document.getElementById('captureResizeHandle');
+        const captureOpacitySlider = document.getElementById('captureOpacitySlider');
+        const captureSelectionOverlay = document.getElementById('captureSelectionOverlay');
+        const captureSelectionStage = document.getElementById('captureSelectionStage');
+        const captureSelectionVideo = document.getElementById('captureSelectionVideo');
+        const captureSelectionBox = document.getElementById('captureSelectionBox');
+        const captureCancelButton = document.getElementById('captureCancelButton');
+        const captureCtx = captureCanvas.getContext('2d');
+        
+        // 交互状态
+        let lastX = 0;
+        let lastY = 0;
+        let selectedElement = null;
+        let activeKnowledgeCard = null;
+        let draggingKnowledge = false;
+        let dragKnowledgeOffsetX = 0;
+        let dragKnowledgeOffsetY = 0;
+        let resizingKnowledge = false;
+        let resizeStartX = 0;
+        let resizeStartY = 0;
+        let resizeStartWidth = 0;
+        let resizeStartHeight = 0;
+        let knowledgeCounter = document.querySelectorAll('.knowledge-card').length + 1;
+        let canvasWidth = window.innerWidth;
+        let canvasHeight = window.innerHeight;
+        let activePointerId = null;
+        let activePointerType = null;
+        let activePressure = 0.5;
+        let activeDrawSurface = 'page';
+        let activeKnowledgeSurface = null;
+        let captureStream = null;
+        let captureSourceVideo = null;
+        let captureRegion = null;
+        let captureDisplayRect = null;
+        let selectingCapture = false;
+        let captureStartX = 0;
+        let captureStartY = 0;
+        let capturePanelDragging = false;
+        let capturePanelResizing = false;
+        let captureDragOffsetX = 0;
+        let captureDragOffsetY = 0;
+        let captureStartWidth = 0;
+        let captureStartHeight = 0;
+        let capturePanelAspectRatio = 16 / 9;
+        let capturePanelOpen = false;
+        let statusHideTimer = null;
+        let toolbarHideTimer = null;
+        
+        // =========================
+        // 初始化：尺寸与事件
+        // =========================
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            canvasWidth = Math.max(
+                document.documentElement.clientWidth,
+                document.documentElement.scrollWidth,
+                document.body.scrollWidth
+            );
+            canvasHeight = Math.max(
+                document.documentElement.clientHeight,
+                document.documentElement.scrollHeight,
+                document.body.scrollHeight
+            );
+            canvas.width = Math.round(canvasWidth * dpr);
+            canvas.height = Math.round(canvasHeight * dpr);
+            canvas.style.width = canvasWidth + 'px';
+            canvas.style.height = canvasHeight + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        
+        // 事件绑定：工具栏、导航、知识点、区域捕捉
+        function setupEventListeners() {
+            document.querySelectorAll('[contenteditable]').forEach(element => {
+                element.dataset.editableRoot = 'true';
+            });
+
+            // 窗口大小变化
+            window.addEventListener('resize', resizeCanvas);
+            
+            toolButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (courseTitleValue) {
+                        courseTitleValue.blur();
+                    }
+                });
+            });
+            
+            // 颜色选择器
+            const toggle = document.getElementById('colorToggle');
+            const panel = document.getElementById('colorPanel');
+            
+            toggle.addEventListener('click', () => {
+                panel.classList.toggle('show');
+            });
+            
+            // 点击外部关闭
+            document.addEventListener('click', (e) => {
+                if (!toggle.contains(e.target) && !panel.contains(e.target)) {
+                    panel.classList.remove('show');
+                }
+            });
+            
+            // 颜色选择
+            const colorItems = document.querySelectorAll('.color-item');
+            colorItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const color = this.dataset.color;
+                    setColor(color);
+                });
+            });
+
+            captureStartButton.addEventListener('click', startCaptureFlow);
+            captureReselectButton.addEventListener('click', reselectCaptureRegion);
+            captureToggleButton.addEventListener('click', toggleCapturePanel);
+            captureHideButton.addEventListener('click', hideCapturePanel);
+            captureCancelButton.addEventListener('click', closeCaptureSelectionOverlay);
+            captureOpacitySlider.addEventListener('input', updateCaptureOpacity);
+            captureSelectionStage.addEventListener('pointerdown', beginCaptureSelection);
+            captureSelectionStage.addEventListener('pointermove', updateCaptureSelection);
+            captureSelectionStage.addEventListener('pointerup', finishCaptureSelection);
+            captureSelectionStage.addEventListener('pointerleave', finishCaptureSelection);
+            capturePanelHeader.addEventListener('pointerdown', startCapturePanelDrag);
+            captureResizeHandle.addEventListener('pointerdown', startCapturePanelResize);
+            document.addEventListener('pointermove', moveCapturePanel);
+            document.addEventListener('pointermove', resizeCapturePanel);
+            document.addEventListener('pointerup', stopCapturePanelInteractions);
+            
+            document.addEventListener('pointerdown', handleDocumentPointerDown);
+            document.addEventListener('pointermove', handleTrackedPointerMove);
+            document.addEventListener('pointerup', finishTrackedPointer);
+            document.addEventListener('pointercancel', finishTrackedPointer);
+            
+            // 监听图片上传
+            document.getElementById('imageUpload').addEventListener('change', function(e){
+                const file = e.target.files[0];
+                if(!file) return;
+
+                const img = new Image();
+                img.onload = function(){
+                    bgImage = img;
+                    setStatus('背景图片已导入');
+                };
+                img.src = URL.createObjectURL(file);
+            });
+
+            document.addEventListener('keydown', handleKeydown);
+            document.addEventListener('pointermove', updateBrushPosition);
+            document.addEventListener('pointerdown', handleSelectablePointerDown);
+
+            if (courseTitleValue && sheetTitle) {
+                courseTitleValue.addEventListener('input', function() {
+                    const title = this.textContent.trim() || '课程题目';
+                    sheetTitle.textContent = title;
+                });
+                sheetTitle.addEventListener('input', function() {
+                    const title = this.textContent.trim() || '课程题目';
+                    courseTitleValue.textContent = title;
+                });
+            }
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const target = document.getElementById(this.dataset.target);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        navWrapper.classList.remove('open');
+                    }
+                });
+            });
+
+            navToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navWrapper.classList.toggle('open');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!navWrapper.contains(e.target)) {
+                    navWrapper.classList.remove('open');
+                }
+            });
+
+            document.addEventListener('click', handleKnowledgeDelegatedClick);
+            document.addEventListener('pointerdown', handleKnowledgeDelegatedPointerDown);
+            document.addEventListener('pointermove', dragKnowledgeCard);
+            document.addEventListener('pointermove', resizeKnowledgeCard);
+            document.addEventListener('pointerup', stopKnowledgeDrag);
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeCaptureSelectionOverlay();
+                }
+            });
+
+            document.addEventListener('mousemove', handleToolbarMouseMove);
+            toolbar.addEventListener('mouseenter', showToolbar);
+            toolbar.addEventListener('mouseleave', scheduleToolbarHide);
+            navWrapper.addEventListener('mouseenter', showToolbar);
+            navWrapper.addEventListener('mouseleave', scheduleToolbarHide);
+        }
+        
+        // =========================
+        // 批注逻辑：开始、绘制、结束
+        // =========================
+        function startDraw(e) {
+            if (document.activeElement && document.activeElement !== document.body && typeof document.activeElement.blur === 'function') {
+                document.activeElement.blur();
+            }
+            drawing = true;
+            points = [];
+            activeKnowledgeSurface = getKnowledgeSurfaceFromPoint(e.clientX, e.clientY);
+            activeDrawSurface = activeKnowledgeSurface ? 'knowledge' : 'page';
+            
+                currentStroke = {
+                    points: [],
+                    color: currentColor,
+                    tool: currentTool,
+                    time: Date.now(),
+                    surface: activeDrawSurface,
+                    surfaceId: activeKnowledgeSurface ? ensureKnowledgeSurfaceId(activeKnowledgeSurface) : null
+                };
+            
+            const p = getPoint(e);
+            points.push(p);
+            currentStroke.points.push(p);
+
+        }
+        
+        // 绘制
+        function draw(e) {
+            if (!drawing) return;
+            
+            const p = getPoint(e);
+            points.push(p);
+            currentStroke.points.push(p);
+            
+            if (points.length < 3) return;
+            
+            const prev = points[points.length - 2];
+            const curr = points[points.length - 1];
+            
+            // 平滑曲线（关键）
+            const midX = (prev.x + curr.x) / 2;
+            const midY = (prev.y + curr.y) / 2;
+            
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // 压感
+            const pressure = activePointerType === 'pen' ? (e.pressure || activePressure || 0.35) : 0.55;
+            
+            // 只处理绘制工具，橡皮擦在pointerdown中处理
+            if (currentTool !== 'erase') {
+                let width = 2;
+                width *= (0.7 + pressure);
+                
+                ctx.lineWidth = width;
+                ctx.strokeStyle = currentColor;
+                ctx.globalCompositeOperation = 'source-over';
+                
+                if (currentTool === 'guide') {
+                    ctx.globalAlpha = 1;
+                    ctx.shadowColor = currentColor;
+                    ctx.shadowBlur = 8;
+                } else {
+                    ctx.globalAlpha = 1;
+                    ctx.shadowBlur = 0;
+                }
+                
+                ctx.beginPath();
+                const activeRect = activeDrawSurface === 'knowledge' && activeKnowledgeSurface
+                    ? activeKnowledgeSurface.getBoundingClientRect()
+                    : null;
+                ctx.moveTo(
+                    activeRect ? activeRect.left + window.scrollX + prev.x : prev.x,
+                    activeRect ? activeRect.top + window.scrollY + prev.y : prev.y
+                );
+                ctx.quadraticCurveTo(
+                    activeRect ? activeRect.left + window.scrollX + prev.x : prev.x,
+                    activeRect ? activeRect.top + window.scrollY + prev.y : prev.y,
+                    activeRect ? activeRect.left + window.scrollX + midX : midX,
+                    activeRect ? activeRect.top + window.scrollY + midY : midY
+                );
+                ctx.stroke();
+            }
+        }
+        
+        // 结束绘制
+        function endDraw() {
+            drawing = false;
+            activePointerId = null;
+            activePointerType = null;
+            activePressure = 0.5;
+            activeDrawSurface = 'page';
+            activeKnowledgeSurface = null;
+            if (currentStroke && currentStroke.points.length > 1) {
+                strokes.push(currentStroke);
+                redoStack = []; // 新操作清空重做栈
+            }
+
+            currentStroke = null;
+        }
+        
+        // 获取坐标
+        function getPoint(e) {
+            if (activeDrawSurface === 'knowledge' && activeKnowledgeSurface) {
+                const rect = activeKnowledgeSurface.getBoundingClientRect();
+                return {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+            }
+            return {
+                x: e.clientX + window.scrollX,
+                y: e.clientY + window.scrollY
+            };
+        }
+
+        function getKnowledgeSurfaceFromPoint(clientX, clientY) {
+            return document.elementsFromPoint(clientX, clientY).find(element =>
+                element.classList?.contains('knowledge-editor')
+            ) || null;
+        }
+
+        function ensureKnowledgeSurfaceId(surface) {
+            if (!surface.id) {
+                surface.id = `knowledgeSurface${knowledgeCounter++}`;
+            }
+            return surface.id;
+        }
+
+        function updateBrushPosition(e) {
+            if (currentTool === 'select') {
+                brush.style.opacity = '0';
+                return;
+            }
+            if (e.pointerType === 'touch' && !drawing) {
+                brush.style.opacity = '0';
+                return;
+            }
+            const size = currentTool === 'erase' ? 22 : 8;
+            lastX = e.clientX;
+            lastY = e.clientY;
+
+            brush.style.left = lastX + 'px';
+            brush.style.top = lastY + 'px';
+            brush.style.width = size + 'px';
+            brush.style.height = size + 'px';
+            brush.style.borderWidth = '1px';
+            brush.style.borderStyle = 'solid';
+
+            if (currentTool === 'guide' || currentTool === 'marker') {
+                brush.style.borderColor = currentColor;
+                brush.style.background = 'transparent';
+                brush.style.boxShadow = `0 0 8px ${currentColor}`;
+                brush.style.opacity = '1';
+            } else if (currentTool === 'erase') {
+                brush.style.borderColor = '#ffffff';
+                brush.style.background = 'rgba(0,0,0,0.3)';
+                brush.style.boxShadow = '0 0 0 1px #000, 0 0 6px rgba(0,0,0,0.5)';
+                brush.style.opacity = '1';
+            } else {
+                brush.style.borderColor = 'rgba(0, 113, 227, 0.7)';
+                brush.style.background = 'rgba(255,255,255,0.45)';
+                brush.style.boxShadow = '0 0 0 6px rgba(0, 113, 227, 0.08)';
+                brush.style.opacity = '1';
+            }
+        }
+        
+        // 绘制单个笔触
+        function drawStroke(stroke) {
+            const pts = stroke.visiblePoints || stroke.points;
+            if (pts.length < 2) return;
+            const maxSegmentDistance = 220;
+            ctx.strokeStyle = stroke.color;
+            
+            if (stroke.tool === 'guide') {
+                ctx.shadowColor = stroke.color;
+                ctx.shadowBlur = 8;
+                ctx.lineWidth = 2;      // 细线
+                
+                // 透明度渐变
+                const life = Date.now() - stroke.time;
+                if (life > 1500) {
+                    const fade = 1 - Math.min((life - 1500)/1000, 1);
+                    ctx.globalAlpha = fade;
+                } else {
+                    ctx.globalAlpha = 1;
+                }
+            } else if (stroke.tool === 'marker') {
+                ctx.shadowBlur = 0;
+                ctx.lineWidth = 2;
+                ctx.globalAlpha = 1;
+            }
+            
+            ctx.beginPath();
+            const firstPoint = getStrokeRenderPoint(stroke, pts[0]);
+            ctx.moveTo(firstPoint.x, firstPoint.y);
+            
+            for (let i = 1; i < pts.length; i++) {
+                const from = getStrokeRenderPoint(stroke, pts[i - 1]);
+                const current = getStrokeRenderPoint(stroke, pts[i]);
+                if (Math.hypot(current.x - from.x, current.y - from.y) > maxSegmentDistance) {
+                    ctx.moveTo(current.x, current.y);
+                    continue;
+                }
+                const midX = (from.x + current.x) / 2;
+                const midY = (from.y + current.y) / 2;
+                ctx.quadraticCurveTo(from.x, from.y, midX, midY);
+            }
+            
+            ctx.stroke();
+        }
+        
+        // 渲染循环：重绘笔迹与字幕捕捉窗
+        function render() {
+            const nextCanvasWidth = Math.max(
+                document.documentElement.clientWidth,
+                document.documentElement.scrollWidth,
+                document.body.scrollWidth
+            );
+            const nextCanvasHeight = Math.max(
+                document.documentElement.clientHeight,
+                document.documentElement.scrollHeight,
+                document.body.scrollHeight
+            );
+
+            if (nextCanvasWidth !== canvasWidth || nextCanvasHeight !== canvasHeight) {
+                resizeCanvas();
+            }
+
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            
+            if(bgImage){
+                ctx.drawImage(bgImage, 0, 0, canvasWidth, canvasHeight);
+            }
+            
+            const now = Date.now();
+            
+            strokes = strokes.filter(stroke => {
+                if (stroke.tool === 'guide') {
+                    const life = now - stroke.time;
+                    
+                    // ① 先完整显示 1.5s
+                    if (life < 1500) {
+                        stroke.visiblePoints = stroke.points;
+                        return true;
+                    }
+                    
+                    // ② 再开始消失（再用 1s 消失）
+                    const fadeTime = life - 1500;
+                    if (fadeTime > 1000) return false;
+                    
+                    const progress = fadeTime / 1000;
+                    const cutIndex = Math.floor(stroke.points.length * progress);
+                    
+                    stroke.visiblePoints = stroke.points.slice(cutIndex);
+                    return true;
+                }
+                return true; // 标记笔保留
+            });
+            
+            strokes.forEach(drawStroke);
+
+            if (currentStroke && currentStroke.points.length > 1) {
+                drawStroke(currentStroke);
+            }
+
+            renderCapturePanel();
+            
+            requestAnimationFrame(render);
+        }
+
+        // =========================
+        // 工具状态：选择模式与批注模式切换
+        // =========================
+        function setTool(t) {
+            currentTool = t;
+            updateCursor();
+            templateStage.classList.toggle('select-mode', t === 'select');
+            document.body.classList.toggle('draw-mode', t !== 'select');
+
+            toolSwitcherButtons.forEach(button => {
+                button.classList.toggle('active', button.dataset.tool === t);
+            });
+            
+            if (currentTool === 'select') {
+                setStatus('选择工具已激活');
+            } else if (currentTool === 'guide') {
+                setStatus('引导笔已激活');
+            } else if (currentTool === 'marker') {
+                setStatus('标记笔已激活');
+            } else if (currentTool === 'erase') {
+                setStatus('橡皮擦已激活');
+            }
+
+            applyEditingState();
+            if (t === 'select') {
+                brush.style.opacity = '0';
+            }
+        }
+
+        function handleDocumentPointerDown(e) {
+            const interactiveElement = getKnowledgeInteractiveFromPoint(e.clientX, e.clientY);
+            if (interactiveElement) {
+                if (interactiveElement.matches('.knowledge-header, .knowledge-resize')) {
+                    handleKnowledgeOverlayInteraction(interactiveElement, e);
+                }
+                return;
+            }
+
+            if (currentTool === 'select') return;
+            if (!shouldHandlePointer(e)) return;
+
+            const blockedTarget = e.target.closest('.toolbar, .nav-wrapper, .tool-button, .color-panel, .nav-button, .knowledge-action');
+            if (blockedTarget) return;
+
+            activePointerId = e.pointerId;
+            activePointerType = e.pointerType;
+            activePressure = e.pressure || 0.5;
+            e.preventDefault();
+
+            if (currentTool === 'erase') {
+                erasing = true;
+                eraseAt(e);
+                return;
+            }
+
+            startDraw(e);
+        }
+
+        function applyEditingState() {
+            const editable = currentTool === 'select';
+            document.querySelectorAll('[data-editable-root="true"]').forEach(element => {
+                element.setAttribute('contenteditable', editable ? 'true' : 'false');
+            });
+        }
+
+        function setStatus(message) {
+            statusBar.textContent = message;
+            statusBar.classList.add('visible');
+            clearTimeout(statusHideTimer);
+            statusHideTimer = setTimeout(() => {
+                statusBar.classList.remove('visible');
+            }, 1000);
+        }
+
+        function showToolbar() {
+            clearTimeout(toolbarHideTimer);
+            document.body.classList.remove('toolbar-collapsed');
+        }
+
+        function scheduleToolbarHide() {
+            clearTimeout(toolbarHideTimer);
+            toolbarHideTimer = setTimeout(() => {
+                document.body.classList.add('toolbar-collapsed');
+            }, 700);
+        }
+
+        function handleToolbarMouseMove(e) {
+            if (e.clientY <= 64) {
+                showToolbar();
+            } else if (!toolbar.matches(':hover') && !navWrapper.matches(':hover')) {
+                scheduleToolbarHide();
+            }
+        }
+
+        async function toggleFullscreen() {
+            try {
+                if (!document.fullscreenElement) {
+                    await document.documentElement.requestFullscreen();
+                    setStatus('已进入全屏模式');
+                } else {
+                    await document.exitFullscreen();
+                    setStatus('已退出全屏模式');
+                }
+            } catch (error) {
+                setStatus('当前环境不支持全屏');
+            }
+        }
+
+        function shouldHandlePointer(e) {
+            if (e.pointerType === 'mouse') return true;
+            if (e.pointerType === 'pen') return true;
+            if (e.pointerType === 'touch') return currentTool === 'select';
+            return false;
+        }
+
+        function getStrokeRenderPoint(stroke, point) {
+            if (stroke.surface !== 'knowledge' || !stroke.surfaceId) {
+                return { x: point.x, y: point.y };
+            }
+
+            const knowledgeSurface = document.getElementById(stroke.surfaceId);
+            if (!knowledgeSurface) {
+                return { x: point.x, y: point.y };
+            }
+
+            const knowledgeRect = knowledgeSurface.getBoundingClientRect();
+            return {
+                x: knowledgeRect.left + window.scrollX + point.x,
+                y: knowledgeRect.top + window.scrollY + point.y
+            };
+        }
+
+        function handleTrackedPointerMove(e) {
+            updateBrushPosition(e);
+            if (!drawing && !erasing) return;
+            if (e.pointerId !== activePointerId) return;
+            activePressure = e.pressure || activePressure;
+            if (currentTool === 'erase' && erasing) {
+                e.preventDefault();
+                eraseAt(e);
+                return;
+            }
+            if (drawing) {
+                e.preventDefault();
+                draw(e);
+            }
+        }
+
+        function finishTrackedPointer(e) {
+            if (e.pointerId !== activePointerId) return;
+            erasing = false;
+            endDraw();
+        }
+
+        function getKnowledgeInteractiveFromPoint(clientX, clientY) {
+            return document.elementsFromPoint(clientX, clientY).find(element =>
+                element.matches('.knowledge-trigger[data-knowledge-target], [data-close-knowledge], .knowledge-header, .knowledge-resize')
+            );
+        }
+
+        function handleKnowledgeOverlayInteraction(element, e) {
+            if (element.matches('.knowledge-trigger[data-knowledge-target]')) {
+                toggleKnowledgeCardFromTrigger(element);
+                return;
+            }
+
+            if (element.matches('[data-close-knowledge]')) {
+                const card = document.getElementById(element.dataset.closeKnowledge);
+                if (card) {
+                    card.classList.remove('open');
+                    delete card.dataset.freePositioned;
+                    if (activeKnowledgeCard === card) activeKnowledgeCard = null;
+                }
+                return;
+            }
+
+            if (element.matches('.knowledge-header')) {
+                startKnowledgeDrag({
+                    currentTarget: element,
+                    target: element,
+                    clientX: e.clientX,
+                    clientY: e.clientY,
+                    preventDefault() {}
+                });
+                return;
+            }
+
+            if (element.matches('.knowledge-resize')) {
+                startKnowledgeResize({
+                    currentTarget: element,
+                    target: element,
+                    clientX: e.clientX,
+                    clientY: e.clientY,
+                    preventDefault() {}
+                });
+            }
+        }
+
+        function handleKnowledgeDelegatedClick(e) {
+            const trigger = e.target.closest('.knowledge-trigger[data-knowledge-target]');
+            if (trigger) {
+                e.stopPropagation();
+                toggleKnowledgeCardFromTrigger(trigger);
+                return;
+            }
+
+            const closeButton = e.target.closest('[data-close-knowledge]');
+            if (closeButton) {
+                e.stopPropagation();
+                const card = document.getElementById(closeButton.dataset.closeKnowledge);
+                if (card) {
+                    card.classList.remove('open');
+                    delete card.dataset.freePositioned;
+                    if (activeKnowledgeCard === card) activeKnowledgeCard = null;
+                }
+                return;
+            }
+        }
+
+        function handleKnowledgeDelegatedPointerDown(e) {
+            const header = e.target.closest('.knowledge-header');
+            if (header) {
+                startKnowledgeDrag(e);
+                return;
+            }
+
+            const resizeHandle = e.target.closest('.knowledge-resize');
+            if (resizeHandle) {
+                startKnowledgeResize(e);
+            }
+        }
+
+        function toggleKnowledgeCardFromTrigger(trigger) {
+            const targetId = trigger.dataset.knowledgeTarget;
+            const card = document.getElementById(targetId);
+            if (!card) return;
+
+            if (!card.classList.contains('open')) {
+                positionKnowledgeCard(trigger, card);
+            }
+
+            card.classList.toggle('open');
+            activeKnowledgeCard = card.classList.contains('open') ? card : null;
+        }
+
+        function positionKnowledgeCard(trigger, card) {
+            if (card.dataset.freePositioned === 'true') return;
+
+            const host = trigger.closest('.knowledge-inline');
+            if (!host) return;
+
+            const previousVisibility = card.style.visibility;
+            const previousDisplay = card.style.display;
+            card.style.visibility = 'hidden';
+            card.style.display = 'block';
+
+            const triggerRect = trigger.getBoundingClientRect();
+            const hostRect = host.getBoundingClientRect();
+            const cardRect = card.getBoundingClientRect();
+
+            let desiredLeft = triggerRect.right + 6;
+            let desiredTop = triggerRect.top - cardRect.height + triggerRect.height;
+
+            if (desiredLeft + cardRect.width > window.innerWidth - 12) {
+                desiredLeft = triggerRect.left - cardRect.width - 6;
+            }
+
+            if (desiredLeft < 12) {
+                desiredLeft = 12;
+            }
+
+            if (desiredTop < 12) {
+                desiredTop = triggerRect.bottom + 6;
+            }
+
+            if (desiredTop + cardRect.height > window.innerHeight - 12) {
+                desiredTop = Math.max(12, window.innerHeight - cardRect.height - 12);
+            }
+
+            card.style.left = (desiredLeft - hostRect.left) + 'px';
+            card.style.top = (desiredTop - hostRect.top) + 'px';
+            card.style.visibility = previousVisibility;
+            card.style.display = previousDisplay;
+        }
+
+        function startKnowledgeDrag(e) {
+            const card = e.currentTarget.closest('.knowledge-card');
+            if (!card || e.target.closest('.knowledge-action')) return;
+            activeKnowledgeCard = card;
+            draggingKnowledge = true;
+            card.dataset.freePositioned = 'true';
+            const rect = card.getBoundingClientRect();
+            const parentRect = card.offsetParent.getBoundingClientRect();
+            dragKnowledgeOffsetX = e.clientX - rect.left;
+            dragKnowledgeOffsetY = e.clientY - rect.top;
+            card.style.left = (rect.left - parentRect.left) + 'px';
+            card.style.top = (rect.top - parentRect.top) + 'px';
+            e.preventDefault();
+        }
+
+        function dragKnowledgeCard(e) {
+            if (!draggingKnowledge || !activeKnowledgeCard) return;
+            const parentRect = activeKnowledgeCard.offsetParent.getBoundingClientRect();
+            activeKnowledgeCard.style.left = (e.clientX - parentRect.left - dragKnowledgeOffsetX) + 'px';
+            activeKnowledgeCard.style.top = (e.clientY - parentRect.top - dragKnowledgeOffsetY) + 'px';
+        }
+
+        function stopKnowledgeDrag() {
+            draggingKnowledge = false;
+            resizingKnowledge = false;
+        }
+
+        function startKnowledgeResize(e) {
+            const handle = e.currentTarget.closest('.knowledge-resize') || e.target.closest('.knowledge-resize');
+            const card = handle?.closest('.knowledge-card');
+            if (!card) return;
+            activeKnowledgeCard = card;
+            resizingKnowledge = true;
+            card.dataset.freePositioned = 'true';
+            resizeStartX = e.clientX;
+            resizeStartY = e.clientY;
+            resizeStartWidth = card.offsetWidth;
+            resizeStartHeight = card.offsetHeight;
+            e.preventDefault();
+        }
+
+        function resizeKnowledgeCard(e) {
+            if (!resizingKnowledge || !activeKnowledgeCard) return;
+            const nextWidth = Math.max(220, resizeStartWidth + (e.clientX - resizeStartX));
+            const nextHeight = Math.max(140, resizeStartHeight + (e.clientY - resizeStartY));
+            activeKnowledgeCard.style.width = nextWidth + 'px';
+            activeKnowledgeCard.style.height = nextHeight + 'px';
+        }
+
+        function createKnowledgeInline(id, title = '知识点', content = '测试文本：\n请在这里输入知识点内容。') {
+            const wrapper = document.createElement('span');
+            wrapper.className = 'knowledge-inline selectable-item';
+            wrapper.innerHTML = `<button class="knowledge-trigger" type="button" data-knowledge-target="${id}">!</button>
+<aside class="knowledge-card" id="${id}">
+    <div class="knowledge-header">
+        <span class="knowledge-title">${title}</span>
+        <button class="knowledge-action" type="button" data-close-knowledge="${id}">×</button>
+    </div>
+    <div class="knowledge-body">
+        <p>统一样式知识点模块，可继续复制和批量插入。</p>
+        <div class="knowledge-editor editable-block" id="${id}Editor" data-editable-root="true" contenteditable="true">${content}</div>
+        <span class="knowledge-resize"></span>
+    </div>
+</aside>`;
+            return wrapper;
+        }
+
+        function addKnowledgePointAtSelection() {
+            const selection = window.getSelection();
+            const id = `knowledgePhrase${knowledgeCounter++}`;
+            const inline = createKnowledgeInline(id, `知识点 ${knowledgeCounter - 1}`);
+
+            if (selection && selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const editableHost = range.commonAncestorContainer.nodeType === 1
+                    ? range.commonAncestorContainer.closest('.editable-block')
+                    : range.commonAncestorContainer.parentElement?.closest('.editable-block');
+
+                if (editableHost) {
+                    range.collapse(false);
+                    range.insertNode(inline);
+                    range.setStartAfter(inline);
+                    range.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                    setStatus('已插入新的知识点入口');
+                    return;
+                }
+            }
+
+            const fallbackHost = document.querySelector('#learningGoals .editable-block');
+            if (fallbackHost) {
+                fallbackHost.appendChild(document.createTextNode(' '));
+                fallbackHost.appendChild(inline);
+                setStatus('已在学习目标区域末尾插入知识点入口');
+            }
+        }
+
+        function setColor(color) {
+            currentColor = color;
+            setStatus('颜色已更改: ' + color);
+            document.querySelectorAll('.color-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.color === color);
+            });
+            updateCursor();
+        }
+        
+        // 更新鼠标光标
+        function updateCursor() {
+            // 不再操作 cursor，已在 CSS 中设置 cursor: none
+        }
+
+        function clearSelectedElement() {
+            if (selectedElement) {
+                selectedElement.classList.remove('selected');
+                selectedElement = null;
+            }
+        }
+
+        function handleSelectablePointerDown(e) {
+            if (currentTool !== 'select') return;
+            const target = e.target.closest('.selectable-item, .editable-block');
+            clearSelectedElement();
+            if (target) {
+                selectedElement = target.classList.contains('selectable-item') ? target : target.closest('.selectable-item') || target;
+                if (selectedElement) {
+                    selectedElement.classList.add('selected');
+                    setStatus('已选中元素，可编辑文本或复制内容');
+                }
+            }
+        }
+
+        async function startCaptureFlow() {
+            try {
+                if (!captureStream) {
+                    captureStream = await navigator.mediaDevices.getDisplayMedia({
+                        video: { frameRate: 30 },
+                        audio: false
+                    });
+                    captureSourceVideo = document.createElement('video');
+                    captureSourceVideo.srcObject = captureStream;
+                    captureSourceVideo.muted = true;
+                    captureSourceVideo.playsInline = true;
+                    await captureSourceVideo.play();
+                    captureSelectionVideo.srcObject = captureStream;
+                    await captureSelectionVideo.play();
+                    const [track] = captureStream.getVideoTracks();
+                    if (track) {
+                        track.addEventListener('ended', resetCaptureState, { once: true });
+                    }
+                }
+
+                if (captureRegion) {
+                    showCapturePanel();
+                    setStatus('已恢复区域捕捉窗口');
+                    return;
+                }
+
+                openCaptureSelectionOverlay();
+            } catch (error) {
+                setStatus('区域捕捉未开启或权限被取消');
+            }
+        }
+
+        function openCaptureSelectionOverlay() {
+            if (!captureStream) return;
+            selectingCapture = false;
+            captureSelectionBox.style.display = 'none';
+            captureSelectionOverlay.classList.add('open');
+            setStatus('请拖动框选要嵌入网页的区域');
+        }
+
+        function closeCaptureSelectionOverlay() {
+            captureSelectionOverlay.classList.remove('open');
+            selectingCapture = false;
+            captureSelectionBox.style.display = 'none';
+        }
+
+        function getCaptureDisplayRect() {
+            const stageRect = captureSelectionStage.getBoundingClientRect();
+            const videoWidth = captureSelectionVideo.videoWidth || 1;
+            const videoHeight = captureSelectionVideo.videoHeight || 1;
+            const stageRatio = stageRect.width / stageRect.height;
+            const videoRatio = videoWidth / videoHeight;
+
+            let width = stageRect.width;
+            let height = stageRect.height;
+            let left = 0;
+            let top = 0;
+
+            if (videoRatio > stageRatio) {
+                height = width / videoRatio;
+                top = (stageRect.height - height) / 2;
+            } else {
+                width = height * videoRatio;
+                left = (stageRect.width - width) / 2;
+            }
+
+            return { left, top, width, height };
+        }
+
+        function beginCaptureSelection(e) {
+            if (!captureSelectionOverlay.classList.contains('open')) return;
+            captureDisplayRect = getCaptureDisplayRect();
+            const localX = e.clientX - captureSelectionStage.getBoundingClientRect().left;
+            const localY = e.clientY - captureSelectionStage.getBoundingClientRect().top;
+
+            if (
+                localX < captureDisplayRect.left ||
+                localY < captureDisplayRect.top ||
+                localX > captureDisplayRect.left + captureDisplayRect.width ||
+                localY > captureDisplayRect.top + captureDisplayRect.height
+            ) {
+                return;
+            }
+
+            selectingCapture = true;
+            captureStartX = localX;
+            captureStartY = localY;
+            captureSelectionBox.style.display = 'block';
+            captureSelectionBox.style.left = captureStartX + 'px';
+            captureSelectionBox.style.top = captureStartY + 'px';
+            captureSelectionBox.style.width = '0px';
+            captureSelectionBox.style.height = '0px';
+            e.preventDefault();
+        }
+
+        function updateCaptureSelection(e) {
+            if (!selectingCapture) return;
+            const stageRect = captureSelectionStage.getBoundingClientRect();
+            const localX = Math.min(Math.max(e.clientX - stageRect.left, captureDisplayRect.left), captureDisplayRect.left + captureDisplayRect.width);
+            const localY = Math.min(Math.max(e.clientY - stageRect.top, captureDisplayRect.top), captureDisplayRect.top + captureDisplayRect.height);
+            const left = Math.min(captureStartX, localX);
+            const top = Math.min(captureStartY, localY);
+            const width = Math.abs(localX - captureStartX);
+            const height = Math.abs(localY - captureStartY);
+
+            captureSelectionBox.style.left = left + 'px';
+            captureSelectionBox.style.top = top + 'px';
+            captureSelectionBox.style.width = width + 'px';
+            captureSelectionBox.style.height = height + 'px';
+        }
+
+        function finishCaptureSelection() {
+            if (!selectingCapture) return;
+            selectingCapture = false;
+
+            const left = parseFloat(captureSelectionBox.style.left) || 0;
+            const top = parseFloat(captureSelectionBox.style.top) || 0;
+            const width = parseFloat(captureSelectionBox.style.width) || 0;
+            const height = parseFloat(captureSelectionBox.style.height) || 0;
+
+            if (width < 24 || height < 24) {
+                captureSelectionBox.style.display = 'none';
+                setStatus('框选区域太小，请重新选择');
+                return;
+            }
+
+            const offsetX = left - captureDisplayRect.left;
+            const offsetY = top - captureDisplayRect.top;
+            const scaleX = captureSourceVideo.videoWidth / captureDisplayRect.width;
+            const scaleY = captureSourceVideo.videoHeight / captureDisplayRect.height;
+
+            captureRegion = {
+                x: Math.round(offsetX * scaleX),
+                y: Math.round(offsetY * scaleY),
+                width: Math.round(width * scaleX),
+                height: Math.round(height * scaleY)
+            };
+
+            capturePanelAspectRatio = captureRegion.width / captureRegion.height;
+            const nextWidth = Math.max(260, Math.min(420, captureRegion.width / 2));
+            capturePanel.style.width = nextWidth + 'px';
+            capturePanelBody.style.aspectRatio = `${captureRegion.width} / ${captureRegion.height}`;
+            capturePanel.classList.add('has-feed');
+            captureEmpty.style.display = 'none';
+            closeCaptureSelectionOverlay();
+            showCapturePanel();
+            setStatus('已完成区域捕捉，可随时隐藏或重新框选');
+        }
+
+        function showCapturePanel() {
+            if (!captureRegion) {
+                setStatus('请先开启区域捕捉并框选目标区域');
+                return;
+            }
+            capturePanelOpen = true;
+            capturePanel.classList.add('open');
+            capturePanel.classList.add('has-feed');
+            updateCaptureOpacity();
+        }
+
+        function hideCapturePanel() {
+            capturePanelOpen = false;
+            capturePanel.classList.remove('open');
+        }
+
+        function toggleCapturePanel() {
+            if (!captureRegion) {
+                startCaptureFlow();
+                return;
+            }
+            if (capturePanelOpen) {
+                hideCapturePanel();
+            } else {
+                showCapturePanel();
+            }
+        }
+
+        function reselectCaptureRegion() {
+            if (!captureStream) {
+                startCaptureFlow();
+                return;
+            }
+            openCaptureSelectionOverlay();
+        }
+
+        function startCapturePanelDrag(e) {
+            if (!capturePanel.classList.contains('open')) return;
+            capturePanelDragging = true;
+            const rect = capturePanel.getBoundingClientRect();
+            captureDragOffsetX = e.clientX - rect.left;
+            captureDragOffsetY = e.clientY - rect.top;
+            capturePanel.style.left = rect.left + 'px';
+            capturePanel.style.top = rect.top + 'px';
+            capturePanel.style.right = 'auto';
+            capturePanel.style.bottom = 'auto';
+            e.preventDefault();
+        }
+
+        function moveCapturePanel(e) {
+            if (!capturePanelDragging) return;
+            capturePanel.style.left = (e.clientX - captureDragOffsetX) + 'px';
+            capturePanel.style.top = (e.clientY - captureDragOffsetY) + 'px';
+        }
+
+        function startCapturePanelResize(e) {
+            if (!captureRegion) return;
+            capturePanelResizing = true;
+            captureStartX = e.clientX;
+            captureStartY = e.clientY;
+            captureStartWidth = capturePanel.offsetWidth;
+            captureStartHeight = capturePanel.offsetHeight;
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function resizeCapturePanel(e) {
+            if (!capturePanelResizing) return;
+            const deltaX = e.clientX - captureStartX;
+            const nextWidth = Math.max(240, captureStartWidth + deltaX);
+            capturePanel.style.width = nextWidth + 'px';
+            capturePanelBody.style.aspectRatio = `${capturePanelAspectRatio}`;
+        }
+
+        function stopCapturePanelInteractions() {
+            capturePanelDragging = false;
+            capturePanelResizing = false;
+        }
+
+        function renderCapturePanel() {
+            if (!capturePanelOpen || !captureRegion || !captureSourceVideo || captureSourceVideo.readyState < 2) return;
+
+            const dpr = window.devicePixelRatio || 1;
+            const targetWidth = Math.max(1, Math.floor(capturePanelBody.clientWidth * dpr));
+            const targetHeight = Math.max(1, Math.floor(capturePanelBody.clientHeight * dpr));
+
+            if (captureCanvas.width !== targetWidth || captureCanvas.height !== targetHeight) {
+                captureCanvas.width = targetWidth;
+                captureCanvas.height = targetHeight;
+            }
+
+            captureCtx.setTransform(1, 0, 0, 1, 0, 0);
+            captureCtx.clearRect(0, 0, captureCanvas.width, captureCanvas.height);
+            captureCtx.drawImage(
+                captureSourceVideo,
+                captureRegion.x,
+                captureRegion.y,
+                captureRegion.width,
+                captureRegion.height,
+                0,
+                0,
+                captureCanvas.width,
+                captureCanvas.height
+            );
+        }
+
+        function updateCaptureOpacity() {
+            const opacity = Number(captureOpacitySlider.value || 100) / 100;
+            capturePanel.style.opacity = String(opacity);
+        }
+
+        function resetCaptureState() {
+            if (captureStream) {
+                captureStream.getTracks().forEach(track => track.stop());
+            }
+            captureStream = null;
+            captureSourceVideo = null;
+            captureRegion = null;
+            capturePanelOpen = false;
+            capturePanel.classList.remove('open', 'has-feed');
+            capturePanel.style.opacity = '1';
+            captureSelectionVideo.srcObject = null;
+            closeCaptureSelectionOverlay();
+            setStatus('区域捕捉已结束');
+        }
+        
+        // 几何辅助：命中检测
+        function hitStroke(stroke, p) {
+            const pts = stroke.points;
+
+            for(let i=1;i<pts.length;i++){
+                const a = pts[i-1];
+                const b = pts[i];
+
+                const dist = pointToSegmentDistance(p, a, b);
+
+                if(dist < 12) return true;
+            }
+            return false;
+        }
+        
+        // 点到线段的距离计算
+        function pointToSegmentDistance(p, a, b){
+            const A = p.x - a.x;
+            const B = p.y - a.y;
+            const C = b.x - a.x;
+            const D = b.y - a.y;
+
+            const dot = A*C + B*D;
+            const len = C*C + D*D;
+            let t = dot / len;
+
+            t = Math.max(0, Math.min(1, t));
+
+            const x = a.x + t * C;
+            const y = a.y + t * D;
+
+            const dx = p.x - x;
+            const dy = p.y - y;
+
+            return Math.sqrt(dx*dx + dy*dy);
+        }
+        
+        // 擦除函数
+        function eraseAt(e){ 
+            const p = getPoint(e);
+
+            // ① 处理已完成 strokes
+            strokes = strokes.filter(stroke => {
+                return !hitStroke(stroke, p);
+            });
+
+            // ② 关键：处理“当前正在画的这一笔”
+            if(currentStroke && hitStroke(currentStroke, p)){
+                currentStroke = null;
+                drawing = false;
+            }
+        }
+
+        // =========================
+        // 快捷键：批注工具切换
+        // =========================
+        function handleKeydown(e) {
+            if (document.activeElement && (document.activeElement.isContentEditable || ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName))) {
+                return;
+            }
+
+            const key = e.key.toLowerCase();
+
+            if ((e.metaKey || e.ctrlKey) && key === 'z') {
+                e.preventDefault();
+                if (e.shiftKey) {
+                    redo();
+                } else {
+                    undo();
+                }
+                return;
+            }
+
+            if (key === 'g') {
+                setTool('guide');
+            } else if (key === 'm') {
+                setTool('marker');
+            } else if (key === 'e') {
+                setTool('erase');
+            } else if (key === 'v' || key === 's') {
+                setTool('select');
+            }
+        }
+        
+        // 绘制单个笔触（在指定上下文）
+        function drawStrokeOn(ctx2, stroke){
+            const pts = stroke.points;
+            if(pts.length < 2) return;
+            const maxSegmentDistance = 220;
+
+            ctx2.strokeStyle = stroke.color;
+
+            if(stroke.tool === 'guide'){
+                ctx2.shadowColor = stroke.color;
+                ctx2.shadowBlur = 8;
+                ctx2.lineWidth = 2;
+            } else {
+                ctx2.shadowBlur = 0;
+                ctx2.lineWidth = 2;
+            }
+
+            ctx2.beginPath();
+            const firstPoint = getStrokeRenderPoint(stroke, pts[0]);
+            ctx2.moveTo(firstPoint.x, firstPoint.y);
+
+            for(let i=1;i<pts.length;i++){
+                const from = getStrokeRenderPoint(stroke, pts[i - 1]);
+                const current = getStrokeRenderPoint(stroke, pts[i]);
+                if (Math.hypot(current.x - from.x, current.y - from.y) > maxSegmentDistance) {
+                    ctx2.moveTo(current.x, current.y);
+                    continue;
+                }
+                const midX = (from.x + current.x) / 2;
+                const midY = (from.y + current.y) / 2;
+                ctx2.quadraticCurveTo(from.x, from.y, midX, midY);
+            }
+
+            ctx2.stroke();
+        }
+        
+        // 撤销
+        function undo() {
+            if (strokes.length === 0) return;
+            redoStack.push(strokes.pop());
+            setStatus('已撤销');
+        }
+        
+        // 重做
+        function redo() {
+            if (redoStack.length === 0) return;
+            strokes.push(redoStack.pop());
+            setStatus('已重做');
+        }
+        
+        // 导出PNG
+        function exportPNG(){
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = canvas.width;
+            exportCanvas.height = canvas.height;
+            const ectx = exportCanvas.getContext('2d');
+
+            // 1. 画背景
+            if(bgImage){
+                ectx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+            }
+
+            // 2. 画标注（复用 drawStroke）
+            strokes.forEach(stroke => {
+                drawStrokeOn(ectx, stroke);
+            });
+
+            const link = document.createElement('a');
+            link.download = 'annotation.png';
+            link.href = exportCanvas.toDataURL('image/png');
+            link.click();
+            setStatus('已导出PNG');
+        }
+        
+        // 清空所有图层
+        function clearAll() {
+            strokes = [];
+            redoStack = [];
+            setStatus('已清空所有标注');
+        }
+        
+        // =========================
+        // 页面入口：模板初始化
+        // =========================
+        function init() {
+            resizeCanvas();
+            setupEventListeners();
+            setColor(currentColor);
+            setTool(currentTool);
+            updateCursor();
+            brush.style.opacity = '0';
+            scheduleToolbarHide();
+            render();
+        }
+        
+        window.onload = init;
+    </script>
+</body>
+</html>
