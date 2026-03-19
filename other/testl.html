@@ -51,6 +51,10 @@
             overscroll-behavior: none;
         }
 
+        body.ipad-optimized {
+            -webkit-text-size-adjust: 100%;
+        }
+
         .template-stage {
             position: relative;
             z-index: 0;
@@ -374,7 +378,34 @@
             align-items: center;
             gap: 6px;
         }
-        
+
+        .ipad-optimized .toolbar,
+        .ipad-optimized .status-bar,
+        .ipad-optimized .info-panel,
+        .ipad-optimized .knowledge-card,
+        .ipad-optimized #brushCursor {
+            backdrop-filter: none;
+        }
+
+        .ipad-optimized .toolbar,
+        .ipad-optimized .info-panel,
+        .ipad-optimized .knowledge-card,
+        .ipad-optimized .section-shell,
+        .ipad-optimized .simple-card,
+        .ipad-optimized .practice-box,
+        .ipad-optimized .lesson-sheet {
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+        }
+
+        .ipad-optimized .knowledge-trigger {
+            animation: pulseGlowLite 2.8s ease-in-out infinite;
+            box-shadow: none;
+        }
+
+        .ipad-optimized #brushCursor {
+            display: none;
+        }
+
         .tool-button {
             width: 32px;
             height: 32px;
@@ -766,6 +797,12 @@
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 149, 0, 0.42); }
             70% { transform: scale(1.05); box-shadow: 0 0 0 18px rgba(255, 149, 0, 0); }
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 149, 0, 0); }
+        }
+
+        @keyframes pulseGlowLite {
+            0% { transform: scale(1); opacity: 0.92; }
+            50% { transform: scale(1.04); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.92; }
         }
 
         .knowledge-card {
@@ -1370,7 +1407,8 @@
         // 说明：所有笔迹以页面坐标保存，滚动后仍跟随页面内容
         // =========================
         const canvas = document.getElementById('drawCanvas');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { desynchronized: true });
+        const isIPadLikeDevice = /iPad|Macintosh/.test(navigator.userAgent) && 'ontouchend' in document;
         
         // 工具与绘制状态
         let drawing = false;
@@ -1430,12 +1468,15 @@
         let penScrollLocked = false;
         let lockedScrollY = 0;
         let lockedScrollX = 0;
+        let renderScheduled = false;
+        let renderLoopStarted = false;
         
         // =========================
         // 基础初始化
         // =========================
         function resizeCanvas() {
-            const dpr = window.devicePixelRatio || 1;
+            const deviceRatio = window.devicePixelRatio || 1;
+            const dpr = isIPadLikeDevice ? Math.min(deviceRatio, 1.6) : deviceRatio;
             canvasWidth = Math.max(
                 document.documentElement.clientWidth,
                 document.documentElement.scrollWidth,
@@ -1451,6 +1492,7 @@
             canvas.style.width = canvasWidth + 'px';
             canvas.style.height = canvasHeight + 'px';
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            requestRender();
         }
         
         // 设置事件监听器
@@ -1510,6 +1552,7 @@
                 img.onload = function(){
                     bgImage = img;
                     statusBar.textContent = '背景图片已导入';
+                    requestRender();
                 };
                 img.src = URL.createObjectURL(file);
             });
@@ -1609,39 +1652,43 @@
             
             // 只处理绘制工具，橡皮擦在pointerdown中处理
             if (currentTool !== 'erase') {
-                let width = 2;
-                width *= (0.7 + pressure);
-                
-                ctx.lineWidth = width;
-                ctx.strokeStyle = currentColor;
-                ctx.globalCompositeOperation = 'source-over';
-                
-                // 引导笔发光效果
-                if (currentTool === 'guide') {
-                    ctx.globalAlpha = 1;
-                    ctx.shadowColor = currentColor;
-                    ctx.shadowBlur = 8;
-                } else {
-                    ctx.globalAlpha = 1;
-                    ctx.shadowBlur = 0;
+                if (!isIPadLikeDevice) {
+                    let width = 2;
+                    width *= (0.7 + pressure);
+                    
+                    ctx.lineWidth = width;
+                    ctx.strokeStyle = currentColor;
+                    ctx.globalCompositeOperation = 'source-over';
+                    
+                    if (currentTool === 'guide') {
+                        ctx.globalAlpha = 1;
+                        ctx.shadowColor = currentColor;
+                        ctx.shadowBlur = 8;
+                    } else {
+                        ctx.globalAlpha = 1;
+                        ctx.shadowBlur = 0;
+                    }
+                    
+                    ctx.beginPath();
+                    const activeRect = activeDrawSurface === 'knowledge' && activeKnowledgeSurface
+                        ? activeKnowledgeSurface.getBoundingClientRect()
+                        : null;
+                    ctx.moveTo(
+                        activeRect ? activeRect.left + window.scrollX + prev.x : prev.x,
+                        activeRect ? activeRect.top + window.scrollY + prev.y : prev.y
+                    );
+                    ctx.quadraticCurveTo(
+                        activeRect ? activeRect.left + window.scrollX + prev.x : prev.x,
+                        activeRect ? activeRect.top + window.scrollY + prev.y : prev.y,
+                        activeRect ? activeRect.left + window.scrollX + midX : midX,
+                        activeRect ? activeRect.top + window.scrollY + midY : midY
+                    );
+                    ctx.stroke();
+                    return;
                 }
-                
-                ctx.beginPath();
-                const activeRect = activeDrawSurface === 'knowledge' && activeKnowledgeSurface
-                    ? activeKnowledgeSurface.getBoundingClientRect()
-                    : null;
-                ctx.moveTo(
-                    activeRect ? activeRect.left + window.scrollX + prev.x : prev.x,
-                    activeRect ? activeRect.top + window.scrollY + prev.y : prev.y
-                );
-                ctx.quadraticCurveTo(
-                    activeRect ? activeRect.left + window.scrollX + prev.x : prev.x,
-                    activeRect ? activeRect.top + window.scrollY + prev.y : prev.y,
-                    activeRect ? activeRect.left + window.scrollX + midX : midX,
-                    activeRect ? activeRect.top + window.scrollY + midY : midY
-                );
-                ctx.stroke();
             }
+
+            requestRender();
         }
         
         // 结束绘制
@@ -1660,6 +1707,7 @@
             }
 
             currentStroke = null;
+            requestRender();
         }
         
         // 保存图层
@@ -1744,7 +1792,7 @@
             
             if (stroke.tool === 'guide') {
                 ctx.shadowColor = stroke.color;
-                ctx.shadowBlur = 8;     // 轻微发光
+                ctx.shadowBlur = isIPadLikeDevice ? 0 : 8;
                 ctx.lineWidth = 2;      // 细线
                 
                 // 透明度渐变
@@ -1778,6 +1826,7 @@
         
         // 渲染循环
         function render() {
+            renderScheduled = false;
             const nextCanvasWidth = Math.max(
                 document.documentElement.clientWidth,
                 document.documentElement.scrollWidth,
@@ -1803,6 +1852,10 @@
             
             strokes = strokes.filter(stroke => {
                 if (stroke.tool === 'guide') {
+                    if (isIPadLikeDevice) {
+                        stroke.visiblePoints = stroke.points;
+                        return true;
+                    }
                     const life = now - stroke.time;
                     
                     // ① 先完整显示 1.5s
@@ -1829,8 +1882,22 @@
             if (currentStroke && currentStroke.points.length > 1) {
                 drawStroke(currentStroke);
             }
-            
-            requestAnimationFrame(render);
+        }
+
+        function requestRender() {
+            if (isIPadLikeDevice) {
+                if (renderScheduled) return;
+                renderScheduled = true;
+                requestAnimationFrame(render);
+                return;
+            }
+
+            if (renderLoopStarted) return;
+            renderLoopStarted = true;
+            requestAnimationFrame(function renderFrame() {
+                render();
+                requestAnimationFrame(renderFrame);
+            });
         }
 
         // =========================
@@ -1859,6 +1926,8 @@
                 statusBar.textContent = '橡皮擦已激活';
                 activeToolChip.textContent = '当前工具: 橡皮擦';
             }
+
+            requestRender();
         }
 
         function handleDocumentPointerDown(e) {
@@ -1915,9 +1984,7 @@
         }
 
         async function toggleFullscreen() {
-            const isIPadLike = /iPad|Macintosh/.test(navigator.userAgent) && 'ontouchend' in document;
-
-            if (isIPadLike) {
+            if (isIPadLikeDevice) {
                 teachingMode = !teachingMode;
                 document.body.classList.toggle('teaching-mode', teachingMode);
                 statusBar.textContent = teachingMode ? '已进入授课模式' : '已退出授课模式';
@@ -2155,11 +2222,13 @@
             const parentRect = activeKnowledgeCard.offsetParent.getBoundingClientRect();
             activeKnowledgeCard.style.left = (e.clientX - parentRect.left - dragKnowledgeOffsetX) + 'px';
             activeKnowledgeCard.style.top = (e.clientY - parentRect.top - dragKnowledgeOffsetY) + 'px';
+            requestRender();
         }
 
         function stopKnowledgeDrag() {
             draggingKnowledge = false;
             resizingKnowledge = false;
+            requestRender();
         }
 
         function startKnowledgeResize(e) {
@@ -2182,6 +2251,7 @@
             const nextHeight = Math.max(140, resizeStartHeight + (e.clientY - resizeStartY));
             activeKnowledgeCard.style.width = nextWidth + 'px';
             activeKnowledgeCard.style.height = nextHeight + 'px';
+            requestRender();
         }
 
         function createKnowledgeInline(id, title = '知识点', content = '测试文本：\n请在这里输入知识点内容。') {
@@ -2242,6 +2312,7 @@
                 item.classList.toggle('active', item.dataset.color === color);
             });
             updateCursor();
+            requestRender();
         }
         
         // 更新鼠标光标
@@ -2320,6 +2391,8 @@
                 currentStroke = null;
                 drawing = false;
             }
+
+            requestRender();
         }
 
         // =========================
@@ -2362,7 +2435,7 @@
 
             if(stroke.tool === 'guide'){
                 ctx2.shadowColor = stroke.color;
-                ctx2.shadowBlur = 8;
+                ctx2.shadowBlur = isIPadLikeDevice ? 0 : 8;
                 ctx2.lineWidth = 2;
             } else {
                 ctx2.shadowBlur = 0;
@@ -2389,6 +2462,7 @@
             if (strokes.length === 0) return;
             redoStack.push(strokes.pop());
             statusBar.textContent = '已撤销';
+            requestRender();
         }
         
         // 重做
@@ -2396,6 +2470,7 @@
             if (redoStack.length === 0) return;
             strokes.push(redoStack.pop());
             statusBar.textContent = '已重做';
+            requestRender();
         }
         
         // 导出PNG
@@ -2427,12 +2502,16 @@
             strokes = [];
             redoStack = [];
             statusBar.textContent = '已清空所有标注';
+            requestRender();
         }
         
         // =========================
         // 页面初始化入口
         // =========================
         function init() {
+            if (isIPadLikeDevice) {
+                document.body.classList.add('ipad-optimized');
+            }
             resizeCanvas();
             setupEventListeners();
             applyTextLockState();
@@ -2440,7 +2519,7 @@
             setColor(currentColor);
             updateCursor();
             brush.style.opacity = '0';
-            render(); // 启动渲染循环
+            requestRender();
         }
         
         window.onload = init;
