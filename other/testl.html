@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>效果 - 创意工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #0071e3;
+            --secondary: #34c759;
+            --background: #f5f5f7;
+            --surface: #ffffff;
+            --text: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --border: #d2d2d7;
+            --accent: #ff9500;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: #121212;
+                --surface: #1c1c1e;
+                --text: #f5f5f7;
+                --text-secondary: #a1a1a6;
+                --border: #2c2c2e;
+            }
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            position: relative;
+            cursor: crosshair;
+            transition: background 0.3s ease;
+            padding-top: 48px;
+        }
+        
+        .toolbar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            border-radius: 0;
+            padding: 8px 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.2s ease;
+            height: 48px;
+            box-sizing: border-box;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .toolbar {
+                background: rgba(28, 28, 30, 0.8);
+            }
+        }
+        
+        .toolbar:hover {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .brand {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--primary);
+            margin-right: 15px;
+            padding-right: 15px;
+            border-right: 1px solid var(--border);
+        }
+        
+        .tool-button {
+            width: 28px;
+            height: 28px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            background: var(--surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            position: relative;
+            padding: 0;
+            outline: none;
+            font-family: inherit;
+        }
+        
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 15px;
+            border-left: 1px solid var(--border);
+        }
+        
+        .tool-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        
+        .tool-select {
+            padding: 4px 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--surface);
+            color: var(--text);
+            font-size: 12px;
+            outline: none;
+            cursor: pointer;
+        }
+        
+        .text-element {
+            position: absolute;
+            color: var(--text);
+            font-size: 16px;
+            font-family: inherit;
+            pointer-events: auto;
+            min-width: 100px;
+            min-height: 40px;
+            padding: 8px;
+            border: 1px solid transparent;
+            outline: none;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 4px;
+            overflow: auto;
+            transition: all 0.2s ease;
+        }
+        
+        .text-element:hover {
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
+        }
+        
+        .text-element.selected {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.2);
+        }
+        
+        .text-element:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.3);
+            outline: none;
+        }
+        
+        .resize-handle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border: 1px solid white;
+            border-radius: 50%;
+            cursor: nwse-resize;
+            z-index: 21;
+        }
+        
+        .resize-handle.bottom-right {
+            bottom: -4px;
+            right: -4px;
+        }
+        
+        .tool-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .tool-button.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        .tool-button:nth-child(2) {
+            background: #f44336;
+            border-color: #f44336;
+            color: white;
+        }
+        
+        .tool-button:nth-child(3) {
+            background: #2196f3;
+            border-color: #2196f3;
+            color: white;
+        }
+        
+        .tool-button:nth-child(4) {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+        
+        .tool-button:nth-child(5) {
+            background: #9c27b0;
+            border-color: #9c27b0;
+            color: white;
+        }
+        
+        .tool-button:nth-child(6) {
+            background: #ff9800;
+            border-color: #ff9800;
+            color: white;
+        }
+        
+        .tool-button:nth-child(7) {
+            background: #607d8b;
+            border-color: #607d8b;
+            color: white;
+        }
+        
+        .tooltip {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+            z-index: 1001;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .tooltip {
+                background: rgba(255, 255, 255, 0.8);
+                color: var(--text);
+            }
+        }
+        
+        .tool-button:hover .tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+        
+        .drawing {
+            position: absolute;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .intro {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 5;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .intro h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .intro p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 400px;
+            line-height: 1.5;
+        }
+        
+        .status-bar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 8px 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .status-bar {
+                background: rgba(28, 28, 30, 0.8);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .toolbar {
+                top: 20px;
+                padding: 10px 15px;
+                gap: 10px;
+            }
+            
+            .brand {
+                font-size: 14px;
+                margin-right: 15px;
+                padding-right: 15px;
+            }
+            
+            .tool-button {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .intro h1 {
+                font-size: 32px;
+            }
+            
+            .intro p {
+                font-size: 16px;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body id="canvas">
+    <div class="toolbar">
+        <button class="tool-button" data-tool="highlighter" title="荧光笔">
+            ✏️
+            <span class="tooltip">荧光笔</span>
+        </button>
+        <button class="tool-button" data-tool="text" title="文本">
+            📝
+            <span class="tooltip">文本</span>
+        </button>
+        <div class="tool-group">
+            <label for="fontSize" class="tool-label">字体大小:</label>
+            <select id="fontSize" class="tool-select">
+                <option value="12">12px</option>
+                <option value="14">14px</option>
+                <option value="16" selected>16px</option>
+                <option value="18">18px</option>
+                <option value="20">20px</option>
+                <option value="24">24px</option>
+                <option value="30">30px</option>
+                <option value="36">36px</option>
+            </select>
+        </div>
+        <button class="tool-button" data-color="#f44336" title="红色">
+            <span class="tooltip">红色</span>
+        </button>
+        <button class="tool-button" data-color="#2196f3" title="蓝色">
+            <span class="tooltip">蓝色</span>
+        </button>
+        <button class="tool-button" data-color="#4caf50" title="绿色">
+            <span class="tooltip">绿色</span>
+        </button>
+        <button class="tool-button" data-color="#9c27b0" title="紫色">
+            <span class="tooltip">紫色</span>
+        </button>
+        <button class="tool-button" data-color="#ff9800" title="橙色">
+            <span class="tooltip">橙色</span>
+        </button>
+        <button class="tool-button" data-color="#607d8b" title="灰色">
+            <span class="tooltip">灰色</span>
+        </button>
+    </div>
+    
+    <div class="intro">
+        <h1>效果</h1>
+        <p>创意工具 • 自由表达 • 瞬间灵感</p>
+    </div>
+    
+    <div class="status-bar">
+        点击荧光笔开始创作
+    </div>
+
+    <script>
+        let isDrawing = false;
+        let currentColor = '#ffeb3b';
+        let currentTool = 'highlighter';
+        let drawingPath = null;
+        let drawingPoints = [];
+        let currentTextElement = null;
+        let isEditingText = false;
+        let isDragging = false;
+        let isResizing = false;
+        let isDrawingText = false;
+        let textStart = { x: 0, y: 0 };
+        let textEnd = { x: 0, y: 0 };
+        let textPreview = null;
+        let dragOffset = { x: 0, y: 0 };
+        let resizeStart = { x: 0, y: 0 };
+        let selectedTextElement = null;
+        
+        const canvas = document.getElementById('canvas');
+        const toolButtons = document.querySelectorAll('.tool-button');
+        const intro = document.querySelector('.intro');
+        const statusBar = document.querySelector('.status-bar');
+        const fontSizeSelect = document.getElementById('fontSize');
+        
+        // 初始化body样式
+        document.body.style.overflow = 'hidden';
+        document.body.style.width = '100vw';
+        document.body.style.height = '100vh';
+        
+        // 初始化
+        function init() {
+            setupEventListeners();
+        }
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 工具栏按钮点击
+            toolButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.dataset.tool) {
+                        currentTool = this.dataset.tool;
+                        toolButtons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        if (currentTool === 'highlighter') {
+                            statusBar.textContent = '荧光笔已激活';
+                        } else if (currentTool === 'text') {
+                            statusBar.textContent = '文本工具已激活';
+                        }
+                        
+                        // 隐藏介绍文字
+                        if (intro) {
+                            intro.style.opacity = '0';
+                            setTimeout(() => {
+                                if (intro) {
+                                    intro.style.display = 'none';
+                                }
+                            }, 300);
+                        }
+                    } else if (this.dataset.color) {
+                        currentColor = this.dataset.color;
+                        toolButtons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        statusBar.textContent = '颜色已更改: ' + this.dataset.color;
+                        
+                        // 更新选中的文本元素颜色
+                        if (selectedTextElement) {
+                            selectedTextElement.style.color = currentColor;
+                        }
+                    }
+                });
+            });
+            
+            // 字体大小选择器
+            fontSizeSelect.addEventListener('change', function() {
+                const fontSize = this.value + 'px';
+                statusBar.textContent = '字体大小: ' + fontSize;
+                
+                // 更新选中的文本元素字体大小
+                if (selectedTextElement) {
+                    selectedTextElement.style.fontSize = fontSize;
+                }
+            });
+            
+            // 画布事件
+            canvas.addEventListener('mousedown', function(e) {
+                // 检查是否点击了文本元素
+                const target = e.target;
+                if (target.classList.contains('text-element')) {
+                    // 单击选择，双击编辑
+                    selectTextElement(target);
+                    startDrag(e, target);
+                } else if (target.classList.contains('resize-handle')) {
+                    const textElement = target.closest('.text-element');
+                    if (textElement) {
+                        selectTextElement(textElement);
+                        startResize(e, textElement);
+                    }
+                } else if (currentTool === 'highlighter') {
+                    startDrawing(e);
+                } else if (currentTool === 'text') {
+                    startDrawingText(e);
+                } else {
+                    // 点击空白处取消选择
+                    deselectTextElement();
+                }
+            });
+            
+            // 文本元素双击事件 - 激活编辑
+            document.addEventListener('dblclick', function(e) {
+                const target = e.target;
+                if (target.classList.contains('text-element')) {
+                    activateTextEdit(target);
+                }
+            });
+            
+            // 文本元素单击事件 - 选择但不激活编辑
+            document.addEventListener('click', function(e) {
+                const target = e.target;
+                if (target.classList.contains('text-element')) {
+                    selectTextElement(target);
+                }
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (isDragging && selectedTextElement) {
+                    dragElement(e, selectedTextElement);
+                } else if (isResizing && selectedTextElement) {
+                    resizeElement(e, selectedTextElement);
+                } else if (isDrawingText) {
+                    drawTextPreview(e);
+                } else {
+                    draw(e);
+                }
+            });
+            
+            document.addEventListener('mouseup', function(e) {
+                stopDrawing();
+                stopDrawingText(e);
+                isDragging = false;
+                isResizing = false;
+            });
+            
+            document.addEventListener('mouseout', function() {
+                stopDrawing();
+                cancelDrawingText();
+                isDragging = false;
+                isResizing = false;
+            });
+        }
+        
+        // 开始绘制
+        function startDrawing(e) {
+            if (currentTool !== 'highlighter') return;
+            
+            isDrawing = true;
+            drawingPoints = [];
+            
+            const rect = canvas.getBoundingClientRect();
+            const startX = e.clientX - rect.left;
+            const startY = e.clientY - rect.top;
+            
+            drawingPoints.push({ x: startX, y: startY });
+            
+            // 创建绘制路径
+            drawingPath = document.createElement('div');
+            drawingPath.className = 'drawing';
+            drawingPath.style.position = 'absolute';
+            drawingPath.style.left = '0';
+            drawingPath.style.top = '0';
+            drawingPath.style.pointerEvents = 'none';
+            drawingPath.style.width = '100%';
+            drawingPath.style.height = '100%';
+            
+            document.body.appendChild(drawingPath);
+        }
+        
+        // 绘制
+        function draw(e) {
+            if (!isDrawing || currentTool !== 'highlighter') return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            drawingPoints.push({ x, y });
+            updateDrawing();
+        }
+        
+        // 更新绘制
+        function updateDrawing() {
+            if (!drawingPath || drawingPoints.length < 2) return;
+            
+            let path = 'M' + drawingPoints[0].x + ',' + drawingPoints[0].y;
+            
+            for (let i = 1; i < drawingPoints.length; i++) {
+                path += ' L' + drawingPoints[i].x + ',' + drawingPoints[i].y;
+            }
+            
+            const bodyWidth = document.body.offsetWidth;
+            const bodyHeight = document.body.offsetHeight;
+            
+            drawingPath.innerHTML = `
+                <svg width="${bodyWidth}" height="${bodyHeight}" style="position: absolute; top: 0; left: 0;">
+                    <path d="${path}" fill="none" stroke="${currentColor}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            `;
+        }
+        
+        // 停止绘制
+        function stopDrawing() {
+            if (isDrawing && currentTool === 'highlighter' && drawingPath) {
+                isDrawing = false;
+                
+                // 按书写轨迹消失延迟
+                animatePathDisappear(drawingPath);
+                
+                // 重置绘制路径变量
+                drawingPath = null;
+                drawingPoints = [];
+            }
+        }
+        
+        // 开始绘制文本框
+        function startDrawingText(e) {
+            const rect = canvas.getBoundingClientRect();
+            textStart.x = e.clientX - rect.left;
+            textStart.y = e.clientY - rect.top;
+            isDrawingText = true;
+            
+            // 创建预览元素
+            textPreview = document.createElement('div');
+            textPreview.style.position = 'absolute';
+            textPreview.style.left = textStart.x + 'px';
+            textPreview.style.top = textStart.y + 'px';
+            textPreview.style.width = '0px';
+            textPreview.style.height = '0px';
+            textPreview.style.border = '2px dashed var(--primary)';
+            textPreview.style.backgroundColor = 'rgba(0, 113, 227, 0.1)';
+            textPreview.style.pointerEvents = 'none';
+            textPreview.style.zIndex = '15';
+            document.body.appendChild(textPreview);
+        }
+        
+        // 绘制文本框预览
+        function drawTextPreview(e) {
+            if (!isDrawingText || !textPreview) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            textEnd.x = e.clientX - rect.left;
+            textEnd.y = e.clientY - rect.top;
+            
+            // 计算文本框的位置和大小
+            const left = Math.min(textStart.x, textEnd.x);
+            const top = Math.min(textStart.y, textEnd.y);
+            const width = Math.abs(textEnd.x - textStart.x);
+            const height = Math.abs(textEnd.y - textStart.y);
+            
+            // 更新预览元素
+            textPreview.style.left = left + 'px';
+            textPreview.style.top = top + 'px';
+            textPreview.style.width = Math.max(50, width) + 'px';
+            textPreview.style.height = Math.max(20, height) + 'px';
+        }
+        
+        // 停止绘制文本框
+        function stopDrawingText(e) {
+            if (!isDrawingText || !textPreview) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            textEnd.x = e.clientX - rect.left;
+            textEnd.y = e.clientY - rect.top;
+            
+            // 计算文本框的位置和大小
+            const left = Math.min(textStart.x, textEnd.x);
+            const top = Math.min(textStart.y, textEnd.y);
+            const width = Math.abs(textEnd.x - textStart.x);
+            const height = Math.abs(textEnd.y - textStart.y);
+            
+            // 移除预览元素
+            if (textPreview && textPreview.parentNode) {
+                textPreview.parentNode.removeChild(textPreview);
+            }
+            
+            // 如果文本框太小，不创建
+            if (width < 20 || height < 10) {
+                isDrawingText = false;
+                return;
+            }
+            
+            // 创建文本元素
+            const textElement = document.createElement('div');
+            textElement.className = 'text-element';
+            textElement.contentEditable = 'true';
+            textElement.style.position = 'absolute';
+            textElement.style.left = left + 'px';
+            textElement.style.top = top + 'px';
+            textElement.style.width = width + 'px';
+            textElement.style.height = height + 'px';
+            textElement.style.color = currentColor;
+            textElement.style.fontSize = fontSizeSelect.value + 'px';
+            textElement.style.fontFamily = 'inherit';
+            textElement.style.pointerEvents = 'auto';
+            textElement.style.padding = '8px';
+            textElement.style.border = '1px solid transparent';
+            textElement.style.outline = 'none';
+            textElement.style.zIndex = '20';
+            textElement.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+            textElement.style.borderRadius = '4px';
+            textElement.textContent = '输入文本';
+            
+            // 创建调整大小手柄
+            const resizeHandle = document.createElement('div');
+            resizeHandle.className = 'resize-handle bottom-right';
+            textElement.appendChild(resizeHandle);
+            
+            // 添加到页面
+            document.body.appendChild(textElement);
+            
+            // 聚焦并选择文本
+            textElement.focus();
+            const range = document.createRange();
+            range.selectNodeContents(textElement);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            // 标记正在编辑
+            isEditingText = true;
+            currentTextElement = textElement;
+            selectedTextElement = textElement;
+            
+            // 监听编辑完成
+            textElement.addEventListener('blur', function() {
+                isEditingText = false;
+                if (textElement.textContent === '输入文本') {
+                    textElement.textContent = '';
+                }
+                selectTextElement(textElement);
+            });
+            
+            // 监听键盘事件
+            textElement.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    textElement.blur();
+                }
+            });
+            
+            // 重置状态
+            isDrawingText = false;
+            textPreview = null;
+        }
+        
+        // 取消绘制文本框
+        function cancelDrawingText() {
+            if (textPreview && textPreview.parentNode) {
+                textPreview.parentNode.removeChild(textPreview);
+            }
+            isDrawingText = false;
+            textPreview = null;
+        }
+        
+        // 选择文本元素
+        function selectTextElement(element) {
+            // 取消之前的选择
+            deselectTextElement();
+            
+            // 选择新元素
+            selectedTextElement = element;
+            element.classList.add('selected');
+            statusBar.textContent = '已选择文本元素';
+        }
+        
+        // 取消选择文本元素
+        function deselectTextElement() {
+            if (selectedTextElement) {
+                selectedTextElement.classList.remove('selected');
+                selectedTextElement = null;
+                statusBar.textContent = '就绪';
+            }
+        }
+        
+        // 开始拖动
+        function startDrag(e, element) {
+            e.preventDefault();
+            isDragging = true;
+            const rect = element.getBoundingClientRect();
+            dragOffset.x = e.clientX - rect.left;
+            dragOffset.y = e.clientY - rect.top;
+        }
+        
+        // 拖动元素
+        function dragElement(e, element) {
+            if (!isDragging) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left - dragOffset.x;
+            const y = e.clientY - rect.top - dragOffset.y;
+            
+            element.style.left = Math.max(0, x) + 'px';
+            element.style.top = Math.max(0, y) + 'px';
+        }
+        
+        // 开始调整大小
+        function startResize(e, element) {
+            e.preventDefault();
+            isResizing = true;
+            const rect = element.getBoundingClientRect();
+            resizeStart.x = e.clientX - rect.right;
+            resizeStart.y = e.clientY - rect.bottom;
+        }
+        
+        // 调整元素大小
+        function resizeElement(e, element) {
+            if (!isResizing) return;
+            
+            const rect = element.getBoundingClientRect();
+            const newWidth = Math.max(100, e.clientX - rect.left + resizeStart.x);
+            const newHeight = Math.max(40, e.clientY - rect.top + resizeStart.y);
+            
+            element.style.width = newWidth + 'px';
+            element.style.height = newHeight + 'px';
+        }
+        
+        // 激活文本编辑
+        function activateTextEdit(element) {
+            element.focus();
+            isEditingText = true;
+            currentTextElement = element;
+            selectTextElement(element);
+        }
+        
+        // 按轨迹消失动画
+        function animatePathDisappear(pathElement) {
+            if (!pathElement) return;
+            
+            // 获取SVG路径
+            const svg = pathElement.querySelector('svg');
+            if (!svg) return;
+            
+            const path = svg.querySelector('path');
+            if (!path) return;
+            
+            // 1.5秒延迟后开始消失动画
+            setTimeout(() => {
+                // 创建一个新的路径来替代原路径，实现从起点开始消失
+                const newPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                newPath.setAttribute('d', path.getAttribute('d'));
+                newPath.setAttribute('fill', 'none');
+                newPath.setAttribute('stroke', path.getAttribute('stroke'));
+                newPath.setAttribute('stroke-width', path.getAttribute('stroke-width'));
+                newPath.setAttribute('stroke-linecap', 'round');
+                newPath.setAttribute('stroke-linejoin', 'round');
+                
+                // 替换原路径
+                path.parentNode.replaceChild(newPath, path);
+                
+                // 使用JavaScript动画控制消失
+                const pathLength = newPath.getTotalLength();
+                let offset = 0;
+                const duration = 800; // 动画持续时间
+                const startTime = Date.now();
+                
+                function animate() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // 从起点开始消失
+                    offset = progress * pathLength;
+                    newPath.style.strokeDasharray = pathLength + ' ' + pathLength;
+                    newPath.style.strokeDashoffset = -offset;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        // 动画结束后移除元素
+                        if (pathElement && pathElement.parentNode) {
+                            pathElement.style.transition = 'opacity 0.3s ease';
+                            pathElement.style.opacity = '0';
+                            
+                            setTimeout(() => {
+                                if (pathElement && pathElement.parentNode) {
+                                    pathElement.parentNode.removeChild(pathElement);
+                                }
+                            }, 300);
+                        }
+                    }
+                }
+                
+                animate();
+            }, 1500); // 1.5秒延迟
+        }
+        
+        // 初始化
+        window.onload = init;
+    </script>
+</body>
+</html>
