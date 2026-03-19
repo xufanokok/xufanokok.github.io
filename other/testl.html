@@ -1555,7 +1555,9 @@
             // 文档级输入监听：
             // 1. 手指可以正常选中文本
             // 2. Apple Pencil / 鼠标仍然可以在任何区域书写
+            document.addEventListener('pointerdown', suppressPenPagePan, { capture: true, passive: false });
             document.addEventListener('pointerdown', handleDocumentPointerDown);
+            document.addEventListener('pointermove', suppressPenPagePan, { capture: true, passive: false });
             document.addEventListener('pointermove', handleTrackedPointerMove);
             document.addEventListener('pointerup', finishTrackedPointer);
             document.addEventListener('pointercancel', finishTrackedPointer);
@@ -1986,7 +1988,7 @@
         }
 
         function applyTextLockState() {
-            const suspendEditableForIPadPen = isIPadLikeDevice && currentTool !== 'select';
+            const suspendEditableForIPadPen = isIPadPenDrawMode();
             document.querySelectorAll('[data-editable-root="true"]').forEach(element => {
                 element.setAttribute('contenteditable', (textLocked || suspendEditableForIPadPen) ? 'false' : 'true');
             });
@@ -2046,7 +2048,12 @@
             return false;
         }
 
+        function isIPadPenDrawMode() {
+            return isIPadLikeDevice && currentTool !== 'select';
+        }
+
         function lockPageScroll() {
+            if (isIPadLikeDevice) return;
             if (penScrollLocked) return;
             penScrollLocked = true;
             lockedScrollX = window.scrollX;
@@ -2058,6 +2065,7 @@
         }
 
         function unlockPageScroll() {
+            if (isIPadLikeDevice) return;
             if (!penScrollLocked) return;
             penScrollLocked = false;
             document.documentElement.classList.remove('pen-scroll-lock');
@@ -2098,6 +2106,16 @@
                 e.preventDefault();
                 draw(e);
             }
+        }
+
+        function suppressPenPagePan(e) {
+            if (!isIPadPenDrawMode()) return;
+            if (e.pointerType !== 'pen') return;
+
+            const allowTarget = e.target.closest('.toolbar, .tool-button, .nav-wrapper, .nav-button, .nav-toggle, .knowledge-trigger, .knowledge-action, .knowledge-header, .knowledge-resize');
+            if (allowTarget) return;
+
+            e.preventDefault();
         }
 
         function handleWindowScroll() {
