@@ -55,6 +55,19 @@
             -webkit-text-size-adjust: 100%;
         }
 
+        body.ipad-pen-draw-mode,
+        body.ipad-pen-draw-mode .lesson-sheet,
+        body.ipad-pen-draw-mode .info-panel,
+        body.ipad-pen-draw-mode .knowledge-card {
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        body.ipad-pen-draw-mode .editable-block {
+            caret-color: transparent;
+        }
+
         .template-stage {
             position: relative;
             z-index: 0;
@@ -1440,7 +1453,6 @@
         const navToggle = document.getElementById('navToggle');
         const textLockButton = document.getElementById('textLockButton');
         const teachingExit = document.getElementById('teachingExit');
-        const editableElements = Array.from(document.querySelectorAll('[contenteditable="true"]'));
         
         // 笔刷光标状态
         let lastX = 0;
@@ -1497,8 +1509,13 @@
         
         // 设置事件监听器
         function setupEventListeners() {
+            document.querySelectorAll('[contenteditable]').forEach(element => {
+                element.dataset.editableRoot = 'true';
+            });
+
             // 窗口大小变化
             window.addEventListener('resize', resizeCanvas);
+            window.addEventListener('scroll', handleWindowScroll, { passive: true });
             
             toolButtons.forEach(button => {
                 button.addEventListener('click', function() {
@@ -1604,6 +1621,9 @@
         // 绘制逻辑
         // =========================
         function startDraw(e) {
+            if (document.activeElement && document.activeElement !== document.body && typeof document.activeElement.blur === 'function') {
+                document.activeElement.blur();
+            }
             drawing = true;
             points = [];
             activeKnowledgeSurface = getKnowledgeSurfaceFromPoint(e.clientX, e.clientY);
@@ -1788,6 +1808,7 @@
         function drawStroke(stroke) {
             const pts = stroke.visiblePoints || stroke.points;
             if (pts.length < 2) return;
+            const maxSegmentDistance = isIPadLikeDevice ? 140 : 220;
             ctx.strokeStyle = stroke.color;
             
             if (stroke.tool === 'guide') {
@@ -1816,6 +1837,10 @@
             for (let i = 1; i < pts.length; i++) {
                 const from = getStrokeRenderPoint(stroke, pts[i - 1]);
                 const current = getStrokeRenderPoint(stroke, pts[i]);
+                if (Math.hypot(current.x - from.x, current.y - from.y) > maxSegmentDistance) {
+                    ctx.moveTo(current.x, current.y);
+                    continue;
+                }
                 const midX = (from.x + current.x) / 2;
                 const midY = (from.y + current.y) / 2;
                 ctx.quadraticCurveTo(from.x, from.y, midX, midY);
@@ -1927,6 +1952,7 @@
                 activeToolChip.textContent = '当前工具: 橡皮擦';
             }
 
+            applyTextLockState();
             requestRender();
         }
 
@@ -1960,16 +1986,25 @@
         }
 
         function applyTextLockState() {
-            editableElements.forEach(element => {
-                element.setAttribute('contenteditable', textLocked ? 'false' : 'true');
+            const suspendEditableForIPadPen = isIPadLikeDevice && currentTool !== 'select';
+            document.querySelectorAll('[data-editable-root="true"]').forEach(element => {
+                element.setAttribute('contenteditable', (textLocked || suspendEditableForIPadPen) ? 'false' : 'true');
             });
+
+            document.body.classList.toggle('ipad-pen-draw-mode', suspendEditableForIPadPen);
 
             textLockButton.classList.toggle('locked', textLocked);
             textLockButton.innerHTML = textLocked
                 ? '🔒<span class="tooltip">文本已锁定</span>'
                 : '🔓<span class="tooltip">文本已解锁</span>';
             textLockButton.title = textLocked ? '文本已锁定' : '文本已解锁';
-            statusBar.textContent = textLocked ? '文本编辑已锁定，仍可划词' : '文本编辑已解锁';
+            if (textLocked) {
+                statusBar.textContent = '文本编辑已锁定，仍可划词';
+            } else if (suspendEditableForIPadPen) {
+                statusBar.textContent = '文本已解锁，当前 Pencil 画笔模式会临时挂起文本输入';
+            } else {
+                statusBar.textContent = '文本编辑已解锁';
+            }
         }
 
         function toggleTextLock() {
@@ -2063,6 +2098,13 @@
                 e.preventDefault();
                 draw(e);
             }
+        }
+
+        function handleWindowScroll() {
+            if (!isIPadLikeDevice) return;
+            if (!drawing || activePointerType !== 'pen') return;
+            endDraw();
+            statusBar.textContent = '检测到页面滚动，已结束当前笔迹，避免异常长线';
         }
 
         function finishTrackedPointer(e) {
@@ -2265,7 +2307,7 @@
     </div>
     <div class="knowledge-body">
         <p>统一样式知识点模块，可继续复制和批量插入。</p>
-        <div class="knowledge-editor editable-block" id="${id}Editor" contenteditable="true">${content}</div>
+        <div class="knowledge-editor editable-block" id="${id}Editor" data-editable-root="true" contenteditable="true">${content}</div>
         <span class="knowledge-resize"></span>
     </div>
 </aside>`;
@@ -2430,6 +2472,7 @@
         function drawStrokeOn(ctx2, stroke){
             const pts = stroke.points;
             if(pts.length < 2) return;
+            const maxSegmentDistance = isIPadLikeDevice ? 140 : 220;
 
             ctx2.strokeStyle = stroke.color;
 
@@ -2449,6 +2492,10 @@
             for(let i=1;i<pts.length;i++){
                 const from = getStrokeRenderPoint(stroke, pts[i - 1]);
                 const current = getStrokeRenderPoint(stroke, pts[i]);
+                if (Math.hypot(current.x - from.x, current.y - from.y) > maxSegmentDistance) {
+                    ctx2.moveTo(current.x, current.y);
+                    continue;
+                }
                 const midX = (from.x + current.x) / 2;
                 const midY = (from.y + current.y) / 2;
                 ctx2.quadraticCurveTo(from.x, from.y, midX, midY);
