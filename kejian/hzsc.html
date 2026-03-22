@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HSK 字卡生成系统</title>
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.26.0/dist/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gif.js.optimized/dist/gif.js"></script>
+<style>
+  :root {
+    --bg: #eef4ff;
+    --bg-decor: #dbeafe;
+    --surface: rgba(255, 255, 255, 0.88);
+    --surface-strong: #ffffff;
+    --line: rgba(15, 23, 42, 0.1);
+    --text: #172033;
+    --muted: #64748b;
+    --primary: #2563eb;
+    --primary-soft: rgba(37, 99, 235, 0.1);
+    --accent: #f59e0b;
+    --success: #10b981;
+    --shadow: 0 18px 48px rgba(15, 23, 42, 0.1);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Segoe UI", sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(circle at top left, rgba(191, 219, 254, 0.85), transparent 34%),
+      radial-gradient(circle at top right, rgba(254, 240, 138, 0.45), transparent 28%),
+      linear-gradient(180deg, #f7faff 0%, var(--bg) 100%);
+    padding: 32px 18px 40px;
+  }
+
+  .app-shell {
+    max-width: 1480px;
+    margin: 0 auto;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(300px, 430px) 1fr;
+    gap: 20px;
+    align-items: stretch;
+    margin-bottom: 22px;
+  }
+
+  .hero-card,
+  .panel,
+  .cards-wrap,
+  .export-wrap {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: var(--surface);
+    backdrop-filter: blur(18px) saturate(150%);
+    box-shadow: var(--shadow);
+    border-radius: var(--radius-xl);
+  }
+
+  .hero-card {
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-card::before {
+    content: "";
+    position: absolute;
+    right: -32px;
+    top: -36px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.18), transparent 70%);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero-card h1 {
+    margin: 18px 0 10px;
+    font-size: 38px;
+    line-height: 1.12;
+  }
+
+  .hero-card p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .hero-points {
+    margin-top: 18px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .hero-point {
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    font-size: 14px;
+  }
+
+  .panel {
+    padding: 22px;
+  }
+
+  .panel-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .panel-title h2,
+  .cards-head h2,
+  .export-wrap h2 {
+    margin: 0;
+    font-size: 20px;
+  }
+
+  .panel-title span,
+  .cards-head p,
+  .export-wrap p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .control-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .field,
+  .field-wide {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .field-wide {
+    grid-column: 1 / -1;
+  }
+
+  .field label,
+  .field-wide label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    border: 1px solid rgba(148, 163, 184, 0.26);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--text);
+    padding: 13px 14px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  textarea {
+    min-height: 110px;
+    resize: vertical;
+    line-height: 1.7;
+  }
+
+  input:focus,
+  textarea:focus {
+    border-color: rgba(37, 99, 235, 0.45);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+  }
+
+  .button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .button-row button {
+    border: none;
+    border-radius: 999px;
+    padding: 12px 18px;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  }
+
+  .button-row button:hover {
+    transform: translateY(-1px);
+  }
+
+  .button-primary {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    color: #ffffff;
+  }
+
+  .button-secondary {
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--text);
+  }
+
+  .button-accent {
+    background: linear-gradient(135deg, #f59e0b, #fb7185);
+    color: #ffffff;
+  }
+
+  .button-success {
+    background: linear-gradient(135deg, #10b981, #14b8a6);
+    color: #ffffff;
+  }
+
+  .cards-wrap {
+    padding: 20px;
+    margin-top: 20px;
+  }
+
+  .cards-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+
+  .cards-grid {
+    display: grid;
+    gap: 22px;
+  }
+
+  .lesson-title {
+    margin: 4px 0 2px;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  .card {
+    border-radius: 26px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 249, 255, 0.96));
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    box-shadow: 0 18px 34px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+  }
+
+  .card-body {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 18px;
+    padding: 18px;
+  }
+
+  .writer-panel {
+    border-radius: 22px;
+    background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+    padding: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .writers {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    min-height: 100%;
+    width: 100%;
+  }
+
+  .writer-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .writer-char-pinyin {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .writer-box {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.14);
+    overflow: hidden;
+  }
+
+  .writer-box::before,
+  .writer-box::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .writer-box::before {
+    background:
+      repeating-linear-gradient(
+        to right,
+        transparent 0 6px,
+        rgba(148, 163, 184, 0.6) 6px 12px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0 6px,
+        rgba(148, 163, 184, 0.6) 6px 12px
+      ),
+      repeating-linear-gradient(
+        to right,
+        transparent 0 6px,
+        rgba(148, 163, 184, 0.82) 6px 12px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0 6px,
+        rgba(148, 163, 184, 0.82) 6px 12px
+      );
+    background-size: 100% 1px, 1px 100%, 100% 2px, 2px 100%;
+    background-position: center top, left center, center center, center center;
+    background-repeat: no-repeat;
+    opacity: 0.65;
+  }
+
+  .writer-box::after {
+    border: 1px dashed rgba(148, 163, 184, 0.85);
+    border-radius: 22px;
+  }
+
+  .writer-canvas {
+    position: absolute;
+    inset: 10px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .info-section {
+    min-height: 110px;
+    border-radius: 20px;
+    padding: 14px 14px 12px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(148, 163, 184, 0.16);
+  }
+
+  .info-section.wide {
+    grid-column: 1 / -1;
+  }
+
+  .info-label {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .info-content {
+    outline: none;
+    min-height: 52px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .info-content.pinyin {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .info-content.list-lines {
+    white-space: pre-line;
+  }
+
+  .info-content ruby rt {
+    color: #4f46e5;
+    font-size: 11px;
+  }
+
+  .export-wrap {
+    padding: 20px;
+    margin-top: 20px;
+  }
+
+  .flip-wrap {
+    padding: 20px;
+    margin-top: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: var(--surface);
+    backdrop-filter: blur(18px) saturate(150%);
+    box-shadow: var(--shadow);
+    border-radius: var(--radius-xl);
+  }
+
+  .flip-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .flip-head p {
+    display: none;
+  }
+
+  .flip-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .flip-actions button {
+    border: none;
+    border-radius: 999px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text);
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  }
+
+  .flip-actions button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+    background: #ffffff;
+  }
+
+  .flip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(228px, 1fr));
+    gap: 18px;
+    margin-top: 16px;
+  }
+
+  .flip-card {
+    min-height: 276px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 30px;
+    background:
+      radial-gradient(circle at top left, rgba(255,255,255,0.9), transparent 38%),
+      linear-gradient(180deg, rgba(255,255,255,0.98), rgba(240,246,255,0.95));
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 18px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .flip-card.is-mastered {
+    box-shadow:
+      0 24px 44px rgba(16, 185, 129, 0.18),
+      0 14px 30px rgba(15, 23, 42, 0.08);
+  }
+
+  .flip-card.needs-review {
+    box-shadow:
+      0 24px 44px rgba(245, 158, 11, 0.16),
+      0 14px 30px rgba(15, 23, 42, 0.08);
+  }
+
+  .flip-card:hover {
+    transform: translateY(-4px) rotate(-0.6deg);
+    box-shadow: 0 22px 44px rgba(15, 23, 42, 0.12);
+  }
+
+  .flip-status {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 6px;
+    z-index: 3;
+  }
+
+  .flip-status button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .flip-status button:hover {
+    transform: translateY(-1px);
+    background: #ffffff;
+  }
+
+  .flip-card.is-mastered .flip-mark-master {
+    background: rgba(16, 185, 129, 0.18);
+    box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.18);
+  }
+
+  .flip-card.needs-review .flip-mark-review {
+    background: rgba(245, 158, 11, 0.2);
+    box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.22);
+  }
+
+  .flip-card-inner {
+    width: 100%;
+    min-height: 232px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 22px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+  }
+
+  .flip-card-label {
+    display: none;
+  }
+
+  .flip-card-value {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.12;
+    word-break: break-word;
+    letter-spacing: 0.02em;
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .flip-card.is-face-down .flip-card-inner {
+    background:
+      linear-gradient(135deg, rgba(37,99,235,0.08), rgba(79,70,229,0.16)),
+      linear-gradient(180deg, rgba(255,255,255,0.98), rgba(241,245,255,0.98));
+  }
+
+  .flip-card.is-face-down .flip-card-inner::before,
+  .flip-card.is-face-down .flip-card-inner::after {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    border-radius: 20px;
+    border: 1px dashed rgba(79, 70, 229, 0.22);
+  }
+
+  .flip-card.is-face-down .flip-card-inner::after {
+    inset: auto;
+    width: 128px;
+    height: 128px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    border: 2px solid rgba(37, 99, 235, 0.2);
+    background:
+      radial-gradient(circle, rgba(37,99,235,0.1), transparent 68%),
+      linear-gradient(135deg, rgba(255,255,255,0.8), rgba(224,231,255,0.55));
+  }
+
+  .flip-card-face-pattern {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(79,70,229,0.12) 0 18%, transparent 18% 100%),
+      radial-gradient(circle at 50% 50%, transparent 0 38%, rgba(37,99,235,0.12) 38% 39%, transparent 39% 100%),
+      repeating-linear-gradient(45deg, rgba(79,70,229,0.1) 0 8px, transparent 8px 16px);
+    opacity: 0.68;
+  }
+
+  .flip-card-corner {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border: 2px solid rgba(37, 99, 235, 0.2);
+    opacity: 0.75;
+  }
+
+  .flip-card-corner.top-left {
+    left: 16px;
+    top: 16px;
+    border-right: 0;
+    border-bottom: 0;
+    border-radius: 12px 0 0 0;
+  }
+
+  .flip-card-corner.bottom-right {
+    right: 16px;
+    bottom: 16px;
+    border-left: 0;
+    border-top: 0;
+    border-radius: 0 0 12px 0;
+  }
+
+  .flip-word-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 156px;
+    width: 100%;
+    padding: 8px 12px;
+  }
+
+  .flip-pinyin {
+    font-size: 26px;
+    line-height: 1.1;
+    color: #1d4ed8;
+    font-weight: 700;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.03em;
+    animation: fadeCardContent 0.18s ease;
+  }
+
+  .flip-vi {
+    font-size: 24px;
+    line-height: 1.15;
+    color: #0f766e;
+    font-weight: 700;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    text-align: center;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(15, 118, 110, 0.22);
+    animation: fadeCardContent 0.18s ease;
+  }
+
+  .flip-card.is-face-word .flip-card-inner {
+    background:
+      radial-gradient(circle at top, rgba(251, 191, 36, 0.2), transparent 40%),
+      linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,247,237,0.98));
+    box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.15);
+  }
+
+  .flip-card.is-face-word .flip-card-value {
+    color: #9a3412;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+  }
+
+  .flip-card.is-face-pinyin .flip-card-inner {
+    background:
+      radial-gradient(circle at top, rgba(37, 99, 235, 0.18), transparent 42%),
+      linear-gradient(180deg, rgba(255,255,255,0.98), rgba(239,246,255,0.98));
+    box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.14);
+  }
+
+  .flip-card.is-face-pinyin .flip-card-value {
+    color: #1e3a8a;
+  }
+
+  .flip-card[data-state="3"] .flip-card-inner {
+    background:
+      radial-gradient(circle at bottom, rgba(20, 184, 166, 0.18), transparent 44%),
+      linear-gradient(180deg, rgba(255,255,255,0.98), rgba(240,253,250,0.98));
+    box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.14);
+  }
+
+  @keyframes fadeCardContent {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .flip-badge {
+    display: none;
+  }
+
+  .export-wrap textarea {
+    min-height: 280px;
+    margin-top: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  .status {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.84);
+    color: #ffffff;
+    box-shadow: 0 18px 36px rgba(15, 23, 42, 0.22);
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .status.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 1080px) {
+    .hero,
+    .card-body {
+      grid-template-columns: 1fr;
+    }
+
+    .writer-panel {
+      order: -1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    body {
+      padding: 18px 12px 30px;
+    }
+
+    .control-grid,
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-card,
+    .panel,
+    .cards-wrap,
+    .flip-wrap,
+    .export-wrap {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .writer-box {
+      width: 148px;
+      height: 148px;
+    }
+
+    .writer-char-pinyin {
+      font-size: 18px;
+    }
+
+    .flip-card {
+      min-height: 180px;
+    }
+
+    .flip-card-inner {
+      min-height: 150px;
+    }
+
+    .flip-card-value {
+      font-size: 34px;
+    }
+
+    .flip-head {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .flip-card {
+      min-height: 220px;
+    }
+
+    .flip-card-inner {
+      min-height: 184px;
+    }
+
+    .flip-card-value {
+      font-size: 40px;
+      min-height: 48px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <section class="hero">
+    <article class="hero-card">
+      <span class="eyebrow">HSK Template Tool</span>
+      <h1>字卡生成系统</h1>
+      <p>面向课件制作的字卡母版。支持多词同时生成、自动填充拼音与分类信息、导出 HTML，以及把当前字卡区域导出为动态 GIF。</p>
+      <div class="hero-points">
+        <div class="hero-point">输入多个词语时，请使用空格分隔，例如：<strong>你好 老师 学生 学习</strong></div>
+        <div class="hero-point">系统会优先使用预设词库；未命中时，会按词语结构自动推断词性、释义与例句模板。</div>
+        <div class="hero-point">导出母版嵌入块会生成一段可直接放进你课件母版“生词板块”的代码。</div>
+      </div>
+    </article>
+
+    <section class="panel">
+      <div class="panel-title">
+        <div>
+          <h2>生成设置</h2>
+          <span>先输入课次、词语，再生成字卡。生成后仍可在卡片内继续编辑。</span>
+        </div>
+      </div>
+
+      <div class="control-grid">
+        <div class="field">
+          <label for="lessonInput">课次标题</label>
+          <input id="lessonInput" value="HSK 1 第1课 生词字卡" placeholder="例如：HSK 1 第1课 生词字卡">
+        </div>
+
+        <div class="field">
+          <label for="themeNoteInput">主题说明</label>
+          <input id="themeNoteInput" value="你好 / 问候语" placeholder="例如：你好 / 问候语">
+        </div>
+
+        <div class="field-wide">
+          <label for="wordInput">词语输入</label>
+          <textarea id="wordInput" placeholder="请输入多个词语，用空格分隔，例如：你好 老师 学生 学习">你好 老师 学生 学习</textarea>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="button-primary" id="generateButton" type="button">生成字卡</button>
+        <button class="button-secondary" id="fillButton" type="button">重新自动填充</button>
+        <button class="button-accent" id="gifButton" type="button">导出动态 GIF</button>
+        <button class="button-success" id="embedButton" type="button">导出母版嵌入块</button>
+        <button class="button-secondary" id="pageButton" type="button">导出独立页面</button>
+      </div>
+    </section>
+  </section>
+
+  <section class="cards-wrap">
+    <div class="cards-head">
+      <div>
+        <h2>字卡预览</h2>
+        <p>主字区与信息区分明，适合直接嵌入课件页面。</p>
+      </div>
+      <div>
+        <span id="cardCount" class="eyebrow">0 张字卡</span>
+      </div>
+    </div>
+
+    <div id="previewRoot">
+      <div class="lesson-title" id="previewTitle">HSK 1 第1课 生词字卡</div>
+      <p id="previewSubtitle" style="margin:0 0 18px;color:#64748b;">你好 / 问候语</p>
+      <div class="cards-grid" id="cardsGrid"></div>
+    </div>
+  </section>
+
+  <section class="flip-wrap">
+    <div class="flip-head">
+      <div>
+        <h2 style="margin:0;">翻牌练习</h2>
+      </div>
+      <div class="flip-actions">
+        <button id="flipResetButton" type="button">全部翻回</button>
+        <button id="flipShuffleButton" type="button">随机打乱</button>
+      </div>
+    </div>
+    <div class="flip-grid" id="flipGrid"></div>
+  </section>
+
+  <section class="export-wrap">
+    <h2>导出结果</h2>
+    <p>默认输出“母版嵌入块”代码，可直接放进你的母版生词区；如需独立文件，可使用“导出独立页面”。</p>
+    <textarea id="htmlOutput" placeholder="导出代码会显示在这里"></textarea>
+  </section>
+</div>
+
+<div class="status" id="statusBar"></div>
+
+<script>
+  // ===== 母版说明：后续如需扩展词库，可优先维护这里 =====
+  const presetWordBank = {
+    "你好": {
+      vi: "Xin chào",
+      pos: "交际用语 / 感叹语\n（感叹词 + 礼貌问候语）",
+      definition: "中文：用于见面时打招呼，表示礼貌、问候。\n越南语：Lời chào hỏi khi gặp người, dùng để thể hiện sự lịch sự, thân thiện.",
+      grammar: "固定问候语，不能拆分单独使用。\n用在见面、打招呼、打电话开头。\n不分早晚，全天都能用。\n后面可以加称呼：\n你好，老师！\n你好，同学！",
+      examples: ["你好！", "老师，你好！", "大家好！", "你好，我是学生。"]
+    },
+    "老师": {
+      vi: "Giáo viên",
+      pos: "名词\n（称呼语）",
+      definition: "中文：指在学校或课堂中教授学生的人。\n越南语：Người dạy học, giáo viên.",
+      grammar: "可以单独作称呼。\n常与问候语搭配使用：老师，您好！\n也可出现在职业介绍句中：我是老师。",
+      examples: ["老师，您好！", "这是我们的老师。", "王老师在教室里。", "我喜欢汉语老师。"]
+    },
+    "学生": {
+      vi: "Học sinh / sinh viên",
+      pos: "名词",
+      definition: "中文：在学校学习的人。\n越南语：Người học ở trường, học sinh hoặc sinh viên.",
+      grammar: "常作主语或宾语。\n可以与“是”连用：我是学生。\n可与数量词搭配：一个学生。",
+      examples: ["我是学生。", "他也是学生。", "这个学生很认真。", "学生在教室里。"]
+    },
+    "学习": {
+      vi: "Học tập",
+      pos: "动词",
+      definition: "中文：获得知识、技能的过程或行为。\n越南语：Học, học tập để tiếp thu kiến thức.",
+      grammar: "通常作动词使用。\n后面可接宾语：学习汉语。\n也可和“在”连用：我在学习。",
+      examples: ["我学习汉语。", "我们一起学习。", "他在学习生词。", "学习很重要。"]
+    },
+    "谢谢": {
+      vi: "Cảm ơn",
+      pos: "交际用语 / 感叹语",
+      definition: "中文：表示感谢时使用的礼貌用语。\n越南语：Lời cảm ơn, dùng để bày tỏ sự biết ơn.",
+      grammar: "常单独使用。\n也可扩展为“谢谢你”“谢谢老师”。\n常与回应“没关系 / 不客气”配合使用。",
+      examples: ["谢谢！", "谢谢你。", "老师，谢谢您！", "谢谢大家。"]
+    },
+    "对不起": {
+      vi: "Xin lỗi",
+      pos: "交际用语 / 感叹语",
+      definition: "中文：表示道歉的礼貌用语。\n越南语：Lời xin lỗi dùng khi mắc lỗi hoặc gây phiền toái.",
+      grammar: "固定表达。\n常单独使用，也可后接对象：对不起，老师。\n通常和“没关系”搭配出现。",
+      examples: ["对不起！", "老师，对不起！", "对不起，我来晚了。", "对不起，请问洗手间在哪儿？"]
+    }
+  };
+
+  const lessonInput = document.getElementById("lessonInput");
+  const themeNoteInput = document.getElementById("themeNoteInput");
+  const wordInput = document.getElementById("wordInput");
+  const cardsGrid = document.getElementById("cardsGrid");
+  const previewTitle = document.getElementById("previewTitle");
+  const previewSubtitle = document.getElementById("previewSubtitle");
+  const cardCount = document.getElementById("cardCount");
+  const htmlOutput = document.getElementById("htmlOutput");
+  const statusBar = document.getElementById("statusBar");
+  const flipGrid = document.getElementById("flipGrid");
+  const flipResetButton = document.getElementById("flipResetButton");
+  const flipShuffleButton = document.getElementById("flipShuffleButton");
+  const embedButton = document.getElementById("embedButton");
+  const pageButton = document.getElementById("pageButton");
+
+  let statusTimer = null;
+
+  function showStatus(message, duration = 1800) {
+    statusBar.textContent = message;
+    statusBar.classList.add("show");
+    window.clearTimeout(statusTimer);
+    statusTimer = window.setTimeout(() => {
+      statusBar.classList.remove("show");
+    }, duration);
+  }
+
+  function splitWords(text) {
+    return text
+      .split(/\s+/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  function toPinyin(word) {
+    return window.pinyinPro.pinyin(word, { toneType: "mark", type: "array" }).join(" ");
+  }
+
+  function buildRubyText(sentence) {
+    return [...sentence].map((char) => {
+      if (/[\u4e00-\u9fff]/.test(char)) {
+        const py = window.pinyinPro.pinyin(char, { toneType: "mark" });
+        return `<ruby>${char}<rt>${py}</rt></ruby>`;
+      }
+      return char;
+    }).join("");
+  }
+
+  function inferPos(word) {
+    const greetingWords = ["你好", "您好", "谢谢", "对不起", "没关系", "再见"];
+    if (greetingWords.includes(word)) return "交际用语 / 感叹语";
+    if (word.length === 1) return "汉字 / 语素";
+    if (/学|习|看|说|听|写/.test(word)) return "动词";
+    if (/老师|学生|朋友|同学/.test(word)) return "名词";
+    return "词语";
+  }
+
+  function inferDefinition(word) {
+    return `中文：和“${word}”相关的基础词义说明，可在生成后继续精修。\n越南语：Giải thích cơ bản của từ “${word}”, có thể chỉnh sửa thêm sau khi生成.`;
+  }
+
+  function inferGrammar(word) {
+    if (word.length === 1) {
+      return `常作为构词成分出现。\n可结合本课词语说明字义与用法。\n建议配合笔顺动画、组词和例句一起教学。`;
+    }
+    return `“${word}”可作为本课重点词语。\n建议结合场景对话进行操练。\n可补充搭配、替换练习和句型扩展。`;
+  }
+
+  function inferExamples(word) {
+    if (word === "你好") {
+      return ["你好！", "老师，你好！", "大家好！", "你好，我是学生。"];
+    }
+    return [
+      `${word}。`,
+      `老师说：“${word}。”`,
+      `我们一起学习“${word}”。`,
+      `请用“${word}”造句。`
+    ];
+  }
+
+  function renderFlipFace(flipCard, state) {
+    const innerEl = flipCard.querySelector(".flip-card-inner");
+    flipCard.dataset.state = String(state);
+    flipCard.classList.toggle("is-face-down", state === 0);
+    flipCard.classList.toggle("is-face-word", state === 1);
+    flipCard.classList.toggle("is-face-pinyin", state === 2 || state === 3);
+
+    if (state === 0) {
+      innerEl.innerHTML = `
+        <span class="flip-card-face-pattern" aria-hidden="true"></span>
+        <span class="flip-card-corner top-left" aria-hidden="true"></span>
+        <span class="flip-card-corner bottom-right" aria-hidden="true"></span>
+        <span class="flip-card-value"></span>
+      `;
+      return;
+    }
+
+    if (state === 1) {
+      innerEl.innerHTML = `
+        <div class="flip-word-stack">
+          <span class="flip-pinyin"></span>
+          <span class="flip-card-value">${flipCard.dataset.word || ""}</span>
+          <span class="flip-vi"></span>
+        </div>
+      `;
+      return;
+    }
+
+    if (state === 2) {
+      innerEl.innerHTML = `
+        <div class="flip-word-stack">
+          <span class="flip-pinyin">${flipCard.dataset.pinyin || ""}</span>
+          <span class="flip-card-value">${flipCard.dataset.word || ""}</span>
+          <span class="flip-vi"></span>
+        </div>
+      `;
+      return;
+    }
+
+    innerEl.innerHTML = `
+      <div class="flip-word-stack">
+        <span class="flip-pinyin">${flipCard.dataset.pinyin || ""}</span>
+        <span class="flip-card-value">${flipCard.dataset.word || ""}</span>
+        <span class="flip-vi">${flipCard.dataset.vi || ""}</span>
+      </div>
+    `;
+  }
+
+  function buildCardData(word) {
+    const preset = presetWordBank[word] || {};
+    return {
+      word,
+      pinyin: preset.pinyin || toPinyin(word),
+      vi: preset.vi || "",
+      pos: preset.pos || inferPos(word),
+      definition: preset.definition || inferDefinition(word),
+      grammar: preset.grammar || inferGrammar(word),
+      examples: preset.examples || inferExamples(word)
+    };
+  }
+
+  function createWriter(targetId, char, size = 120) {
+    HanziWriter.create(targetId, char, {
+      width: size,
+      height: size,
+      padding: 6,
+      delayBetweenLoops: 500,
+      strokeAnimationSpeed: 1.1,
+      strokeColor: "#0f172a",
+      radicalColor: "#2563eb",
+      outlineColor: "rgba(37, 99, 235, 0.18)"
+    }).loopCharacterAnimation();
+  }
+
+  function buildWriterBoxes(word, index) {
+    return [...word].map((char, charIndex) => `
+      <div class="writer-unit">
+        <div class="writer-char-pinyin">${window.pinyinPro.pinyin(char, { toneType: "mark" })}</div>
+        <div class="writer-box">
+          <div class="writer-canvas" id="writer-${index}-${charIndex}" data-char="${char}"></div>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function renderCards() {
+    const words = splitWords(wordInput.value);
+    previewTitle.textContent = lessonInput.value.trim() || "HSK 字卡";
+    previewSubtitle.textContent = themeNoteInput.value.trim() || "字卡主题";
+    cardCount.textContent = `${words.length} 张字卡`;
+    htmlOutput.value = "";
+
+    if (!words.length) {
+      cardsGrid.innerHTML = "";
+      showStatus("请先输入至少一个词语");
+      return;
+    }
+
+    cardsGrid.innerHTML = words.map((word, index) => {
+      const data = buildCardData(word);
+      return `
+        <article class="card" data-word="${data.word}">
+          <div class="card-body">
+            <section class="writer-panel">
+              <div class="writers">${buildWriterBoxes(data.word, index)}</div>
+            </section>
+            <section class="info-grid">
+              <div class="info-section">
+                <div class="info-label">2. 越南语</div>
+                <div class="info-content" contenteditable="true" data-field="vi">${data.vi}</div>
+              </div>
+              <div class="info-section">
+                <div class="info-label">3. 词性</div>
+                <div class="info-content list-lines" contenteditable="true" data-field="pos">${data.pos}</div>
+              </div>
+              <div class="info-section wide">
+                <div class="info-label">4. 释义</div>
+                <div class="info-content list-lines" contenteditable="true" data-field="definition">${data.definition}</div>
+              </div>
+              <div class="info-section wide">
+                <div class="info-label">5. 语法重点</div>
+                <div class="info-content list-lines" contenteditable="true" data-field="grammar">${data.grammar}</div>
+              </div>
+              <div class="info-section wide">
+                <div class="info-label">6. 例句</div>
+                <div class="info-content list-lines" contenteditable="true" data-field="examples">${data.examples.map((item) => buildRubyText(item)).join("<br>")}</div>
+              </div>
+            </section>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+    flipGrid.innerHTML = words.map((word) => {
+      const data = buildCardData(word);
+      return `
+        <div class="flip-card is-face-down" role="button" tabindex="0" data-word="${data.word}" data-pinyin="${data.pinyin}" data-vi="${data.vi}" data-state="0">
+          <span class="flip-status">
+            <button class="flip-mark-master" type="button" title="标记为已掌握">✓</button>
+            <button class="flip-mark-review" type="button" title="标记为再练习">↺</button>
+          </span>
+          <div class="flip-card-inner"></div>
+        </div>
+      `;
+    }).join("");
+
+    [...flipGrid.querySelectorAll(".flip-card")].forEach((flipCard) => {
+      renderFlipFace(flipCard, 0);
+    });
+
+    words.forEach((word, index) => {
+      [...word].forEach((char, charIndex) => {
+        createWriter(`writer-${index}-${charIndex}`, char, 168);
+      });
+    });
+
+    showStatus(`已生成 ${words.length} 张字卡`);
+  }
+
+  function refillCards() {
+    if (!cardsGrid.children.length) {
+      showStatus("当前没有可自动填充的字卡");
+      return;
+    }
+    renderCards();
+    showStatus("已根据顶部词语重新自动填充");
+  }
+
+  function refreshWriters(card, word) {
+    const writers = card.querySelector(".writers");
+    const cardIndex = [...cardsGrid.querySelectorAll(".card")].indexOf(card);
+    writers.innerHTML = buildWriterBoxes(word, `refresh-${cardIndex}-${Date.now()}`);
+    const canvases = [...writers.querySelectorAll(".writer-canvas")];
+    canvases.forEach((canvas) => {
+      createWriter(canvas.id, canvas.dataset.char);
+    });
+  }
+
+  function handleWordEdit(input) {
+    const word = input.value.trim();
+    if (!word) return;
+    const card = input.closest(".card");
+    refreshWriters(card, word);
+  }
+
+  function getExportStyleText() {
+    return `
+.hsk-vocab-block{max-width:1280px;margin:0 auto;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Segoe UI",sans-serif;}
+.hsk-vocab-block .lesson-title{margin:0 0 4px;font-size:30px;font-weight:700;}
+.hsk-vocab-block .lesson-subtitle{margin:0 0 18px;color:#64748b;}
+.hsk-vocab-block .cards-grid{display:grid;gap:22px;}
+.hsk-vocab-block .card{border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(246,249,255,.96));border:1px solid rgba(148,163,184,.14);box-shadow:0 18px 34px rgba(15,23,42,.06);overflow:hidden;}
+.hsk-vocab-block .card-body{display:grid;grid-template-columns:340px 1fr;gap:18px;padding:18px;}
+.hsk-vocab-block .writer-panel{border-radius:22px;background:linear-gradient(135deg,#eff6ff,#f5f3ff);padding:16px;border:1px solid rgba(148,163,184,.14);display:flex;align-items:center;justify-content:center;}
+.hsk-vocab-block .writers{display:flex;flex-direction:column;gap:16px;justify-content:center;align-items:center;min-height:100%;width:100%;}
+.hsk-vocab-block .writer-unit{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+.hsk-vocab-block .writer-box{position:relative;width:180px;height:180px;border-radius:22px;background:rgba(255,255,255,.96);box-shadow:inset 0 0 0 1px rgba(148,163,184,.14);overflow:hidden;}
+.hsk-vocab-block .writer-char-pinyin{font-size:22px;font-weight:700;color:#1e293b;line-height:1;white-space:nowrap;}
+.hsk-vocab-block .writer-box::before,.hsk-vocab-block .writer-box::after{content:"";position:absolute;inset:0;pointer-events:none;}
+.hsk-vocab-block .writer-box::before{background:repeating-linear-gradient(to right,transparent 0 6px,rgba(148,163,184,.6) 6px 12px),repeating-linear-gradient(to bottom,transparent 0 6px,rgba(148,163,184,.6) 6px 12px),repeating-linear-gradient(to right,transparent 0 6px,rgba(148,163,184,.82) 6px 12px),repeating-linear-gradient(to bottom,transparent 0 6px,rgba(148,163,184,.82) 6px 12px);background-size:100% 1px,1px 100%,100% 2px,2px 100%;background-position:center top,left center,center center,center center;background-repeat:no-repeat;opacity:.65;}
+.hsk-vocab-block .writer-box::after{border:1px dashed rgba(148,163,184,.85);border-radius:22px;}
+.hsk-vocab-block .writer-canvas{position:absolute;inset:10px;}
+.hsk-vocab-block .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+.hsk-vocab-block .info-section{min-height:110px;border-radius:20px;padding:14px 14px 12px;background:rgba(255,255,255,.95);border:1px solid rgba(148,163,184,.16);}
+.hsk-vocab-block .info-section.wide{grid-column:1 / -1;}
+.hsk-vocab-block .info-label{margin-bottom:10px;color:#64748b;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.hsk-vocab-block .info-content{min-height:52px;line-height:1.8;color:#172033;white-space:pre-line;}
+.hsk-vocab-block .info-content ruby rt{color:#4f46e5;font-size:11px;}
+.hsk-vocab-block .flip-wrap{padding:20px;margin-top:20px;border:1px solid rgba(255,255,255,.8);background:rgba(255,255,255,.88);backdrop-filter:blur(18px) saturate(150%);box-shadow:0 18px 48px rgba(15,23,42,.1);border-radius:28px;}
+.hsk-vocab-block .flip-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
+.hsk-vocab-block .flip-actions{display:flex;flex-wrap:wrap;gap:8px;}
+.hsk-vocab-block .flip-actions button{border:none;border-radius:999px;padding:10px 14px;background:rgba(255,255,255,.9);color:#172033;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.08);}
+.hsk-vocab-block .flip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:18px;margin-top:16px;}
+.hsk-vocab-block .flip-card{min-height:276px;border:1px solid rgba(148,163,184,.16);border-radius:30px;background:radial-gradient(circle at top left,rgba(255,255,255,.9),transparent 38%),linear-gradient(180deg,rgba(255,255,255,.98),rgba(240,246,255,.95));box-shadow:0 14px 30px rgba(15,23,42,.06);display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;position:relative;overflow:hidden;}
+.hsk-vocab-block .flip-card.is-mastered{box-shadow:0 24px 44px rgba(16,185,129,.18),0 14px 30px rgba(15,23,42,.08);}
+.hsk-vocab-block .flip-card.needs-review{box-shadow:0 24px 44px rgba(245,158,11,.16),0 14px 30px rgba(15,23,42,.08);}
+.hsk-vocab-block .flip-status{position:absolute;top:12px;right:12px;display:flex;gap:6px;z-index:3;}
+.hsk-vocab-block .flip-status button{width:32px;height:32px;border:none;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(255,255,255,.78);box-shadow:0 6px 16px rgba(15,23,42,.08);}
+.hsk-vocab-block .flip-card.is-mastered .flip-mark-master{background:rgba(16,185,129,.18);box-shadow:inset 0 0 0 1px rgba(16,185,129,.18);}
+.hsk-vocab-block .flip-card.needs-review .flip-mark-review{background:rgba(245,158,11,.2);box-shadow:inset 0 0 0 1px rgba(245,158,11,.22);}
+.hsk-vocab-block .flip-card-inner{width:100%;min-height:232px;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;border-radius:22px;position:relative;overflow:hidden;}
+.hsk-vocab-block .flip-card-value{font-size:48px;font-weight:700;color:#172033;line-height:1.12;word-break:break-word;letter-spacing:.02em;min-height:58px;display:flex;align-items:center;justify-content:center;}
+.hsk-vocab-block .flip-card.is-face-down .flip-card-inner{background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(79,70,229,.16)),linear-gradient(180deg,rgba(255,255,255,.98),rgba(241,245,255,.98));}
+.hsk-vocab-block .flip-card.is-face-down .flip-card-inner::before,.hsk-vocab-block .flip-card.is-face-down .flip-card-inner::after{content:"";position:absolute;inset:18px;border-radius:20px;border:1px dashed rgba(79,70,229,.22);}
+.hsk-vocab-block .flip-card.is-face-down .flip-card-inner::after{inset:auto;width:128px;height:128px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(45deg);border:2px solid rgba(37,99,235,.2);background:radial-gradient(circle,rgba(37,99,235,.1),transparent 68%),linear-gradient(135deg,rgba(255,255,255,.8),rgba(224,231,255,.55));}
+.hsk-vocab-block .flip-card-face-pattern{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(79,70,229,.12) 0 18%,transparent 18% 100%),radial-gradient(circle at 50% 50%,transparent 0 38%,rgba(37,99,235,.12) 38% 39%,transparent 39% 100%),repeating-linear-gradient(45deg,rgba(79,70,229,.1) 0 8px,transparent 8px 16px);opacity:.68;}
+.hsk-vocab-block .flip-card-corner{position:absolute;width:22px;height:22px;border:2px solid rgba(37,99,235,.2);opacity:.75;}
+.hsk-vocab-block .flip-card-corner.top-left{left:16px;top:16px;border-right:0;border-bottom:0;border-radius:12px 0 0 0;}
+.hsk-vocab-block .flip-card-corner.bottom-right{right:16px;bottom:16px;border-left:0;border-top:0;border-radius:0 0 12px 0;}
+.hsk-vocab-block .flip-word-stack{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:156px;width:100%;padding:8px 12px;}
+.hsk-vocab-block .flip-pinyin{font-size:26px;line-height:1.1;color:#1d4ed8;font-weight:700;min-height:34px;display:flex;align-items:center;justify-content:center;letter-spacing:.03em;}
+.hsk-vocab-block .flip-vi{font-size:24px;line-height:1.15;color:#0f766e;font-weight:700;min-height:32px;display:flex;align-items:center;justify-content:center;max-width:100%;text-align:center;padding-top:8px;border-top:1px dashed rgba(15,118,110,.22);}
+.hsk-vocab-block .flip-card.is-face-word .flip-card-inner{background:radial-gradient(circle at top,rgba(251,191,36,.2),transparent 40%),linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,247,237,.98));box-shadow:inset 0 0 0 1px rgba(251,191,36,.15);}
+.hsk-vocab-block .flip-card.is-face-word .flip-card-value{color:#9a3412;text-shadow:0 1px 0 rgba(255,255,255,.7);}
+.hsk-vocab-block .flip-card.is-face-pinyin .flip-card-inner{background:radial-gradient(circle at top,rgba(37,99,235,.18),transparent 42%),linear-gradient(180deg,rgba(255,255,255,.98),rgba(239,246,255,.98));box-shadow:inset 0 0 0 1px rgba(37,99,235,.14);}
+.hsk-vocab-block .flip-card.is-face-pinyin .flip-card-value{color:#1e3a8a;}
+.hsk-vocab-block .flip-card[data-state="3"] .flip-card-inner{background:radial-gradient(circle at bottom,rgba(20,184,166,.18),transparent 44%),linear-gradient(180deg,rgba(255,255,255,.98),rgba(240,253,250,.98));box-shadow:inset 0 0 0 1px rgba(15,118,110,.14);}
+@media (max-width:1080px){.hsk-vocab-block .card-body{grid-template-columns:1fr;}}
+@media (max-width:768px){.hsk-vocab-block .info-grid{grid-template-columns:1fr;}.hsk-vocab-block .writer-box{width:148px;height:148px;}.hsk-vocab-block .writer-char-pinyin{font-size:18px;}.hsk-vocab-block .flip-card{min-height:220px;}.hsk-vocab-block .flip-card-inner{min-height:184px;}.hsk-vocab-block .flip-card-value{font-size:40px;min-height:48px;}.hsk-vocab-block .flip-head{flex-direction:column;align-items:stretch;}}
+    `.trim();
+  }
+
+  function buildExportWriterBoxes(word, indexPrefix) {
+    return [...word].map((char, charIndex) => `
+      <div class="writer-unit">
+        <div class="writer-char-pinyin">${window.pinyinPro.pinyin(char, { toneType: "mark" })}</div>
+        <div class="writer-box">
+          <div class="writer-canvas" id="${indexPrefix}-writer-${charIndex}" data-char="${char}"></div>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function collectCurrentCardData() {
+    return [...cardsGrid.querySelectorAll(".card")].map((card, index) => ({
+      index,
+      word: card.dataset.word || "",
+      vi: card.querySelector('[data-field="vi"]')?.innerHTML || "",
+      pos: card.querySelector('[data-field="pos"]')?.innerHTML || "",
+      definition: card.querySelector('[data-field="definition"]')?.innerHTML || "",
+      grammar: card.querySelector('[data-field="grammar"]')?.innerHTML || "",
+      examples: card.querySelector('[data-field="examples"]')?.innerHTML || "",
+      pinyin: toPinyin(card.dataset.word || "")
+    }));
+  }
+
+  function collectCurrentFlipData() {
+    return [...flipGrid.querySelectorAll(".flip-card")].map((card, index) => ({
+      index,
+      word: card.dataset.word || "",
+      pinyin: card.dataset.pinyin || "",
+      vi: card.dataset.vi || "",
+      state: Number(card.dataset.state || "0"),
+      mastered: card.classList.contains("is-mastered"),
+      review: card.classList.contains("needs-review")
+    }));
+  }
+
+  function buildExportCardsHTML(cardsData, blockId) {
+    return cardsData.map((data) => `
+      <article class="card" data-word="${data.word}">
+        <div class="card-body">
+          <section class="writer-panel">
+            <div class="writers">${buildExportWriterBoxes(data.word, `${blockId}-card-${data.index}`)}</div>
+          </section>
+          <section class="info-grid">
+            <div class="info-section">
+              <div class="info-label">2. 越南语</div>
+              <div class="info-content" contenteditable="true" data-field="vi">${data.vi}</div>
+            </div>
+            <div class="info-section">
+              <div class="info-label">3. 词性</div>
+              <div class="info-content list-lines" contenteditable="true" data-field="pos">${data.pos}</div>
+            </div>
+            <div class="info-section wide">
+              <div class="info-label">4. 释义</div>
+              <div class="info-content list-lines" contenteditable="true" data-field="definition">${data.definition}</div>
+            </div>
+            <div class="info-section wide">
+              <div class="info-label">5. 语法重点</div>
+              <div class="info-content list-lines" contenteditable="true" data-field="grammar">${data.grammar}</div>
+            </div>
+            <div class="info-section wide">
+              <div class="info-label">6. 例句</div>
+              <div class="info-content list-lines" contenteditable="true" data-field="examples">${data.examples}</div>
+            </div>
+          </section>
+        </div>
+      </article>
+    `).join("");
+  }
+
+  function buildExportFlipHTML(flipData, resetId, shuffleId) {
+    return `
+      <section class="flip-wrap">
+        <div class="flip-head">
+          <div>
+            <h2 style="margin:0;">生词翻牌练习</h2>
+          </div>
+          <div class="flip-actions">
+            <button id="${resetId}" type="button">全部翻回</button>
+            <button id="${shuffleId}" type="button">随机打乱</button>
+          </div>
+        </div>
+        <div class="flip-grid">
+          ${flipData.map((data) => `
+            <div class="flip-card ${data.mastered ? "is-mastered" : ""} ${data.review ? "needs-review" : ""}" role="button" tabindex="0" data-word="${data.word}" data-pinyin="${data.pinyin}" data-vi="${data.vi}" data-state="${data.state}">
+              <span class="flip-status">
+                <button class="flip-mark-master" type="button" title="标记为已掌握">✓</button>
+                <button class="flip-mark-review" type="button" title="标记为再练习">↺</button>
+              </span>
+              <div class="flip-card-inner"></div>
+            </div>
+          `).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function collectExportParts() {
+    const blockId = `hsk-vocab-block-${Date.now()}`;
+    const cardsData = collectCurrentCardData();
+    const flipData = collectCurrentFlipData();
+    const resetId = `${blockId}-reset`;
+    const shuffleId = `${blockId}-shuffle`;
+    const previewHTML = `
+      <div id="previewRoot">
+        <div class="lesson-title" id="previewTitle">${previewTitle.innerHTML}</div>
+        <p id="previewSubtitle" class="lesson-subtitle">${previewSubtitle.innerHTML}</p>
+        <div class="cards-grid">
+          ${buildExportCardsHTML(cardsData, blockId)}
+        </div>
+      </div>
+    `.trim();
+    const flipHTML = buildExportFlipHTML(flipData, resetId, shuffleId);
+    const writerConfig = cardsData.flatMap((data) =>
+      [...data.word].map((char, charIndex) => ({
+        id: `${blockId}-card-${data.index}-writer-${charIndex}`,
+        char
+      }))
+    );
+
+    return {
+      blockId,
+      resetId,
+      shuffleId,
+      previewHTML,
+      flipHTML,
+      writerConfig
+    };
+  }
+
+  function buildExportDocument() {
+    const { previewHTML, writerConfig } = collectExportParts();
+    return `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${previewTitle.textContent}</title>
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"><\/script>
+<style>
+body{margin:0;padding:24px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Segoe UI",sans-serif;background:#eef4ff;color:#172033;}
+#previewRoot{max-width:1280px;margin:0 auto;}
+.lesson-title{margin:0 0 4px;font-size:30px;font-weight:700;}
+#previewSubtitle{margin:0 0 18px;color:#64748b;}
+.cards-grid{display:grid;gap:22px;}
+.card{border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(246,249,255,.96));border:1px solid rgba(148,163,184,.14);box-shadow:0 18px 34px rgba(15,23,42,.06);overflow:hidden;}
+.card-body{display:grid;grid-template-columns:340px 1fr;gap:18px;padding:18px;}
+.writer-panel{border-radius:22px;background:linear-gradient(135deg,#eff6ff,#f5f3ff);padding:16px;border:1px solid rgba(148,163,184,.14);}
+.writer-panel{display:flex;align-items:center;justify-content:center;}
+.writers{display:flex;flex-direction:column;gap:16px;justify-content:center;align-items:center;min-height:100%;width:100%;}
+.writer-unit{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+.writer-box{position:relative;width:180px;height:180px;border-radius:22px;background:rgba(255,255,255,.96);box-shadow:inset 0 0 0 1px rgba(148,163,184,.14);overflow:hidden;}
+.writer-char-pinyin{font-size:22px;font-weight:700;color:#1e293b;line-height:1;white-space:nowrap;}
+.writer-box::before,.writer-box::after{content:"";position:absolute;inset:0;pointer-events:none;}
+.writer-box::before{background:repeating-linear-gradient(to right,transparent 0 6px,rgba(148,163,184,.6) 6px 12px),repeating-linear-gradient(to bottom,transparent 0 6px,rgba(148,163,184,.6) 6px 12px),repeating-linear-gradient(to right,transparent 0 6px,rgba(148,163,184,.82) 6px 12px),repeating-linear-gradient(to bottom,transparent 0 6px,rgba(148,163,184,.82) 6px 12px);background-size:100% 1px,1px 100%,100% 2px,2px 100%;background-position:center top,left center,center center,center center;background-repeat:no-repeat;opacity:.65;}
+.writer-box::after{border:1px dashed rgba(148,163,184,.85);border-radius:22px;}
+.writer-canvas{position:absolute;inset:10px;}
+.info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+.info-section{min-height:110px;border-radius:20px;padding:14px 14px 12px;background:rgba(255,255,255,.95);border:1px solid rgba(148,163,184,.16);}
+.info-section.wide{grid-column:1 / -1;}
+.info-label{margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;color:#64748b;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.info-content{min-height:52px;line-height:1.8;color:#172033;white-space:pre-line;}
+.info-content.pinyin{font-size:22px;font-weight:700;color:#111827;}
+.info-content ruby rt{color:#4f46e5;font-size:11px;}
+@media (max-width:1080px){.card-body{grid-template-columns:1fr;}}
+@media (max-width:768px){body{padding:18px 12px;}.info-grid{grid-template-columns:1fr;}.writer-box{width:148px;height:148px;}.writer-char-pinyin{font-size:18px;}}
+</style>
+</head>
+<body>
+${previewHTML}
+<script>
+const writerConfig = ${JSON.stringify(writerConfig)};
+writerConfig.forEach(({id,char}) => {
+  HanziWriter.create(id, char, {
+    width: 120,
+    height: 120,
+    padding: 6,
+    delayBetweenLoops: 500,
+    strokeAnimationSpeed: 1.1,
+    strokeColor: "#0f172a",
+    radicalColor: "#2563eb",
+    outlineColor: "rgba(37, 99, 235, 0.18)"
+  }).loopCharacterAnimation();
+});
+<\/script>
+</body>
+</html>`;
+  }
+
+  function buildEmbedBlockCode() {
+    const { blockId, resetId, shuffleId, previewHTML, flipHTML, writerConfig } = collectExportParts();
+    const styleText = getExportStyleText();
+    return `<!-- HSK 生词嵌入块：可直接放入母版的生词板块 -->\n<section class="hsk-vocab-block" id="${blockId}">\n${previewHTML}\n${flipHTML}\n</section>\n<style>\n${styleText}\n</style>\n<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"><\/script>\n<script>\n(function(){\n  const root = document.getElementById(${JSON.stringify(blockId)});\n  if (!root) return;\n  const writerConfig = ${JSON.stringify(writerConfig)};\n  writerConfig.forEach(({id,char}) => {\n    HanziWriter.create(id, char, {\n      width: 168,\n      height: 168,\n      padding: 6,\n      delayBetweenLoops: 500,\n      strokeAnimationSpeed: 1.1,\n      strokeColor: "#0f172a",\n      radicalColor: "#2563eb",\n      outlineColor: "rgba(37, 99, 235, 0.18)"\n    }).loopCharacterAnimation();\n  });\n\n  function renderFlipFace(flipCard, state) {\n    const innerEl = flipCard.querySelector(".flip-card-inner");\n    flipCard.dataset.state = String(state);\n    flipCard.classList.toggle("is-face-down", state === 0);\n    flipCard.classList.toggle("is-face-word", state === 1);\n    flipCard.classList.toggle("is-face-pinyin", state === 2 || state === 3);\n\n    if (state === 0) {\n      innerEl.innerHTML = '<span class="flip-card-face-pattern" aria-hidden="true"></span><span class="flip-card-corner top-left" aria-hidden="true"></span><span class="flip-card-corner bottom-right" aria-hidden="true"></span><span class="flip-card-value"></span>';\n      return;\n    }\n    if (state === 1) {\n      innerEl.innerHTML = '<div class="flip-word-stack"><span class="flip-pinyin"></span><span class="flip-card-value">' + (flipCard.dataset.word || '') + '</span><span class="flip-vi"></span></div>';\n      return;\n    }\n    if (state === 2) {\n      innerEl.innerHTML = '<div class="flip-word-stack"><span class="flip-pinyin">' + (flipCard.dataset.pinyin || '') + '</span><span class="flip-card-value">' + (flipCard.dataset.word || '') + '</span><span class="flip-vi"></span></div>';\n      return;\n    }\n    innerEl.innerHTML = '<div class="flip-word-stack"><span class="flip-pinyin">' + (flipCard.dataset.pinyin || '') + '</span><span class="flip-card-value">' + (flipCard.dataset.word || '') + '</span><span class="flip-vi">' + (flipCard.dataset.vi || '') + '</span></div>';\n  }\n\n  root.querySelectorAll(".flip-card").forEach((flipCard) => renderFlipFace(flipCard, 0));\n  root.addEventListener("click", (event) => {\n    if (event.target.closest(".flip-status")) {\n      const actionButton = event.target.closest("button");\n      const flipCard = event.target.closest(".flip-card");\n      if (!actionButton || !flipCard) return;\n      if (actionButton.classList.contains("flip-mark-master")) {\n        flipCard.classList.toggle("is-mastered");\n        flipCard.classList.remove("needs-review");\n      }\n      if (actionButton.classList.contains("flip-mark-review")) {\n        flipCard.classList.toggle("needs-review");\n        flipCard.classList.remove("is-mastered");\n      }\n      return;\n    }\n    const flipCard = event.target.closest(".flip-card");\n    if (!flipCard) return;\n    const state = Number(flipCard.dataset.state || "0");\n    renderFlipFace(flipCard, (state + 1) % 4);\n  });\n  root.addEventListener("keydown", (event) => {\n    const flipCard = event.target.closest(".flip-card");\n    if (!flipCard) return;\n    if (event.key !== "Enter" && event.key !== " ") return;\n    event.preventDefault();\n    const state = Number(flipCard.dataset.state || "0");\n    renderFlipFace(flipCard, (state + 1) % 4);\n  });\n  const resetButton = root.querySelector(${JSON.stringify(`#${resetId}`)});\n  const shuffleButton = root.querySelector(${JSON.stringify(`#${shuffleId}`)});\n  if (resetButton) {\n    resetButton.addEventListener("click", () => {\n      root.querySelectorAll(".flip-card").forEach((flipCard) => renderFlipFace(flipCard, 0));\n    });\n  }\n  if (shuffleButton) {\n    shuffleButton.addEventListener("click", () => {\n      const grid = root.querySelector(".flip-grid");\n      if (!grid) return;\n      [...grid.children].sort(() => Math.random() - 0.5).forEach((card) => grid.appendChild(card));\n    });\n  }\n})();\n<\/script>`;
+  }
+
+  function exportEmbedBlockCode() {
+    htmlOutput.value = buildEmbedBlockCode();
+    showStatus("母版嵌入块代码已生成");
+  }
+
+  function exportHTMLCode() {
+    htmlOutput.value = buildExportDocument();
+    showStatus("独立页面代码已生成");
+  }
+
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  async function exportGIF() {
+    const previewRoot = document.getElementById("previewRoot");
+    if (!cardsGrid.children.length) {
+      showStatus("请先生成字卡后再导出 GIF");
+      return;
+    }
+
+    showStatus("正在采集动态帧，请稍候…", 5000);
+
+    const gif = new GIF({
+      workers: 2,
+      quality: 10,
+      workerScript: "https://cdn.jsdelivr.net/npm/gif.js.optimized/dist/gif.worker.js",
+      width: previewRoot.scrollWidth,
+      height: previewRoot.scrollHeight
+    });
+
+    for (let frameIndex = 0; frameIndex < 10; frameIndex += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 280));
+      const canvas = await html2canvas(previewRoot, {
+        backgroundColor: "#eef4ff",
+        scale: 1,
+        useCORS: true
+      });
+      gif.addFrame(canvas, { copy: true, delay: 260 });
+    }
+
+    gif.on("finished", (blob) => {
+      downloadBlob(blob, `${previewTitle.textContent || "字卡"}.gif`);
+      showStatus("动态 GIF 已导出");
+    });
+
+    gif.render();
+  }
+
+  document.getElementById("generateButton").addEventListener("click", renderCards);
+  document.getElementById("fillButton").addEventListener("click", refillCards);
+  embedButton.addEventListener("click", exportEmbedBlockCode);
+  pageButton.addEventListener("click", exportHTMLCode);
+  document.getElementById("gifButton").addEventListener("click", exportGIF);
+
+  flipGrid.addEventListener("click", (event) => {
+    if (event.target.closest(".flip-status")) {
+      const actionButton = event.target.closest("button");
+      const flipCard = event.target.closest(".flip-card");
+      if (!actionButton || !flipCard) return;
+
+      if (actionButton.classList.contains("flip-mark-master")) {
+        flipCard.classList.toggle("is-mastered");
+        flipCard.classList.remove("needs-review");
+        showStatus(flipCard.classList.contains("is-mastered") ? "已标记为已掌握" : "已取消已掌握标记", 1000);
+      }
+
+      if (actionButton.classList.contains("flip-mark-review")) {
+        flipCard.classList.toggle("needs-review");
+        flipCard.classList.remove("is-mastered");
+        showStatus(flipCard.classList.contains("needs-review") ? "已标记为再练习" : "已取消再练习标记", 1000);
+      }
+      return;
+    }
+
+    const flipCard = event.target.closest(".flip-card");
+    if (!flipCard) return;
+    const state = Number(flipCard.dataset.state || "0");
+    const nextState = (state + 1) % 4;
+    renderFlipFace(flipCard, nextState);
+  });
+
+  flipGrid.addEventListener("keydown", (event) => {
+    const flipCard = event.target.closest(".flip-card");
+    if (!flipCard) return;
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    const state = Number(flipCard.dataset.state || "0");
+    const nextState = (state + 1) % 4;
+    renderFlipFace(flipCard, nextState);
+  });
+
+  flipResetButton.addEventListener("click", () => {
+    [...flipGrid.querySelectorAll(".flip-card")].forEach((flipCard) => {
+      renderFlipFace(flipCard, 0);
+    });
+    showStatus("翻牌已全部复位", 1200);
+  });
+
+  flipShuffleButton.addEventListener("click", () => {
+    const cards = [...flipGrid.children];
+    cards
+      .sort(() => Math.random() - 0.5)
+      .forEach((card) => flipGrid.appendChild(card));
+    showStatus("翻牌顺序已随机打乱", 1200);
+  });
+
+  renderCards();
+</script>
+</body>
+</html>

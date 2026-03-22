@@ -43,7 +43,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>假装老师HSK在线课程</title>
+    <title>HSH 1 第1课-你好-假装老师</title>
     <style>
         * {
             margin: 0;
@@ -274,6 +274,235 @@
             border-radius: 30px;
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(244, 248, 255, 0.7));
             box-shadow: 0 22px 44px rgba(15, 23, 42, 0.08);
+        }
+
+        /* 模板区块：课文板块专用版式，按教材截图结构设计，图片区域保留为空位 */
+        .textbook-layout {
+            position: relative;
+            padding: 18px 10px 8px 82px;
+        }
+
+        .textbook-side-label {
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 64px;
+            text-align: center;
+            color: #d18d11;
+        }
+
+        .textbook-side-label strong {
+            display: block;
+            font-size: 28px;
+            line-height: 1.05;
+            letter-spacing: 1px;
+        }
+
+        .textbook-side-label span {
+            display: block;
+            margin-top: 6px;
+            font-size: 18px;
+            color: #d18d11;
+        }
+
+        .textbook-side-label::after {
+            content: "";
+            display: block;
+            width: 58px;
+            height: 4px;
+            margin: 14px auto 0;
+            background: linear-gradient(90deg, #df9d1c, #f1be57);
+            border-radius: 999px;
+        }
+
+        .textbook-list {
+            display: flex;
+            flex-direction: column;
+            gap: 34px;
+        }
+
+        .textbook-item {
+            --lesson-accent: #6f66c8;
+            display: grid;
+            grid-template-columns: minmax(220px, 0.95fr) minmax(250px, 1fr) minmax(230px, 0.95fr);
+            gap: 26px;
+            padding: 0 0 26px;
+            border-bottom: 1px solid rgba(90, 92, 118, 0.12);
+        }
+
+        .textbook-item:last-child {
+            border-bottom: none;
+            padding-bottom: 4px;
+        }
+
+        .textbook-item[data-accent="green"] {
+            --lesson-accent: #5b8e53;
+        }
+
+        .textbook-item[data-accent="orange"] {
+            --lesson-accent: #f2a12f;
+        }
+
+        .textbook-item-header {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 2px;
+        }
+
+        .textbook-badge {
+            min-width: 54px;
+            height: 30px;
+            padding: 0 14px;
+            border-radius: 0 8px 8px 0;
+            background: var(--lesson-accent);
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .textbook-audio {
+            font-size: 17px;
+            font-style: italic;
+            color: #495057;
+            white-space: nowrap;
+        }
+
+        .textbook-line {
+            flex: 1;
+            height: 3px;
+            background: linear-gradient(90deg, var(--lesson-accent), color-mix(in srgb, var(--lesson-accent) 20%, #ffffff));
+            border-radius: 999px;
+            position: relative;
+        }
+
+        .textbook-line::after {
+            content: "";
+            position: absolute;
+            right: -2px;
+            top: 50%;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--lesson-accent);
+            transform: translateY(-50%);
+        }
+
+        .textbook-dialogue {
+            padding-top: 2px;
+        }
+
+        .textbook-pinyin {
+            margin-bottom: 6px;
+            font-size: 22px;
+            line-height: 1.35;
+            color: #1f2937;
+        }
+
+        .textbook-speaker {
+            display: grid;
+            grid-template-columns: 42px 1fr;
+            gap: 10px;
+            align-items: start;
+            margin-top: 8px;
+        }
+
+        .textbook-speaker-label {
+            font-size: 24px;
+            line-height: 1.5;
+            text-align: right;
+            color: #262626;
+        }
+
+        .textbook-speaker-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .textbook-hanzi {
+            font-size: 22px;
+            line-height: 1.55;
+            letter-spacing: 1px;
+        }
+
+        .textbook-image-slot {
+            min-height: 270px;
+            border: 2px dashed rgba(120, 135, 156, 0.36);
+            border-radius: 18px;
+            background:
+                linear-gradient(135deg, rgba(255,255,255,0.95), rgba(235,241,248,0.95)),
+                repeating-linear-gradient(45deg, rgba(111,102,200,0.06), rgba(111,102,200,0.06) 12px, rgba(255,255,255,0) 12px, rgba(255,255,255,0) 24px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #64748b;
+            padding: 20px;
+        }
+
+        .textbook-image-slot strong {
+            display: block;
+            font-size: 20px;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .textbook-image-slot span {
+            display: block;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .textbook-notes {
+            padding-left: 24px;
+            border-left: 1px dotted rgba(84, 84, 84, 0.35);
+        }
+
+        .textbook-note-title {
+            font-size: 18px;
+            font-style: italic;
+            color: #9a6715;
+            margin-bottom: 10px;
+        }
+
+        .textbook-translation,
+        .textbook-vocab {
+            font-size: 17px;
+            line-height: 1.9;
+        }
+
+        .textbook-vocab {
+            margin-top: 10px;
+        }
+
+        .textbook-vocab ol {
+            margin-top: 4px;
+            padding-left: 1.2em;
+        }
+
+        .textbook-vocab li {
+            margin: 4px 0;
+        }
+
+        .textbook-vocab .vocab-hanzi {
+            font-size: 18px;
+            font-weight: 600;
+            margin-right: 6px;
+        }
+
+        .textbook-vocab .vocab-pinyin {
+            margin-right: 8px;
+            color: #374151;
+        }
+
+        .textbook-vocab .vocab-meaning {
+            color: #4b5563;
+            font-style: italic;
         }
         
         .toolbar {
@@ -1075,6 +1304,139 @@
             .practice-grid {
                 grid-template-columns: 1fr;
             }
+
+            .textbook-layout {
+                padding-left: 0;
+            }
+
+            .textbook-side-label {
+                position: static;
+                width: auto;
+                text-align: left;
+                margin-bottom: 24px;
+            }
+
+            .textbook-side-label::after {
+                margin-left: 0;
+            }
+
+            .textbook-item {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+
+            .textbook-notes {
+                padding-left: 0;
+                border-left: none;
+                border-top: 1px dotted rgba(84, 84, 84, 0.35);
+                padding-top: 18px;
+            }
+
+            .textbook-image-slot {
+                min-height: 220px;
+            }
+        }
+
+        /* 卡片容器 */
+        .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 卡片 */
+        .card {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            padding: 20px;
+            border-radius: 18px;
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            max-height: 90vh;
+            overflow: hidden;
+        }
+
+        /* 左侧动画区 */
+        .left {
+            width: 320px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 10px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #eef2ff, #e0f2ff);
+        }
+
+        /* 每个字动画 */
+        .writers div {
+            flex: 1 1 auto;
+            max-width: 120px;
+            height: 120px;
+            margin: 5px;
+            position: relative;
+            border-radius: 6px;
+            background: #fff;
+        }
+
+        /* 虚线田字格 */
+        .writers div::before {
+            content: "";
+            position: absolute;
+            top:0; left:0; right:0; bottom:0;
+            border: 1px dashed #999;
+            background-image: linear-gradient(to right, #999 1px, transparent 1px),
+                             linear-gradient(to bottom, #999 1px, transparent 1px);
+            background-size: 50% 50%;
+            pointer-events: none;
+        }
+
+        /* 右侧信息区 */
+        .right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        /* label */
+        .label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* 各信息模块 */
+        .section {
+            font-size: 14px;
+            background: #fefefe;
+            border-radius: 8px;
+            padding: 8px 10px;
+            border: 1px solid #e2e8f0;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        /* 拼音样式 */
+        .pinyin {
+            font-size: 18px;
+            color: #111827;
+            font-weight: 600;
+        }
+
+        /* ruby 拼音（例句） */
+        .section.example ruby rt {
+            font-size: 10px;
+            color: #6366f1;
+        }
+
+        [contenteditable="true"] {
+            outline: none;
         }
     </style>
 </head>
@@ -1091,7 +1453,7 @@
                 <div class="tool-group course-title-box">
                     <span class="toolbar-group-label">课程信息</span>
                     <div class="course-meta">
-                        <span class="course-pill">第 1 课</span>
+                        <span class="course-pill">HSH 1 第1课</span>
                         <span class="course-pill">教师：假装老师</span>
                     </div>
                     <span class="course-title-label">本课标题</span>
@@ -1229,7 +1591,7 @@
         <section class="lesson-sheet selectable-item" id="sheetTop">
             <!-- 模板区块：课次编号与课程标题 -->
             <header class="sheet-header">
-                <div class="sheet-index">1</div>
+                <div class="sheet-index">HSH 1</div>
                 <div class="sheet-title selectable-item editable-block" id="sheetTitle" contenteditable="true">你好</div>
             </header>
 
@@ -1256,13 +1618,13 @@
                                             </div>
                                             <div class="knowledge-body">
                                                 <p>这个知识点模块固定嵌入在句型区域，适合后期一个课程放多个知识点入口。</p>
-                                                <div class="knowledge-editor editable-block" id="knowledgePhrase1Editor" contenteditable="true">测试文本：
-“您好”是“你好”的礼貌表达，常用于老师、长辈、正式场合。</div>
+                                                <div class="knowledge-editor editable-block" id="knowledgePhrase1Editor" contenteditable="true">
+“您好”是“你好”的礼貌表达，常用于老师、长辈、正式场合。使用“您好”表示对对方的尊重，体现了中国文化中的礼仪观念。</div>
                                                 <span class="knowledge-resize"></span>
                                             </div>
                                         </aside>
                                     </span>！你们好！</li>
-                                    <li>对不起！没关系！</li>
+                                    <li>早上好！下午好！晚上好！</li>
                                 </ol>
                             </td>
                         </tr>
@@ -1271,10 +1633,10 @@
                             <td class="editable-block" contenteditable="true">
                                 <strong>学生能够：</strong>
                                 <ol class="target-list">
-                                    <li>熟练朗读本课的声母、韵母和核心音节。</li>
-                                    <li>熟悉并正确朗读汉语四个声调。</li>
-                                    <li>了解音节中的声韵调拼合关系。</li>
-                                    <li>完成双音节和连续语流的自然朗读。</li>
+                                    <li>正确朗读“你好”、“您好”、“早上好”等问候语的发音。</li>
+                                    <li>掌握汉语四个声调的基本发音规则。</li>
+                                    <li>练习双音节词语的连读和语调。</li>
+                                    <li>培养自然、流畅的口语表达能力。</li>
                                 </ol>
                             </td>
                         </tr>
@@ -1283,9 +1645,9 @@
                             <td class="editable-block" contenteditable="true">
                                 <strong>学生能够：</strong>
                                 <ol class="target-list">
-                                    <li>认读本课生词并理解其基本含义。</li>
-                                    <li>掌握基础笔画和独体字的书写顺序。</li>
-                                    <li>结合课堂练习完成规范抄写。</li>
+                                    <li>认读并书写“你”、“好”、“早”、“上”、“下”、“晚”等基本汉字。</li>
+                                    <li>了解汉字的基本笔画和结构。</li>
+                                    <li>通过练习掌握汉字的正确书写顺序。</li>
                                 </ol>
                             </td>
                         </tr>
@@ -1294,9 +1656,9 @@
                             <td class="editable-block" contenteditable="true">
                                 <strong>学生能够：</strong>
                                 <ol class="target-list">
-                                    <li>完成打招呼和问候。</li>
-                                    <li>在合适情境中表达歉意。</li>
-                                    <li>理解并回应简单原谅表达。</li>
+                                    <li>在不同时间和场合使用合适的问候语。</li>
+                                    <li>根据交际对象选择恰当的称呼和问候方式。</li>
+                                    <li>建立基本的日常交际能力，增强学习信心。</li>
                                 </ol>
                             </td>
                         </tr>
@@ -1311,7 +1673,42 @@
                             <h2>二、复习板块</h2>
                         </div>
                         <div class="simple-card editable-block" contenteditable="true">
-                            <p>复习建议：回顾上节课问候语、声调和课堂指令，检查学生是否能独立完成基础对话。</p>
+                            <h3 style="color: orange; margin-bottom: 16px;">课堂用语</h3>
+                            <h4 style="color: orange; font-style: italic; margin-bottom: 16px;">Mẫu câu thường dùng trong lớp</h4>
+                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                                <tr>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">上课！</td>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">Shàng kè!</td>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">Vào học đi!</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">下课！</td>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">Xià kè!</td>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">Đã hết giờ học rồi!</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">现在休息！</td>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">Xiànzài xiūxi!</td>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">Nghỉ giải lao nhé!</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">看黑板！</td>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">Kàn hēibǎn!</td>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">Hãy nhìn lên bảng!</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">跟我读！</td>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">Gēn wǒ dú!</td>
+                                    <td style="padding: 8px; border-bottom: 1px solid #ccc;">Hãy đọc theo tôi!</td>
+                                </tr>
+                            </table>
+                            <p>复习建议：</p>
+                            <ol>
+                                <li>回顾之前学习的基本问候语，如"你好"、"早上好"等。</li>
+                                <li>检查学生对汉语四个声调的掌握情况。</li>
+                                <li>通过简单对话练习，巩固学生的口语表达能力。</li>
+                                <li>复习已学汉字的书写和认读。</li>
+                            </ol>
                         </div>
                     </div>
                 </section>
@@ -1324,9 +1721,9 @@
                         </div>
                         <div class="simple-card editable-block" contenteditable="true">
                             <ol>
-                                <li>教师示范问候，学生跟读。</li>
-                                <li>两人一组完成“你好 / 您好”情景打招呼。</li>
-                                <li>快速听音辨别不同语气。</li>
+                                <li>教师用不同声调示范问候语，学生跟读并模仿声调变化。</li>
+                                <li>角色扮演：学生分组模拟不同场景（如教室、操场、图书馆）的问候对话。</li>
+                                <li>游戏：快速反应，教师说出时间（早上/下午/晚上），学生快速说出对应的问候语。</li>
                             </ol>
                         </div>
                     </div>
@@ -1338,12 +1735,397 @@
                             <span class="section-mark" aria-hidden="true"></span>
                             <h2>四、生词板块</h2>
                         </div>
-                        <div class="vocab-grid">
-                            <div class="vocab-item editable-block" contenteditable="true"><strong>你好</strong><span>常用问候语，适用于日常场景。</span></div>
-                            <div class="vocab-item editable-block" contenteditable="true"><strong>您好</strong><span>更礼貌、更正式的问候表达。</span></div>
-                            <div class="vocab-item editable-block" contenteditable="true"><strong>对不起</strong><span>表达歉意。</span></div>
-                            <div class="vocab-item editable-block" contenteditable="true"><strong>没关系</strong><span>回应对方歉意。</span></div>
+                        <!-- HSK 生词嵌入块：可直接放入母版的生词板块 -->
+                        <section class="hsk-vocab-block" id="hsk-vocab-block-1774001404118">
+                        <div id="previewRoot">
+                                <div class="lesson-title" id="previewTitle">HSK 1 第1课 生词字卡</div>
+                                <p id="previewSubtitle" class="lesson-subtitle">你好 / 问候语</p>
+                                <div class="cards-grid">
+                                  
+                            <article class="card" data-word="你好">
+                                <div class="card-body">
+                                <section class="writer-panel">
+                                    <div class="writers">
+                            <div class="writer-unit">
+                                <div class="writer-char-pinyin">nǐ</div>
+                                <div class="writer-box">
+                                <div class="writer-canvas" id="hsk-vocab-block-1774001404118-card-0-writer-0" data-char="你"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="writer-unit">
+                                <div class="writer-char-pinyin">hǎo</div>
+                                <div class="writer-box">
+                                <div class="writer-canvas" id="hsk-vocab-block-1774001404118-card-0-writer-1" data-char="好"></div>
+                                </div>
+                            </div>
                         </div>
+                                </section>
+                                <section class="info-grid">
+                                    <div class="info-section">
+                                    <div class="info-label">2. 越南语</div>
+                                    <div class="info-content" contenteditable="true" data-field="vi">Xin chào</div>
+                                    </div>
+                                    <div class="info-section">
+                                    <div class="info-label">3. 词性</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="pos">交际用语 / 感叹语
+                            （感叹词 + 礼貌问候语）</div>
+                                    </div>
+                                    <div class="info-section wide">
+                                    <div class="info-label">4. 释义</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="definition">中文：用于见面时打招呼，表示礼貌、问候。
+                            越南语：Lời chào hỏi khi gặp người, dùng để thể hiện sự lịch sự, thân thiện.</div>
+                                    </div>
+                                    <div class="info-section wide">
+                                    <div class="info-label">5. 语法重点</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="grammar">固定问候语，不能拆分单独使用。
+                            用在见面、打招呼、打电话开头。
+                            不分早晚，全天都能用。
+                            后面可以加称呼：
+                            你好，老师！
+                            你好，同学！</div>
+                                    </div>
+                                    <div class="info-section wide">
+                                    <div class="info-label">6. 例句</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="examples"><ruby>你<rt>nǐ</rt></ruby><ruby>好<rt>hǎo</rt></ruby>！<br><ruby>老<rt>lǎo</rt></ruby><ruby>师<rt>shī</rt></ruby>，<ruby>你<rt>nǐ</rt></ruby><ruby>好<rt>hǎo</rt></ruby>！<br><ruby>大<rt>dà</rt></ruby><ruby>家<rt>jiā</rt></ruby><ruby>好<rt>hǎo</rt></ruby>！<br><ruby>你<rt>nǐ</rt></ruby><ruby>好<rt>hǎo</rt></ruby>，<ruby>我<rt>wǒ</rt></ruby><ruby>是<rt>shì</rt></ruby><ruby>学<rt>xué</rt></ruby><ruby>生<rt>shēng</rt></ruby>。</div>
+                                    </div>
+                                </section>
+                                </div>
+                            </article>
+                            
+                            <article class="card" data-word="老师">
+                                <div class="card-body">
+                                <section class="writer-panel">
+                                    <div class="writers">
+                            <div class="writer-unit">
+                                <div class="writer-char-pinyin">lǎo</div>
+                                <div class="writer-box">
+                                <div class="writer-canvas" id="hsk-vocab-block-1774001404118-card-1-writer-0" data-char="老"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="writer-unit">
+                                <div class="writer-char-pinyin">shī</div>
+                                <div class="writer-box">
+                                <div class="writer-canvas" id="hsk-vocab-block-1774001404118-card-1-writer-1" data-char="师"></div>
+                                </div>
+                            </div>
+                        </div>
+                                </section>
+                                <section class="info-grid">
+                                    <div class="info-section">
+                                    <div class="info-label">2. 越南语</div>
+                                    <div class="info-content" contenteditable="true" data-field="vi">Giáo viên</div>
+                                    </div>
+                                    <div class="info-section">
+                                    <div class="info-label">3. 词性</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="pos">名词
+                            （称呼语）</div>
+                                    </div>
+                                    <div class="info-section wide">
+                                    <div class="info-label">4. 释义</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="definition">中文：指在学校或课堂中教授学生的人。
+                            越南语：Người dạy học, giáo viên.</div>
+                                    </div>
+                                    <div class="info-section wide">
+                                    <div class="info-label">5. 语法重点</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="grammar">可以单独作称呼。
+                            常与问候语搭配使用：老师，您好！
+                            也可出现在职业介绍句中：我是老师。</div>
+                                    </div>
+                                    <div class="info-section wide">
+                                    <div class="info-label">6. 例句</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="examples"><ruby>老<rt>lǎo</rt></ruby><ruby>师<rt>shī</rt></ruby>，<ruby>您<rt>nín</rt></ruby><ruby>好<rt>hǎo</rt></ruby>！<br><ruby>这<rt>zhè</rt></ruby><ruby>是<rt>shì</rt></ruby><ruby>我<rt>wǒ</rt></ruby><ruby>们<rt>men</rt></ruby><ruby>的<rt>de</rt></ruby><ruby>老<rt>lǎo</rt></ruby><ruby>师<rt>shī</rt></ruby>。<br><ruby>王<rt>wáng</rt></ruby><ruby>老<rt>lǎo</rt></ruby><ruby>师<rt>shī</rt></ruby><ruby>在<rt>zài</rt></ruby><ruby>教<rt>jiào</rt></ruby><ruby>室<rt>shì</rt></ruby><ruby>里<rt>lǐ</rt></ruby>。<br><ruby>我<rt>wǒ</rt></ruby><ruby>喜<rt>xǐ</rt></ruby><ruby>欢<rt>huān</rt></ruby><ruby>汉<rt>hàn</rt></ruby><ruby>语<rt>yǔ</rt></ruby><ruby>老<rt>lǎo</rt></ruby><ruby>师<rt>shī</rt></ruby>。</div>
+                                    </div>
+                                </section>
+                                </div>
+                            </article>
+                            
+                            <article class="card" data-word="学生">
+                                <div class="card-body">
+                                <section class="writer-panel">
+                                    <div class="writers">
+                            <div class="writer-unit">
+                                <div class="writer-char-pinyin">xué</div>
+                                <div class="writer-box">
+                                <div class="writer-canvas" id="hsk-vocab-block-1774001404118-card-2-writer-0" data-char="学"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="writer-unit">
+                                <div class="writer-char-pinyin">shēng</div>
+                                <div class="writer-box">
+                                <div class="writer-canvas" id="hsk-vocab-block-1774001404118-card-2-writer-1" data-char="生"></div>
+                                </div>
+                            </div>
+                        </div>
+                                </section>
+                                <section class="info-grid">
+                                    <div class="info-section">
+                                    <div class="info-label">2. 越南语</div>
+                                    <div class="info-content" contenteditable="true" data-field="vi">Học sinh / sinh viên</div>
+                                    </div>
+                                    <div class="info-section">
+                                    <div class="info-label">3. 词性</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="pos">名词</div>
+                                    </div>
+                                    <div class="info-section wide">
+                                    <div class="info-label">4. 释义</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="definition">中文：在学校学习的人。
+                            越南语：Người học ở trường, học sinh hoặc sinh viên.</div>
+                                    </div>
+                                    <div class="info-section wide">
+                                    <div class="info-label">5. 语法重点</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="grammar">常作主语或宾语。
+                            可以与“是”连用：我是学生。
+                            可与数量词搭配：一个学生。</div>
+                                    </div>
+                                    <div class="info-section wide">
+                                    <div class="info-label">6. 例句</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="examples"><ruby>我<rt>wǒ</rt></ruby><ruby>是<rt>shì</rt></ruby><ruby>学<rt>xué</rt></ruby><ruby>生<rt>shēng</rt></ruby>。<br><ruby>他<rt>tā</rt></ruby><ruby>也<rt>yě</rt></ruby><ruby>是<rt>shì</rt></ruby><ruby>学<rt>xué</rt></ruby><ruby>生<rt>shēng</rt></ruby>。<br><ruby>这<rt>zhè</rt></ruby><ruby>个<rt>gè</rt></ruby><ruby>学<rt>xué</rt></ruby><ruby>生<rt>shēng</rt></ruby><ruby>很<rt>hěn</rt></ruby><ruby>认<rt>rèn</rt></ruby><ruby>真<rt>zhēn</rt></ruby>。<br><ruby>学<rt>xué</rt></ruby><ruby>生<rt>shēng</rt></ruby><ruby>在<rt>zài</rt></ruby><ruby>教<rt>jiào</rt></ruby><ruby>室<rt>shì</rt></ruby><ruby>里<rt>lǐ</rt></ruby>。</div>
+                                    </div>
+                                </section>
+                                </div>
+                            </article>
+                            
+                            <article class="card" data-word="学习">
+                                <div class="card-body">
+                                <section class="writer-panel">
+                                    <div class="writers">
+                            <div class="writer-unit">
+                                <div class="writer-char-pinyin">xué</div>
+                                <div class="writer-box">
+                                <div class="writer-canvas" id="hsk-vocab-block-1774001404118-card-3-writer-0" data-char="学"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="writer-unit">
+                                <div class="writer-char-pinyin">xí</div>
+                                <div class="writer-box">
+                                <div class="writer-canvas" id="hsk-vocab-block-1774001404118-card-3-writer-1" data-char="习"></div>
+                                </div>
+                            </div>
+                        </div>
+                                </section>
+                                <section class="info-grid">
+                                    <div class="info-section">
+                                    <div class="info-label">2. 越南语</div>
+                                    <div class="info-content" contenteditable="true" data-field="vi">Học tập</div>
+                                    </div>
+                                    <div class="info-section">
+                                    <div class="info-label">3. 词性</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="pos">动词</div>
+                                    </div>
+                                    <div class="info-section wide">
+                                    <div class="info-label">4. 释义</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="definition">中文：获得知识、技能的过程或行为。
+                            越南语：Học, học tập để tiếp thu kiến thức.</div>
+                                    </div>
+                                    <div class="info-section wide">
+                                    <div class="info-label">5. 语法重点</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="grammar">通常作动词使用。
+                            后面可接宾语：学习汉语。
+                            也可和“在”连用：我在学习。</div>
+                                    </div>
+                                    <div class="info-section wide">
+                                    <div class="info-label">6. 例句</div>
+                                    <div class="info-content list-lines" contenteditable="true" data-field="examples"><ruby>我<rt>wǒ</rt></ruby><ruby>学<rt>xué</rt></ruby><ruby>习<rt>xí</rt></ruby><ruby>汉<rt>hàn</rt></ruby><ruby>语<rt>yǔ</rt></ruby>。<br><ruby>我<rt>wǒ</rt></ruby><ruby>们<rt>men</rt></ruby><ruby>一<rt>yī</rt></ruby><ruby>起<rt>qǐ</rt></ruby><ruby>学<rt>xué</rt></ruby><ruby>习<rt>xí</rt></ruby>。<br><ruby>他<rt>tā</rt></ruby><ruby>在<rt>zài</rt></ruby><ruby>学<rt>xué</rt></ruby><ruby>习<rt>xí</rt></ruby><ruby>生<rt>shēng</rt></ruby><ruby>词<rt>cí</rt></ruby>。<br><ruby>学<rt>xué</rt></ruby><ruby>习<rt>xí</rt></ruby><ruby>很<rt>hěn</rt></ruby><ruby>重<rt>zhòng</rt></ruby><ruby>要<rt>yào</rt></ruby>。</div>
+                                    </div>
+                                </section>
+                                </div>
+                            </article>
+                            
+                                </div>
+                              </div>
+
+                              <section class="flip-wrap">
+                                <div class="flip-head">
+                                  <div>
+                                    <h2 style="margin:0;">生词翻牌练习</h2>
+                                  </div>
+                                  <div class="flip-actions">
+                                    <button id="hsk-vocab-block-1774001404118-reset" type="button">全部翻回</button>
+                                    <button id="hsk-vocab-block-1774001404118-shuffle" type="button">随机打乱</button>
+                                  </div>
+                                </div>
+                                <div class="flip-grid">
+                                  
+                                    <div class="flip-card  " role="button" tabindex="0" data-word="你好" data-pinyin="nǐ hǎo" data-vi="Xin chào" data-state="0">
+                                      <span class="flip-status">
+                                        <button class="flip-mark-master" type="button" title="标记为已掌握">✓</button>
+                                        <button class="flip-mark-review" type="button" title="标记为再练习">↺</button>
+                                      </span>
+                                      <div class="flip-card-inner"></div>
+                                    </div>
+                                  
+                                    <div class="flip-card  " role="button" tabindex="0" data-word="老师" data-pinyin="lǎo shī" data-vi="Giáo viên" data-state="0">
+                                      <span class="flip-status">
+                                        <button class="flip-mark-master" type="button" title="标记为已掌握">✓</button>
+                                        <button class="flip-mark-review" type="button" title="标记为再练习">↺</button>
+                                      </span>
+                                      <div class="flip-card-inner"></div>
+                                    </div>
+                                  
+                                    <div class="flip-card  " role="button" tabindex="0" data-word="学生" data-pinyin="xué shēng" data-vi="Học sinh / sinh viên" data-state="0">
+                                      <span class="flip-status">
+                                        <button class="flip-mark-master" type="button" title="标记为已掌握">✓</button>
+                                        <button class="flip-mark-review" type="button" title="标记为再练习">↺</button>
+                                      </span>
+                                      <div class="flip-card-inner"></div>
+                                    </div>
+                                  
+                                    <div class="flip-card  " role="button" tabindex="0" data-word="学习" data-pinyin="xué xí" data-vi="Học tập" data-state="0">
+                                      <span class="flip-status">
+                                        <button class="flip-mark-master" type="button" title="标记为已掌握">✓</button>
+                                        <button class="flip-mark-review" type="button" title="标记为再练习">↺</button>
+                                      </span>
+                                      <div class="flip-card-inner"></div>
+                                    </div>
+                                  
+                                </div>
+                              </section>
+                            
+                        </section>
+                        <style>
+                        .hsk-vocab-block{max-width:1280px;margin:0 auto;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Segoe UI",sans-serif;}
+                        .hsk-vocab-block .lesson-title{margin:0 0 4px;font-size:30px;font-weight:700;}
+                        .hsk-vocab-block .lesson-subtitle{margin:0 0 18px;color:#64748b;}
+                        .hsk-vocab-block .cards-grid{display:grid;gap:22px;}
+                        .hsk-vocab-block .card{border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(246,249,255,.96));border:1px solid rgba(148,163,184,.14);box-shadow:0 18px 34px rgba(15,23,42,.06);overflow:hidden;}
+                        .hsk-vocab-block .card-body{display:grid;grid-template-columns:340px 1fr;gap:18px;padding:18px;}
+                        .hsk-vocab-block .writer-panel{border-radius:22px;background:linear-gradient(135deg,#eff6ff,#f5f3ff);padding:16px;border:1px solid rgba(148,163,184,.14);display:flex;align-items:center;justify-content:center;}
+                        .hsk-vocab-block .writers{display:flex;flex-direction:column;gap:16px;justify-content:center;align-items:center;min-height:100%;width:100%;}
+                        .hsk-vocab-block .writer-unit{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+                        .hsk-vocab-block .writer-box{position:relative;width:180px;height:180px;border-radius:22px;background:rgba(255,255,255,.96);box-shadow:inset 0 0 0 1px rgba(148,163,184,.14);overflow:hidden;}
+                        .hsk-vocab-block .writer-char-pinyin{font-size:22px;font-weight:700;color:#1e293b;line-height:1;white-space:nowrap;}
+                        .hsk-vocab-block .writer-box::before,.hsk-vocab-block .writer-box::after{content:"";position:absolute;inset:0;pointer-events:none;}
+                        .hsk-vocab-block .writer-box::before{background:repeating-linear-gradient(to right,transparent 0 6px,rgba(148,163,184,.6) 6px 12px),repeating-linear-gradient(to bottom,transparent 0 6px,rgba(148,163,184,.6) 6px 12px),repeating-linear-gradient(to right,transparent 0 6px,rgba(148,163,184,.82) 6px 12px),repeating-linear-gradient(to bottom,transparent 0 6px,rgba(148,163,184,.82) 6px 12px);background-size:100% 1px,1px 100%,100% 2px,2px 100%;background-position:center top,left center,center center,center center;background-repeat:no-repeat;opacity:.65;}
+                        .hsk-vocab-block .writer-box::after{border:1px dashed rgba(148,163,184,.85);border-radius:22px;}
+                        .hsk-vocab-block .writer-canvas{position:absolute;inset:10px;}
+                        .hsk-vocab-block .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+                        .hsk-vocab-block .info-section{min-height:110px;border-radius:20px;padding:14px 14px 12px;background:rgba(255,255,255,.95);border:1px solid rgba(148,163,184,.16);}
+                        .hsk-vocab-block .info-section.wide{grid-column:1 / -1;}
+                        .hsk-vocab-block .info-label{margin-bottom:10px;color:#64748b;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+                        .hsk-vocab-block .info-content{min-height:52px;line-height:1.8;color:#172033;white-space:pre-line;}
+                        .hsk-vocab-block .info-content ruby rt{color:#4f46e5;font-size:11px;}
+                        .hsk-vocab-block .flip-wrap{padding:20px;margin-top:20px;border:1px solid rgba(255,255,255,.8);background:rgba(255,255,255,.88);backdrop-filter:blur(18px) saturate(150%);box-shadow:0 18px 48px rgba(15,23,42,.1);border-radius:28px;}
+                        .hsk-vocab-block .flip-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
+                        .hsk-vocab-block .flip-actions{display:flex;flex-wrap:wrap;gap:8px;}
+                        .hsk-vocab-block .flip-actions button{border:none;border-radius:999px;padding:10px 14px;background:rgba(255,255,255,.9);color:#172033;cursor:pointer;box-shadow:0 10px 24px rgba(15,23,42,.08);}
+                        .hsk-vocab-block .flip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:18px;margin-top:16px;}
+                        .hsk-vocab-block .flip-card{min-height:276px;border:1px solid rgba(148,163,184,.16);border-radius:30px;background:radial-gradient(circle at top left,rgba(255,255,255,.9),transparent 38%),linear-gradient(180deg,rgba(255,255,255,.98),rgba(240,246,255,.95));box-shadow:0 14px 30px rgba(15,23,42,.06);display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;position:relative;overflow:hidden;}
+                        .hsk-vocab-block .flip-card.is-mastered{box-shadow:0 24px 44px rgba(16,185,129,.18),0 14px 30px rgba(15,23,42,.08);}
+                        .hsk-vocab-block .flip-card.needs-review{box-shadow:0 24px 44px rgba(245,158,11,.16),0 14px 30px rgba(15,23,42,.08);}
+                        .hsk-vocab-block .flip-status{position:absolute;top:12px;right:12px;display:flex;gap:6px;z-index:3;}
+                        .hsk-vocab-block .flip-status button{width:32px;height:32px;border:none;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(255,255,255,.78);box-shadow:0 6px 16px rgba(15,23,42,.08);}
+                        .hsk-vocab-block .flip-card.is-mastered .flip-mark-master{background:rgba(16,185,129,.18);box-shadow:inset 0 0 0 1px rgba(16,185,129,.18);}
+                        .hsk-vocab-block .flip-card.needs-review .flip-mark-review{background:rgba(245,158,11,.2);box-shadow:inset 0 0 0 1px rgba(245,158,11,.22);}
+                        .hsk-vocab-block .flip-card-inner{width:100%;min-height:232px;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;border-radius:22px;position:relative;overflow:hidden;}
+                        .hsk-vocab-block .flip-card-value{font-size:48px;font-weight:700;color:#172033;line-height:1.12;word-break:break-word;letter-spacing:.02em;min-height:58px;display:flex;align-items:center;justify-content:center;}
+                        .hsk-vocab-block .flip-card.is-face-down .flip-card-inner{background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(79,70,229,.16)),linear-gradient(180deg,rgba(255,255,255,.98),rgba(241,245,255,.98));}
+                        .hsk-vocab-block .flip-card.is-face-down .flip-card-inner::before,.hsk-vocab-block .flip-card.is-face-down .flip-card-inner::after{content:"";position:absolute;inset:18px;border-radius:20px;border:1px dashed rgba(79,70,229,.22);}
+                        .hsk-vocab-block .flip-card.is-face-down .flip-card-inner::after{inset:auto;width:128px;height:128px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(45deg);border:2px solid rgba(37,99,235,.2);background:radial-gradient(circle,rgba(37,99,235,.1),transparent 68%),linear-gradient(135deg,rgba(255,255,255,.8),rgba(224,231,255,.55));}
+                        .hsk-vocab-block .flip-card-face-pattern{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(79,70,229,.12) 0 18%,transparent 18% 100%),radial-gradient(circle at 50% 50%,transparent 0 38%,rgba(37,99,235,.12) 38% 39%,transparent 39% 100%),repeating-linear-gradient(45deg,rgba(79,70,229,.1) 0 8px,transparent 8px 16px);opacity:.68;}
+                        .hsk-vocab-block .flip-card-corner{position:absolute;width:22px;height:22px;border:2px solid rgba(37,99,235,.2);opacity:.75;}
+                        .hsk-vocab-block .flip-card-corner.top-left{left:16px;top:16px;border-right:0;border-bottom:0;border-radius:12px 0 0 0;}
+                        .hsk-vocab-block .flip-card-corner.bottom-right{right:16px;bottom:16px;border-left:0;border-top:0;border-radius:0 0 12px 0;}
+                        .hsk-vocab-block .flip-word-stack{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:156px;width:100%;padding:8px 12px;}
+                        .hsk-vocab-block .flip-pinyin{font-size:26px;line-height:1.1;color:#1d4ed8;font-weight:700;min-height:34px;display:flex;align-items:center;justify-content:center;letter-spacing:.03em;}
+                        .hsk-vocab-block .flip-vi{font-size:24px;line-height:1.15;color:#0f766e;font-weight:700;min-height:32px;display:flex;align-items:center;justify-content:center;max-width:100%;text-align:center;padding-top:8px;border-top:1px dashed rgba(15,118,110,.22);}
+                        .hsk-vocab-block .flip-card.is-face-word .flip-card-inner{background:radial-gradient(circle at top,rgba(251,191,36,.2),transparent 40%),linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,247,237,.98));box-shadow:inset 0 0 0 1px rgba(251,191,36,.15);}
+                        .hsk-vocab-block .flip-card.is-face-word .flip-card-value{color:#9a3412;text-shadow:0 1px 0 rgba(255,255,255,.7);}
+                        .hsk-vocab-block .flip-card.is-face-pinyin .flip-card-inner{background:radial-gradient(circle at top,rgba(37,99,235,.18),transparent 42%),linear-gradient(180deg,rgba(255,255,255,.98),rgba(239,246,255,.98));box-shadow:inset 0 0 0 1px rgba(37,99,235,.14);}
+                        .hsk-vocab-block .flip-card.is-face-pinyin .flip-card-value{color:#1e3a8a;}
+                        .hsk-vocab-block .flip-card[data-state="3"] .flip-card-inner{background:radial-gradient(circle at bottom,rgba(20,184,166,.18),transparent 44%),linear-gradient(180deg,rgba(255,255,255,.98),rgba(240,253,250,.98));box-shadow:inset 0 0 0 1px rgba(15,118,110,.14);}
+                        @media (max-width:1080px){.hsk-vocab-block .card-body{grid-template-columns:1fr;}}
+                        @media (max-width:768px){.hsk-vocab-block .info-grid{grid-template-columns:1fr;}.hsk-vocab-block .writer-box{width:148px;height:148px;}.hsk-vocab-block .writer-char-pinyin{font-size:18px;}.hsk-vocab-block .flip-card{min-height:220px;}.hsk-vocab-block .flip-card-inner{min-height:184px;}.hsk-vocab-block .flip-card-value{font-size:40px;min-height:48px;}.hsk-vocab-block .flip-head{flex-direction:column;align-items:stretch;}}
+                        </style>
+                        <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+                        <script>
+                        (function(){
+                          const root = document.getElementById("hsk-vocab-block-1774001404118");
+                          if (!root) return;
+                          const writerConfig = [{"id":"hsk-vocab-block-1774001404118-card-0-writer-0","char":"你"},{"id":"hsk-vocab-block-1774001404118-card-0-writer-1","char":"好"},{"id":"hsk-vocab-block-1774001404118-card-1-writer-0","char":"老"},{"id":"hsk-vocab-block-1774001404118-card-1-writer-1","char":"师"},{"id":"hsk-vocab-block-1774001404118-card-2-writer-0","char":"学"},{"id":"hsk-vocab-block-1774001404118-card-2-writer-1","char":"生"},{"id":"hsk-vocab-block-1774001404118-card-3-writer-0","char":"学"},{"id":"hsk-vocab-block-1774001404118-card-3-writer-1","char":"习"}];
+                          writerConfig.forEach(({id,char}) => {
+                            HanziWriter.create(id, char, {
+                              width: 168,
+                              height: 168,
+                              padding: 6,
+                              delayBetweenLoops: 500,
+                              strokeAnimationSpeed: 1.1,
+                              strokeColor: "#0f172a",
+                              radicalColor: "#2563eb",
+                              outlineColor: "rgba(37, 99, 235, 0.18)"
+                            }).loopCharacterAnimation();
+                          });
+
+                          function renderFlipFace(flipCard, state) {
+                            const innerEl = flipCard.querySelector(".flip-card-inner");
+                            flipCard.dataset.state = String(state);
+                            flipCard.classList.toggle("is-face-down", state === 0);
+                            flipCard.classList.toggle("is-face-word", state === 1);
+                            flipCard.classList.toggle("is-face-pinyin", state === 2 || state === 3);
+
+                            if (state === 0) {
+                              innerEl.innerHTML = '<span class="flip-card-face-pattern" aria-hidden="true"></span><span class="flip-card-corner top-left" aria-hidden="true"></span><span class="flip-card-corner bottom-right" aria-hidden="true"></span><span class="flip-card-value"></span>';
+                              return;
+                            }
+                            if (state === 1) {
+                              innerEl.innerHTML = '<div class="flip-word-stack"><span class="flip-pinyin"></span><span class="flip-card-value">' + (flipCard.dataset.word || '') + '</span><span class="flip-vi"></span></div>';
+                              return;
+                            }
+                            if (state === 2) {
+                              innerEl.innerHTML = '<div class="flip-word-stack"><span class="flip-pinyin">' + (flipCard.dataset.pinyin || '') + '</span><span class="flip-card-value">' + (flipCard.dataset.word || '') + '</span><span class="flip-vi"></span></div>';
+                              return;
+                            }
+                            innerEl.innerHTML = '<div class="flip-word-stack"><span class="flip-pinyin">' + (flipCard.dataset.pinyin || '') + '</span><span class="flip-card-value">' + (flipCard.dataset.word || '') + '</span><span class="flip-vi">' + (flipCard.dataset.vi || '') + '</span></div>';
+                          }
+
+                          root.querySelectorAll(".flip-card").forEach((flipCard) => renderFlipFace(flipCard, 0));
+                          root.addEventListener("click", (event) => {
+                            if (event.target.closest(".flip-status")) {
+                              const actionButton = event.target.closest("button");
+                              const flipCard = event.target.closest(".flip-card");
+                              if (!actionButton || !flipCard) return;
+                              if (actionButton.classList.contains("flip-mark-master")) {
+                                flipCard.classList.toggle("is-mastered");
+                                flipCard.classList.remove("needs-review");
+                              }
+                              if (actionButton.classList.contains("flip-mark-review")) {
+                                flipCard.classList.toggle("needs-review");
+                                flipCard.classList.remove("is-mastered");
+                              }
+                              return;
+                            }
+                            const flipCard = event.target.closest(".flip-card");
+                            if (!flipCard) return;
+                            const state = Number(flipCard.dataset.state || "0");
+                            renderFlipFace(flipCard, (state + 1) % 4);
+                          });
+                          root.addEventListener("keydown", (event) => {
+                            const flipCard = event.target.closest(".flip-card");
+                            if (!flipCard) return;
+                            if (event.key !== "Enter" && event.key !== " ") return;
+                            event.preventDefault();
+                            const state = Number(flipCard.dataset.state || "0");
+                            renderFlipFace(flipCard, (state + 1) % 4);
+                          });
+                          const resetButton = root.querySelector("#hsk-vocab-block-1774001404118-reset");
+                          const shuffleButton = root.querySelector("#hsk-vocab-block-1774001404118-shuffle");
+                          if (resetButton) {
+                            resetButton.addEventListener("click", () => {
+                              root.querySelectorAll(".flip-card").forEach((flipCard) => renderFlipFace(flipCard, 0));
+                            });
+                          }
+                          if (shuffleButton) {
+                            shuffleButton.addEventListener("click", () => {
+                              const grid = root.querySelector(".flip-grid");
+                              if (!grid) return;
+                              [...grid.children].sort(() => Math.random() - 0.5).forEach((card) => grid.appendChild(card));
+                            });
+                          }
+                        })();
+                        </script>
                     </div>
                 </section>
 
@@ -1354,8 +2136,8 @@
                             <h2>五、生词练习板块</h2>
                         </div>
                         <div class="practice-grid">
-                            <div class="practice-box editable-block" contenteditable="true">练习 1：听音选词，把“你好 / 您好 / 对不起 / 没关系”对应到正确场景。</div>
-                            <div class="practice-box editable-block" contenteditable="true">练习 2：看图说话，两人一组完成问候和回应。</div>
+                            <div class="practice-box editable-block" contenteditable="true">练习 1：根据时间选择正确的问候语，将“早上好”、“下午好”、“晚上好”对应到正确的时间段。</div>
+                            <div class="practice-box editable-block" contenteditable="true">练习 2：角色扮演，两人一组，根据不同场景（如遇见老师、同学、朋友）选择合适的问候语。</div>
                         </div>
                     </div>
                 </section>
@@ -1366,11 +2148,145 @@
                             <span class="section-mark" aria-hidden="true"></span>
                             <h2>六、课文板块</h2>
                         </div>
-                        <div class="simple-card editable-block" contenteditable="true">
-                            <p>A：你好！</p>
-                            <p>B：你好！</p>
-                            <p>A：对不起！</p>
-                            <p>B：没关系！</p>
+                        <!-- 模板区块：课文板块按教材截图风格排版；不使用截图中的水印，图片区域仅保留占位 -->
+                        <div class="simple-card textbook-layout">
+                            <div class="textbook-side-label" aria-hidden="true">
+                                <strong>课文</strong>
+                                <span>Bài học</span>
+                            </div>
+                            <div class="textbook-list">
+                                <article class="textbook-item" data-accent="purple">
+                                    <div class="textbook-item-header">
+                                        <span class="textbook-badge">1</span>
+                                        <span class="textbook-audio editable-block" contenteditable="true">🎵 01-1</span>
+                                        <span class="textbook-line" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="textbook-dialogue editable-block" contenteditable="true">
+                                        <p class="textbook-pinyin">Nǐ hǎo!</p>
+                                        <div class="textbook-speaker">
+                                            <span class="textbook-speaker-label">A:</span>
+                                            <div class="textbook-speaker-lines">
+                                                <p class="textbook-hanzi">你好！</p>
+                                            </div>
+                                        </div>
+                                        <p class="textbook-pinyin" style="margin-top: 16px;">Nǐ hǎo!</p>
+                                        <div class="textbook-speaker">
+                                            <span class="textbook-speaker-label">B:</span>
+                                            <div class="textbook-speaker-lines">
+                                                <p class="textbook-hanzi">你好！</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="textbook-image-slot selectable-item">
+                                        <div class="editable-block" contenteditable="true">
+                                            <strong>图片预留区 01-1</strong>
+                                            <span>请在此替换为对应课文配图。<br>当前仅保留版式空位，不嵌入截图原图，也不保留任何水印元素。</span>
+                                        </div>
+                                    </div>
+                                    <div class="textbook-notes editable-block" contenteditable="true">
+                                        <p class="textbook-note-title">Dịch nghĩa</p>
+                                        <div class="textbook-translation">
+                                            <p>A: Chào anh!</p>
+                                            <p>B: Chào anh!</p>
+                                        </div>
+                                        <div class="textbook-vocab">
+                                            <p class="textbook-note-title">Từ mới</p>
+                                            <ol>
+                                                <li><span class="vocab-hanzi">你</span><span class="vocab-pinyin">nǐ</span><span class="vocab-meaning">đại từ: anh, chị, bạn...</span></li>
+                                                <li><span class="vocab-hanzi">好</span><span class="vocab-pinyin">hǎo</span><span class="vocab-meaning">khỏe, tốt</span></li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </article>
+
+                                <article class="textbook-item" data-accent="green">
+                                    <div class="textbook-item-header">
+                                        <span class="textbook-badge">2</span>
+                                        <span class="textbook-audio editable-block" contenteditable="true">🎵 01-2</span>
+                                        <span class="textbook-line" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="textbook-dialogue editable-block" contenteditable="true">
+                                        <p class="textbook-pinyin">Nín hǎo!</p>
+                                        <div class="textbook-speaker">
+                                            <span class="textbook-speaker-label">A:</span>
+                                            <div class="textbook-speaker-lines">
+                                                <p class="textbook-hanzi">您好！</p>
+                                            </div>
+                                        </div>
+                                        <p class="textbook-pinyin" style="margin-top: 16px;">Nǐmen hǎo!</p>
+                                        <div class="textbook-speaker">
+                                            <span class="textbook-speaker-label">B:</span>
+                                            <div class="textbook-speaker-lines">
+                                                <p class="textbook-hanzi">你们好！</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="textbook-image-slot selectable-item">
+                                        <div class="editable-block" contenteditable="true">
+                                            <strong>图片预留区 01-2</strong>
+                                            <span>建议替换为“向长辈或多人问候”的场景图。<br>可直接导入图片覆盖此占位区域。</span>
+                                        </div>
+                                    </div>
+                                    <div class="textbook-notes editable-block" contenteditable="true">
+                                        <p class="textbook-note-title">Dịch nghĩa</p>
+                                        <div class="textbook-translation">
+                                            <p>A: Chào ông!</p>
+                                            <p>B: Chào anh chị!</p>
+                                        </div>
+                                        <div class="textbook-vocab">
+                                            <p class="textbook-note-title">Từ mới</p>
+                                            <ol>
+                                                <li><span class="vocab-hanzi">您</span><span class="vocab-pinyin">nín</span><span class="vocab-meaning">lịch sự: ông, bà, ngài...</span></li>
+                                                <li><span class="vocab-hanzi">你们</span><span class="vocab-pinyin">nǐmen</span><span class="vocab-meaning">số nhiều: các anh, các chị, các bạn...</span></li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </article>
+
+                                <article class="textbook-item" data-accent="orange">
+                                    <div class="textbook-item-header">
+                                        <span class="textbook-badge">3</span>
+                                        <span class="textbook-audio editable-block" contenteditable="true">🎵 01-3</span>
+                                        <span class="textbook-line" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="textbook-dialogue editable-block" contenteditable="true">
+                                        <p class="textbook-pinyin">Duìbuqǐ!</p>
+                                        <div class="textbook-speaker">
+                                            <span class="textbook-speaker-label">A:</span>
+                                            <div class="textbook-speaker-lines">
+                                                <p class="textbook-hanzi">对不起！</p>
+                                            </div>
+                                        </div>
+                                        <p class="textbook-pinyin" style="margin-top: 16px;">Méi guānxi!</p>
+                                        <div class="textbook-speaker">
+                                            <span class="textbook-speaker-label">B:</span>
+                                            <div class="textbook-speaker-lines">
+                                                <p class="textbook-hanzi">没关系！</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="textbook-image-slot selectable-item">
+                                        <div class="editable-block" contenteditable="true">
+                                            <strong>图片预留区 01-3</strong>
+                                            <span>建议替换为“道歉与回应”的情境图片。<br>当前保留教材风格版式，不引入原截图中的任何水印内容。</span>
+                                        </div>
+                                    </div>
+                                    <div class="textbook-notes editable-block" contenteditable="true">
+                                        <p class="textbook-note-title">Dịch nghĩa</p>
+                                        <div class="textbook-translation">
+                                            <p>A: Xin lỗi!</p>
+                                            <p>B: Không sao đâu!</p>
+                                        </div>
+                                        <div class="textbook-vocab">
+                                            <p class="textbook-note-title">Từ mới</p>
+                                            <ol>
+                                                <li><span class="vocab-hanzi">对不起</span><span class="vocab-pinyin">duìbuqǐ</span><span class="vocab-meaning">xin lỗi</span></li>
+                                                <li><span class="vocab-hanzi">没关系</span><span class="vocab-pinyin">méi guānxi</span><span class="vocab-meaning">không sao đâu, không có vấn đề gì đâu</span></li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -1382,8 +2298,95 @@
                             <h2>七、语法板块</h2>
                         </div>
                         <div class="simple-card editable-block" contenteditable="true">
-                            <p>语法提示：根据交际对象不同，问候语会有口语化和礼貌化的区别。</p>
-                            <p>“你好”适合平辈，“您好”适合正式场合或长辈。</p>
+                            <h3 style="color: orange; margin-bottom: 16px; border-bottom: 2px solid orange; padding-bottom: 8px;">课文</h3>
+                            <h4 style="color: orange; font-style: italic; margin-bottom: 16px;">Bài học</h4>
+                            
+                            <!-- 场景1 -->
+                            <div style="border-bottom: 1px solid #ccc; padding-bottom: 20px; margin-bottom: 20px;">
+                                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                                    <span style="background-color: #333; color: white; padding: 2px 8px; border-radius: 4px; margin-right: 10px;">1</span>
+                                    <span style="margin-right: 10px; color: var(--text);">🎵 01-1</span>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                                    <div style="padding: 10px;">
+                                        <p style="margin-bottom: 10px; color: var(--text); font-size: 16px;">Nǐ hǎo!</p>
+                                        <p style="margin-bottom: 10px; color: var(--text); font-size: 16px;">A：你好！</p>
+                                        <p style="margin-bottom: 10px; color: var(--text); font-size: 16px;">Nǐ hǎo!</p>
+                                        <p style="margin-bottom: 10px; color: var(--text); font-size: 16px;">B：你好！</p>
+                                    </div>
+                                    <div style="padding: 10px;">
+                                        <div style="width: 100%; aspect-ratio: 1/1; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd;">
+                                            [图片占位：两人握手场景]
+                                        </div>
+                                    </div>
+                                    <div style="padding: 10px;">
+                                        <h5 style="color: var(--text); margin-bottom: 10px; font-size: 14px;">Dịch nghĩa</h5>
+                                        <p style="margin-bottom: 5px; color: var(--text); font-size: 14px;">A: Chào anh!</p>
+                                        <p style="margin-bottom: 5px; color: var(--text); font-size: 14px;">B: Chào anh!</p>
+                                        <h5 style="color: var(--text); margin-bottom: 10px; margin-top: 15px; font-size: 14px;">Từ mới</h5>
+                                        <p style="margin-bottom: 5px; color: #0a84ff; font-size: 14px;">1. 你 nǐ đt. (số ít anh, chị, bạn...)</p>
+                                        <p style="margin-bottom: 5px; color: #0a84ff; font-size: 14px;">2. 好 hǎo tt. khỏe, tốt</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 场景2 -->
+                            <div style="border-bottom: 1px solid #ccc; padding-bottom: 20px; margin-bottom: 20px;">
+                                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                                    <span style="background-color: #333; color: white; padding: 2px 8px; border-radius: 4px; margin-right: 10px;">2</span>
+                                    <span style="margin-right: 10px; color: var(--text);">🎵 01-2</span>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                                    <div style="padding: 10px;">
+                                        <p style="margin-bottom: 10px; color: var(--text); font-size: 16px;">Nín hǎo!</p>
+                                        <p style="margin-bottom: 10px; color: var(--text); font-size: 16px;">A：您 好！</p>
+                                        <p style="margin-bottom: 10px; color: var(--text); font-size: 16px;">Nǐmen hǎo!</p>
+                                        <p style="margin-bottom: 10px; color: var(--text); font-size: 16px;">B：你们 好！</p>
+                                    </div>
+                                    <div style="padding: 10px;">
+                                        <div style="width: 100%; aspect-ratio: 1/1; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd;">
+                                            [图片占位：多人问候场景]
+                                        </div>
+                                    </div>
+                                    <div style="padding: 10px;">
+                                        <h5 style="color: var(--text); margin-bottom: 10px; font-size: 14px;">Dịch nghĩa</h5>
+                                        <p style="margin-bottom: 5px; color: var(--text); font-size: 14px;">A: Chào ông!</p>
+                                        <p style="margin-bottom: 5px; color: var(--text); font-size: 14px;">B: Chào anh chị!</p>
+                                        <h5 style="color: var(--text); margin-bottom: 10px; margin-top: 15px; font-size: 14px;">Từ mới</h5>
+                                        <p style="margin-bottom: 5px; color: #0a84ff; font-size: 14px;">*3. 您 nín đt. (lịch sư ông, bà, ngài...)</p>
+                                        <p style="margin-bottom: 5px; color: #0a84ff; font-size: 14px;">4. 你们 nǐmen đt. (số nhiều) các anh, các chị, các bạn...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 场景3 -->
+                            <div style="padding-bottom: 20px;">
+                                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                                    <span style="background-color: #ff9f0a; color: white; padding: 2px 8px; border-radius: 4px; margin-right: 10px;">3</span>
+                                    <span style="margin-right: 10px; color: var(--text);">🎵 01-3</span>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                                    <div style="padding: 10px;">
+                                        <p style="margin-bottom: 10px; color: var(--text); font-size: 16px;">Duìbuqǐ!</p>
+                                        <p style="margin-bottom: 10px; color: var(--text); font-size: 16px;">A：对 不起！</p>
+                                        <p style="margin-bottom: 10px; color: var(--text); font-size: 16px;">Méiguānxi!</p>
+                                        <p style="margin-bottom: 10px; color: var(--text); font-size: 16px;">B：没 关系！</p>
+                                    </div>
+                                    <div style="padding: 10px;">
+                                        <div style="width: 100%; aspect-ratio: 1/1; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd;">
+                                            [图片占位：女孩道歉场景]
+                                        </div>
+                                    </div>
+                                    <div style="padding: 10px;">
+                                        <h5 style="color: var(--text); margin-bottom: 10px; font-size: 14px;">Dịch nghĩa</h5>
+                                        <p style="margin-bottom: 5px; color: var(--text); font-size: 14px;">A: Xin lỗi!</p>
+                                        <p style="margin-bottom: 5px; color: var(--text); font-size: 14px;">B: Không sao đâu!</p>
+                                        <h5 style="color: var(--text); margin-bottom: 10px; margin-top: 15px; font-size: 14px;">Từ mới</h5>
+                                        <p style="margin-bottom: 5px; color: #ff9f0a; font-size: 14px;">5. 对不起 duìbuqǐ đt. xin lỗi</p>
+                                        <p style="margin-bottom: 5px; color: #ff9f0a; font-size: 14px;">6. 没关系 méiguānxi không sao đâu, gì đâu không có vấn đề gì đâu</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -1395,8 +2398,8 @@
                             <h2>八、语法练习板块</h2>
                         </div>
                         <div class="practice-grid">
-                            <div class="practice-box editable-block" contenteditable="true">练习 1：判断不同人物关系，选择“你好”还是“您好”。</div>
-                            <div class="practice-box editable-block" contenteditable="true">练习 2：改写句子，让表达更礼貌。</div>
+                            <div class="practice-box editable-block" contenteditable="true">练习 1：根据场景选择正确的问候语，如在学校遇见老师用“您好”，遇见同学用“你好”。</div>
+                            <div class="practice-box editable-block" contenteditable="true">练习 2：根据时间完成对话，如早上用“早上好”，下午用“下午好”，晚上用“晚上好”。</div>
                         </div>
                     </div>
                 </section>
@@ -1408,8 +2411,21 @@
                             <h2>九、总结及作业板块</h2>
                         </div>
                         <div class="simple-card editable-block" contenteditable="true">
-                            <p>课堂总结：掌握问候与礼貌表达，能完成简单互动。</p>
-                            <p>课后作业：录音朗读课文，抄写本课生词各两遍，并完成问候情景对话。</p>
+                            <p>课堂总结：</p>
+                            <ol>
+                                <li>掌握了基本问候语：你好、您好、早上好、下午好、晚上好、你们好。</li>
+                                <li>了解了不同场合和对象的礼貌用语使用规则。</li>
+                                <li>练习了汉语四个声调的发音，特别是问候语中的声调。</li>
+                                <li>通过对话练习，提高了口语表达能力。</li>
+                            </ol>
+                            <p></p>
+                            <p>课后作业：</p>
+                            <ol>
+                                <li>录音朗读课文对话，注意声调的正确性。</li>
+                                <li>抄写本课生词各三遍，注意汉字的书写顺序。</li>
+                                <li>与家人或朋友练习不同场景的问候对话。</li>
+                                <li>制作一张问候语卡片，包含不同时间和场合的问候语。</li>
+                            </ol>
                         </div>
                     </div>
                 </section>
